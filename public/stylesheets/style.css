@@ -1,8 +1,16 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-size: medium;
+  box-sizing: border-box;
 }
 
-a {
-  color: #00B7FF;
+.logo{
+  margin-left: 50%;
+  height: 50px;
+  width: 50px;
 }
+.carousel-item{
+  
+}
+
+
