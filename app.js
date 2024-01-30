@@ -4,6 +4,11 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('express-handlebars');
+var flash = require('express-flash');
+var session = require('express-session');
+
+// db connection
+var UFOdbdb = require('./config/connection')
 
 var indexRouter = require('./routes/user_routes/index');
 var usersRegisterRouter = require('./routes/user_routes/userRegister');
@@ -18,11 +23,20 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}));
 
+const oneDay = 1000*60*60*24;
+app.use(session({
+  secret:'yourSecretKey',
+  resave:false,
+  saveUninitialized:true,
+  cookie: {maxAge: oneDay}
+}))
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
 
 app.use('/', indexRouter);
 app.use('/user_register', usersRegisterRouter);
