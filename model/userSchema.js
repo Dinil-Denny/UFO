@@ -10,13 +10,16 @@ const userSchema = new mongoose.Schema({
         require : true,
         unique : true
     },
-    mobile:{
+    mobilenumber:{
         type: Number,
         require: true
     },
     password:{
         type: String,
         require: true
+    },
+    createdAt:{
+        type: Date,
     }
 })
 

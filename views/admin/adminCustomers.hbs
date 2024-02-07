@@ -1,6 +1,6 @@
 <div class="container-fluid d-flex" style="background-color: #D9D9D9;">
     <div class="sideMenu">
-        <a href="/admin/dashboard"><button type="button" class="btn btn-light sideMenuButton" ><i class="bi bi-view-list"></i> <span class="menuLabel"> Dashboard</span></button></a>
+        <a href="/admin"><button type="button" class="btn btn-light sideMenuButton" ><i class="bi bi-view-list"></i> <span class="menuLabel"> Dashboard</span></button></a>
         <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
@@ -10,48 +10,34 @@
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
         <dir class="separator mt-5 pt-5"></dir>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span class="menuLabel"> Settings</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
+        <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
     </div>
     <div class="customerDetails">
         <table class="table" id="myTable" style="width: 100%;">
+            <h3>Customers</h3>
             <thead>
                 <tr>
-                <th scope="col">No</th>
                 <th scope="col">Name</th>
                 <th scope="col">E-mail</th>
                 <th scope="col">Mobile</th>
                 <th scope="col">Status</th>
-                <th scope="col">Update</th>
                 </tr>
             </thead>
             <tbody>
+                {{#each userList}}
                 <tr>
-                <th scope="row">1</th>
-                <td>Markafsdd</td>
-                <td>mark@123</td>
-                <td>15684864</td>
-                <td><label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider round"></span>
+                <td>{{this.name}}</td>
+                <td>{{this.email}}</td>
+                <td>{{this.mobilenumber}}</td>
+                <td>
+                    <label class="switch">
+                        <input type="checkbox" name="active">
+                        <span class="slider round"></span>
                     </label>
                 </td>
-                <td>
-                    <a href="/admin/updateuser/{{this._id}}" class="btn btn-primary btn-small"><i class="bi bi-pencil-square"></i></a>
-                    <a href="/admin/deleteuser/{{this._id}}" class="btn btn-danger btn-small" onclick="return confirm(`Are you sure you want to delete user {{this.name}}?`)"><i class="bi bi-trash3-fill"></i></a>
-                </td>
                 </tr>
-                <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-                </tr>
+                {{/each}}
             </tbody>
         </table>
     </div>
-</div>
-<script>
-      $(document).ready( function () {
-        $('#myTable').DataTable();
-      } );
-</script> 
+</div> 

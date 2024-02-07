@@ -1,0 +1,167 @@
+<div class="container-fluid productList d-flex">
+    <div class="options_sidebar col-xs-3 col-sm-3 me-2 ps-4">
+        <div class="filterOptions">
+            <h5>Catagory</h5>
+            <label for="catgMen" style="display:block;">
+                <input type="checkbox" id="catgMen" name="catagory" value="men">Men
+            </label>
+            <label for="catgWomen" style="display:block;">
+                <input type="checkbox" id="catgWomen" name="catagory" value="Women">Women
+            </label>
+            <label for="catgKids" style="display:block;">
+                <input type="checkbox" id="catgKids" name="catagory" value="Kids">Kids
+            </label>
+            <div class="separator my-4"></div>
+        </div>
+        <div class="filterOptions">
+            <h5>Brands</h5>
+            <label for="AllBrand" style="display:block;">
+                <input type="checkbox" id="AllBrand" name="brand" value="AllBrand">All brands
+            </label>
+            <label for="AllenSolly" style="display:block;">
+                <input type="checkbox" id="AllenSolly" name="brand" value="AllenSolly">Allen Solly
+            </label>
+            <label for="Roadster" style="display:block;">
+                <input type="checkbox" id="Roadster" name="brand" value="Roadster">Roadster
+            </label>
+            <label for="Arrow" style="display:block;">
+                <input type="checkbox" id="Arrow" name="brand" value="Arrow">Arrow
+            </label>
+            <label for="IndianTerrain" style="display:block;">
+                <input type="checkbox" id="IndianTerrain" name="brand" value="IndianTerrain">Indian Terrain
+            </label>
+            <label for="Levis" style="display:block;">
+                <input type="checkbox" id="Levis" name="brand" value="Levis">Levis
+            </label>
+            <div class="separator my-4"></div>
+        </div>
+        <div class="filterOptions">
+            <h5>Price</h5>
+            <label for="gt3k" style="display:block;">
+                <input type="checkbox" id="gt3k" name="price" value="gt3000">Above Rs.3000
+            </label>
+            <label for="lt0_5k" style="display:block;">
+                <input type="checkbox" id="lt0_5k" name="price" value="lt500">Below Rs.500
+            </label>
+            <label for="0_5kto1k" style="display:block;">
+                <input type="checkbox" id="0_5kto1k" name="price" value="500to1000">Rs.500 - Rs.1000
+            </label>
+            <label for="1kto2k" style="display:block;">
+                <input type="checkbox" id="1kto2k" name="price" value="1000to2000">Rs.1000 - Rs.2000
+            </label>
+            <label for="2kto3k" style="display:block;">
+                <input type="checkbox" id="2kto3k" name="price" value="2000to3000">Rs.2000 - Rs.3000
+            </label>
+            <div class="separator my-4"></div>
+        </div>
+        <div class="filterOptions">
+            <h5>Rating</h5>
+            <label for="fiveStar" style="display:block;">
+                <input type="checkbox" id="fiveStar" name="rating" value="fiveStar">5<i class="bi bi-star-fill"></i>
+            </label>
+            <label for="fourStar" style="display:block;">
+                <input type="checkbox" id="fourStar" name="rating" value="fourStar">4<i class="bi bi-star-fill"></i>
+            </label>
+            <label for="threeStar" style="display:block;">
+                <input type="checkbox" id="threeStar" name="rating" value="threeStar">3<i class="bi bi-star-fill"></i>
+            </label>
+            <label for="twoStar" style="display:block;">
+                <input type="checkbox" id="twoStar" name="rating" value="twoStar">2<i class="bi bi-star-fill"></i>
+            </label>
+            <label for="oneStar" style="display:block;">
+                <input type="checkbox" id="oneStar" name="rating" value="oneStar">1<i class="bi bi-star-fill"></i>
+            </label>
+            <div class="separator my-4"></div>
+        </div>
+        <div class="filterOptions">
+            
+        </div>
+    </div>
+    {{!-- product listing --}}
+    <div class="productsContainer d-flex flex-column">
+        <div class="productList d-flex justify-content-center">
+            <div class="products mb-3 d-flex flex-wrap justify-content-evenly">
+                <div class="card mb-3" style="width: 18rem;">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <img src="/images/products/men-jeans-black.jpg" class="card-img-top" style="height:350px;" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Levis</h5>
+                        <p class="card-text">Men's black Jeans</p>
+                        <h6 class="card-title">Rs.1699</h6>
+                    </div>
+                    </a>
+                </div>
+                <div class="card mb-3" style="width: 18rem;">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <img src="/images/products/men-shorts-grey.jpg" class="card-img-top" style="height:350px;" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Levis</h5>
+                        <p class="card-text">Men's black Jeans</p>
+                        <h6 class="card-title">Rs.1699</h6>
+                    </div>
+                    </a>
+                </div>
+                <div class="card mb-3" style="width: 18rem;">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <img src="/images/products/men-tshirt-white (2).jpg" class="card-img-top" style="height:350px;" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Levis</h5>
+                        <p class="card-text">Men's black Jeans</p>
+                        <h6 class="card-title">Rs.1699</h6>
+                    </div>
+                    </a>
+                </div>
+                <div class="card mb-3" style="width: 18rem;">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <img src="/images/products/men-formalshirt-blue.jpg" class="card-img-top" style="height:350px;" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Levis</h5>
+                        <p class="card-text">Men's black Jeans</p>
+                        <h6 class="card-title">Rs.1699</h6>
+                    </div>
+                    </a>
+                </div>
+                <div class="card mb-3" style="width: 18rem;">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <img src="/images/products/men-hoodies-black.jpg" class="card-img-top" style="height:350px;" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Levis</h5>
+                        <p class="card-text">Men's black Jeans</p>
+                        <h6 class="card-title">Rs.1699</h6>
+                    </div>
+                    </a>
+                </div>
+                <div class="card mb-3" style="width: 18rem;">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <img src="/images/products/men-hoodies-white.jpg" class="card-img-top" style="height:350px;" alt="...">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Levis</h5>
+                        <p class="card-text">Men's black Jeans</p>
+                        <h6 class="card-title">Rs.1699</h6>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{{!-- pagination --}}

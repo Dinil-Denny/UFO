@@ -8,14 +8,14 @@
             <h1 class="fullform ">Odyssey</h1>
         </div>
         <div class="userRegisterForm">
-            <form class="ms-4 mt-5" action="/user_login" method="post">
+            <form class="ms-4 mt-5" action="/login" method="post">
                 <input class="formDetails" type="email" name="email" placeholder="Enter your email">
                 <div class="separator"></div>
                 <input class="formDetails" type="password" name="password" placeholder="Enter password">
                 <div class="separator"></div>
-                <p class="ms-2 mt-3"><a href="/user_login/user_forgetPassword">Forgot password?</a></p>
+                <p class="ms-2 mt-3"><a href="/forgetPassword">Forgot password?</a></p>
                 <button class="formDetails mt-5 ms-4" style="width: 80%; border-radius: 30px; background-color:#72383D; color:white" type="submit" class="btn btn-primary m-2">LogIn</button> 
-                <p class="or mt-2 text-center">New to UFO? <a class="accountCreation p-0" href="/user_register">Register</a></p>
+                <p class="or mt-2 text-center">New to UFO? <a class="accountCreation p-0" href="/register">Register</a></p>
                 <div class="notification text-center text-danger">
                     {{#if message}}
                         <p>{{message}}</p>

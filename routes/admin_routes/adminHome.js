@@ -1,22 +1,24 @@
-var express = require('express');
-var router = express.Router()
+// const express = require('express');
+// const router = express.Router();
+// const users = require('../../model/userSchema');
+// const {getDashboard,getUserList} = require('../../controller/adminControllers');
 
-router.get('/',(req,res,next)=>{
-    res.render('admin/adminDashboard',{admin:true, message:"Admin"});
-})
+// // get admin dashboard
+// router.get('/', getDashboard);
 
-
-router.get('/dashboard',(req,res,next)=>{
-    res.render('admin/adminDashboard',{admin:true, message:"Admin"});
-})
-
-
-router.get('/customers',(req,res,next)=>{
-    res.render('admin/adminCustomers',{admin:true,message:"Admin"});
-})
+// // get customer's details
+// router.get('/customers',getUserList)
 
 
-router.get('/banner',(req,res,next)=>{
-    res.render('admin/adminBanner',{admin:true,message:"Admin"});
-})
-module.exports = router;
+// router.get('/banner',async(req,res,next)=>{
+//     res.render('admin/adminBanner',{admin:true});
+// })
+
+
+
+
+// router.get('/logout',async(req,res,next)=>{
+//     req.session.destroy();
+//     res.render('admin/adminLogin',{admin:true});
+// })
+// module.exports = router; 
