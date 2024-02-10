@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     },
     createdAt:{
         type: Date,
+    },
+    blocked:{
+        type : Boolean,
+        default : false
     }
 })
 

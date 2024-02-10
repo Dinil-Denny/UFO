@@ -30,10 +30,11 @@
                 <td>{{this.email}}</td>
                 <td>{{this.mobilenumber}}</td>
                 <td>
-                    <label class="switch">
-                        <input type="checkbox" name="active">
+                    {{!-- <label for="blocked" class="switch">
+                        <input type="checkbox" name="blocked" id="blocked" data-id="{{this.id}}" onchange=toggleUserBlock(this)>
                         <span class="slider round"></span>
-                    </label>
+                    </label> --}}
+                    <a href="/admin/block/{{this._id}}" class="btn btn-success btn-small"><i class="bi bi-ban"></i></i></a>
                 </td>
                 </tr>
                 {{/each}}

@@ -21,9 +21,9 @@ module.exports = {
       try{
         if(!email){
           res.render('user/userLogin',{message:"Email required",title:"Login"});
-        }else if(!password){
+        }if(!password){
           res.render('user/userLogin',{message:"Password required",title:"Login"});
-        }else if(!email && !password){
+        }if(!email && !password){
           res.render('user/userLogin',{message:"Email and Password required",title:"Login"});
         }
         const userExist = await userCollection.findOne({email});
@@ -57,20 +57,21 @@ module.exports = {
     postUserRegister : async(req,res)=>{
         try{
           const{name,email,mobilenumber,password,confirmPassword} = req.body;
-          if(!name){
+          if(!email && !mobilenumber && !password && !confirmPassword && !name){
+            res.render('user/userRegister',{message : "Enter full details",title:"Register"});
+          }if(!name){
             res.render('user/userRegister',{ message: 'Enter name',title:"Register"});
-          }else if(!email){
+          }if(!email){
             res.render('user/userRegister',{ message: 'Enter email',title:"Register"});
-          }else if(!mobilenumber){
+          }if(!mobilenumber){
             res.render('user/userRegister',{ message: 'Enter mobile number',title:"Register"});
-          }else if(!password){
+          }if(!password){
             res.render('user/userRegister',{ message: 'Enter password',title:"Register"});
-          }else if(!confirmPassword){
+          }if(!confirmPassword){
             res.render('user/userRegister',{ message: 'Confirm your password',title:"Register"});
-          }else if(password !== confirmPassword){
+          }if(password !== confirmPassword){
             res.render('user/userRegister',{message : "Both passwords should be same",title:"Register"});
           }
-          else{
             // checking if the user is already registered
             const userExist = await userCollection.findOne({email});
             if(userExist){
@@ -91,17 +92,17 @@ module.exports = {
                 // send otp verification email
                 await sendOTPVerificationMail(email);
                 res.render('user/userOTPVerification',{title:"OTP verification"});
-                
-            }
+       
         }catch(err){
           console.error("An error occured :"+err);
           res.render('user/userRegister',{message: "Something went wrong..!Please try again",title:"Register"});
         }
     },
 
-    getOTP : (req,res,next)=>{
-      res.render('user/userLoginOTP',{title:"Login OTP"});
-    },
+    // getOTP : (req,res,next)=>{
+    //   res.render('user/userLoginOTP',{title:"Login OTP"});
+    // },
+
     // otp verification
     postVerifyOTP : async(req,res,next)=>{
       try{
@@ -112,19 +113,22 @@ module.exports = {
           const otpExists = await otpCollection.findOne({otp});
           console.log("otpExists: "+otpExists);
           if(!otpExists){
-            res.render('user/userOTPVerification',{message:"OTP not found....check once more",title:"OTP verification"});
+            res.render('user/userOTPVerification',{message:"Incorrect OTP",title:"OTP verification"});
           }
-          const expiresAt = otpExists.expiresAt;
+          const {expiresAt} = otpExists;
           console.log("expiresAt : "+expiresAt)
           // checking if otp expired or not
-          if(expiresAt<Date.now()){
-            console.log(Date.now());
+          let time = Date.now();
+          if(expiresAt<time){
+            console.log("date now : "+time);
             await otpCollection.deleteOne({otp:otp});
             console.log("otp deleted");
             res.render('user/userOTPVerification',{message:"OTP expired! Try again",title:"OTP verification"});
           }
           if(otp === otpExists.otp){
             res.render('user/userLogin',{title:"Login"});
+            console.log("user registered redirecting to login");
+            await otpCollection.deleteOne({otp:otp});
           }else{
             res.render('user/userOTPVerification',{message:"Invalid OTP! Try again",title:"OTP verification"});
           }
@@ -151,7 +155,7 @@ module.exports = {
           userId : recentUser[0].email,
           otp : otp,
           createdAt : Date.now(),
-          expiresAt : Date.now()+3000
+          expiresAt : Date.now()+30000
         }
         await otpCollection.insertMany([userOTP]); 
         // sending email using transporter
@@ -175,12 +179,17 @@ module.exports = {
           }
           const {expiresAt} = otpExists;
           // checking if otp expired or not
-          if(expiresAt<Date.now()){
+          let time = Date.now();
+          if(expiresAt<time){
+            console.log("exprire at : "+time);
+            console.log("date now: "+Date.now());
             await otpCollection.deleteOne({otp:otp});
             res.render('user/userResendOTP',{message:"OTP expired! Try again"});
           }
           if(otp === otpExists.otp){
             res.render('user/userLogin');
+            console.log("user registered redirecting to login page")
+            otpCollection.deleteOne({otp:otp});
           }else{
             res.render('user/userResendOTP',{message:"Invalid OTP! Try again"});
           }

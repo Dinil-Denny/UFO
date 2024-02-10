@@ -18,7 +18,7 @@ const sendOTPVerificationMail = async(email)=>{
         userId : email,
         otp : otp,
         createdAt : Date.now(),
-        expiresAt : Date.now()+3000
+        expiresAt : Date.now()+30000
       }
       await otpCollection.insertMany([userOTP]);
       // sending email using transporter

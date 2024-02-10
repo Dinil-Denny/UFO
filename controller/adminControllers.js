@@ -48,10 +48,12 @@ module.exports = {
             console.log("error...!!! "+err.message);
         }
     },
-    adminLogout: async(req,res,next)=>{
-        await req.session.desroy();
-        res.redirect('/admin/login',{admin:true,title:"Admin_Login"});
+    adminLogout:async(req,res,next)=>{
+        req.session.destroy();
+        res.render('admin/adminLogin',{admin:true});
     },
+        
+   
     getAdminRegister : (req,res,next)=>{
         res.render('admin/adminRegister',{admin:true,title:"Admin_Register"})
     },
@@ -87,5 +89,27 @@ module.exports = {
                 console.log("An error occured "+err);
                 res.render('admin/adminRegister',{admin:true, message:"Something went wrong",title:"Admin_Register"});
             }
+        },
+        blockUser : async(req,res,next)=>{
+            const id= req.params.id;
+            console.log(id);
+            const user = await userCollection.findById(req.params.id);
+            if(!user.blocked){
+                await userCollection.findByIdAndUpdate(req.params.id, {blocked:true});
+                // const user = await userCollection.findById(req.params.id);
+                // console.log(user.blocked);
+                // console.log("user:"+user);
+                res.send("blocked");
+                
+            }
+            if(user.blocked){
+                await userCollection.findByIdAndUpdate(req.params.id, {blocked:false});
+                // const user = await userCollection.findById(req.params.id);
+                // console.log(user.blocked);
+                // console.log("user:"+user);
+                res.send("unblocked");
+            }
+            
+
         }
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPassword,getOTP,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails} = require('../../controller/userController')
+const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPassword,getOTP,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP} = require('../../controller/userController')
 
 /* GET user home page. */
 router.get('/',getHomePage);
@@ -20,19 +20,21 @@ router.get('/register',getUserRegister);
 // post user registration details
 router.post('/register',postUserRegister);
 
+// get user login otp verification page
+// router.get('/otp',getOTP);
+
+// post otp for verification
+router.post('/otp',postVerifyOTP);
+
 // resend otp
 router.get('/resendOTP',getResendOTP);
 
-router.post('/resendOTP')
+router.post('/resendOTP',postResendOTP);
 
 // get forget password
 router.get('/forgetPassword',getForgetPassword);
 
-// get user login otp verification page
-router.get('/otp',getOTP)
 
-// post otp for verification
-router.post('/otp',postVerifyOTP)
 
 // get products list
 router.get('/products',getProductListing);
