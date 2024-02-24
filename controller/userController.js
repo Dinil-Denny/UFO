@@ -88,11 +88,10 @@ module.exports = {
                 createdAt : Date.now()
                 }
                 console.log(userData);
-                await userCollection.insertMany([userData]);
                 // send otp verification email
                 await sendOTPVerificationMail(email);
+                await userCollection.insertMany([userData]);
                 res.render('user/userOTPVerification',{title:"OTP verification"});
-       
         }catch(err){
           console.error("An error occured :"+err);
           res.render('user/userRegister',{message: "Something went wrong..!Please try again",title:"Register"});
@@ -129,6 +128,7 @@ module.exports = {
             res.render('user/userLogin',{title:"Login"});
             console.log("user registered redirecting to login");
             await otpCollection.deleteOne({otp:otp});
+            console.log("OTP deleted");
           }else{
             res.render('user/userOTPVerification',{message:"Invalid OTP! Try again",title:"OTP verification"});
           }
@@ -199,8 +199,21 @@ module.exports = {
       }
     },
 
-    getForgetPassword : (req,res,next)=>{
-          res.render('user/userForgetPass');
+    getForgetPasswordEmail : (req,res,next)=>{
+          res.render('user/userForgetPassMail');
+    },
+    postForgetPasswordEmail: async(req,res,next)=>{
+      try{
+        const {email} = req.body;
+        console.log(email);
+        if(!email){
+          res.render('user/userForgetPassMail',{title:'Forget Password',message:"Email id is required"});
+        }
+        await sendOTPVerificationMail(email);
+        res.render('user/userResetPass',{title:'Forget Password'});
+      }catch(err){
+        console.log("An error occured: "+err.message);
+      }
     },
     
     getProductListing : (req,res,next)=>{

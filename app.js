@@ -11,11 +11,7 @@ const UFOdbdb = require('./config/connection');
 const {catchError,errorHandler} = require('./middlewares/errorHandling');
 
 const userRouter = require('./routes/user_routes/user');
-// const usersRegisterRouter = require('./routes/user_routes/userRegister');
-// const userLoginRouter = require('./routes/user_routes/userLogin');
 const adminRouter = require('./routes/admin_routes/admin');
-// const adminLoginRouter = require('./routes/admin_routes/adminLogin');
-// const adminRegisterRouter = require('./routes/admin_routes/adminRegister');
 
 const app = express();
 

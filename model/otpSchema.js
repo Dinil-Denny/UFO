@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 let otpSchema = new mongoose.Schema({
-    userId : {
-        type: String
-    },
+    userId : String,
     otp : String,
     createdAt : Date,
     expiresAt : Date

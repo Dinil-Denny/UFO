@@ -1,0 +1,45 @@
+<div class="container-fluid d-flex" style="background-color: #D9D9D9;">
+    <div class="sideMenu">
+        <a href="/admin"><button type="button" class="btn btn-light sideMenuButton" ><i class="bi bi-view-list"></i> <span class="menuLabel"> Dashboard</span></button></a>
+        <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
+        <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span class="menuLabel"> Banner Management</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
+        <a href="/admin/category"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
+        <dir class="separator mt-5 pt-5"></dir>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span class="menuLabel"> Settings</span></button></a>
+        <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
+    </div>
+    <div class="customerDetails">
+        <a href="/admin/addProduct" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Product</a>
+        <table class="table" id="myTable" style="width: 100%;">
+            <h3>Your Products</h3>
+            <thead>
+                <tr>
+                <th scope="col">Product Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Selling Price</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Images</th>
+                <th scope="col">Update</th>
+                </tr>
+            </thead>
+            {{!-- <tbody>
+                {{#each products}}
+                <tr>
+                <td>{{this.productName}}</td>
+                <td>{{this.category}}</td>
+                <td>{{this.offerPrice}}</td>
+                <td>{{this.stock}}</td>
+                
+                <td>
+                    <a href="/admin/block/{{this._id}}" class="btn btn-success btn-small"><i class="bi bi-ban"></i></i></a>
+                </td>
+                </tr>
+                {{/each}}
+            </tbody> --}}
+        </table>
+    </div>
+</div> 
