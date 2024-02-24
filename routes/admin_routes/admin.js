@@ -43,7 +43,7 @@ router.get('/products',productList);
 
 // get the add new product form
 router.get('/addProduct',getAddProduct);
-router.post('/addProduct',postAddProducts);
+router.post('/addProduct',upload.array('images',5),postAddProducts);
 
 
 
