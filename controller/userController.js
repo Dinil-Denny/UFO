@@ -9,7 +9,9 @@ require('dotenv').config();
 
 module.exports = {
     getHomePage : (req, res, next)=>{
-        res.render('user/index', {title:"UFO"});
+      const userName = req.session.username;
+      console.log(userName);
+      res.render('user/index', {title:"UFO",loginName : userName});
     },
 
     getUserLogin : (req,res,next)=>{
@@ -34,8 +36,12 @@ module.exports = {
           if(!match){
             res.render('user/userLogin',{message:"Incorrect Password",title:"Login"});
           }else{
-            req.session.userid = req.body.email;
-            res.render('user/index',{loginName : userExist.name,title:"UFO"});
+            req.session.userid = req.body.email; 
+            // Storing the user's name in the session
+            req.session.username = userExist.name;
+            console.log("session : ",req.session.username);
+            console.log("userExist: ",userExist.name);
+            res.redirect('/');
           }
         } 
 
@@ -57,6 +63,7 @@ module.exports = {
     postUserRegister : async(req,res)=>{
         try{
           const{name,email,mobilenumber,password,confirmPassword} = req.body;
+          req.session.useremail = req.body.email;
           if(!email && !mobilenumber && !password && !confirmPassword && !name){
             res.render('user/userRegister',{message : "Enter full details",title:"Register"});
           }if(!name){
@@ -139,23 +146,26 @@ module.exports = {
 
     },
     getResendOTP : async(req,res)=>{
-      const recentUser = await userCollection.find({}).sort({createdAt:-1}).limit(1);
-      console.log(recentUser[0].email);
+      // const recentUser = await userCollection.find({}).sort({createdAt:-1}).limit(1);
+      // console.log(recentUser[0].email);
+      const email = req.session.useremail;
+      console.log("email: ",email);
       try{
         // generate otp
         const otp = `${(Math.floor(1000+Math.random()*9000))}`;
         // mail options
+        const oneMinute = 1*60*1000;
         const mailOptions = {
           from: process.env.AUTH_MAIL,
-          to : recentUser[0].email,
+          to : email,
           subject : "Verify your Email",
           html : `<p>Enter ${otp} to verify your account(OTP expires in 3 mins)</p>`
         }
         const userOTP = {
-          userId : recentUser[0].email,
+          userId : email,
           otp : otp,
           createdAt : Date.now(),
-          expiresAt : Date.now()+30000
+          expiresAt : Date.now() + oneMinute
         }
         await otpCollection.insertMany([userOTP]); 
         // sending email using transporter

@@ -22,24 +22,34 @@
                 <th scope="col">Category</th>
                 <th scope="col">Selling Price</th>
                 <th scope="col">Stock</th>
-                <th scope="col">Images</th>
+                <th scope="col">Status</th>
                 <th scope="col">Update</th>
                 </tr>
             </thead>
-            {{!-- <tbody>
+            <tbody>
                 {{#each products}}
                 <tr>
                 <td>{{this.productName}}</td>
                 <td>{{this.category}}</td>
                 <td>{{this.offerPrice}}</td>
                 <td>{{this.stock}}</td>
-                
-                <td>
-                    <a href="/admin/block/{{this._id}}" class="btn btn-success btn-small"><i class="bi bi-ban"></i></i></a>
+                {{#if this.active}}
+                    <td>Listed</td>
+                    <td>
+                    <a href="/admin/active/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to unlist this product`)"><i class="bi bi-ban"></i></a>
                 </td>
+                {{else}}
+                    <td>Unlisted</td>
+                    <td>
+                    <a href="/admin/active/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to list this product`)"><i class="bi bi-ban"></i></a>
+                </td>
+                {{/if}}
+                {{!-- <td>
+                    <a href="/admin/block/{{this._id}}" class="btn btn-success btn-small"><i class="bi bi-ban"></i></i></a>
+                </td> --}}
                 </tr>
                 {{/each}}
-            </tbody> --}}
+            </tbody>
         </table>
     </div>
 </div> 

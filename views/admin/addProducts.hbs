@@ -15,7 +15,7 @@
     <div class="product ms-5 my-5" style="width: 50vw;">
         <div class="productsForm">
             <h3>Add Products</h3>
-            <form class="row mt-3" action="/admin/addProduct" method="post" >
+            <form class="row mt-3" action="/admin/addProduct" method="post" enctype="multipart/form-data">
                 <div class="col-md-6 mb-3">
                     <label for="productName" class="form-label">Product Name</label>
                     <input type="text" name="productName" class="form-control" id="productName" required>
@@ -32,12 +32,11 @@
                     <label for="gender" class="form-label">Gender</label>
                     <select name="gender" id="gender" class="form-select" required>
                         <option selected>Choose...</option>
-                        <option value="">Male</option>
-                        <option value="">Female</option>
-                        <option value="">Unisex</option>
-                        <option value="">Other</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="unisex">Unisex</option>
+                        <option value="other">Other</option>
                     </select>
-                    {{!-- <input type="text" name="gender" class="form-control" id="gender" required> --}}
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="price" class="form-label">Price</label>
@@ -45,39 +44,39 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="offerPrice" class="form-label">Offer Price</label>
-                    <input type="text" name="offerPrice" class="form-control" id="offerPrice">
+                    <input type="text" name="offerPrice" class="form-control" id="offerPrice" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="size" class="form-label">Size</label>
                     <select id="size" name="size" class="form-select" required>
                         <option selected>Choose...</option>
-                        <option value="">S</option>
-                        <option value="">M</option>
-                        <option value="">L</option>
-                        <option value="">XL</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
                     </select>
                     {{!-- <input type="text" name="size" class="form-control" id="size"> --}}
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="color" class="form-label">Color</label>
-                    <input type="text" name="color" class="form-control" id="color">
+                    <input type="text" name="color" class="form-control" id="color" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="stock" class="form-label">Total number of stock</label>
-                    <input type="text" name="stock" class="form-control" id="stock">
+                    <input type="text" name="stock" class="form-control" id="stock" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="category" class="form-label">Category</label>
-                    <select id="category" name="category" class="form-select">
+                    <select id="category" name="category" class="form-select" required>
                     <option selected>Choose...</option>
                     {{#each categories}}
-                        <option value="{{_id}}">{{this.catagoryName}}</option>
+                        <option value="{{this._id}}">{{this.catagoryName}}</option>
                     {{/each}}
                     </select>
                 </div>
                 <div class="mb-3 col-md-8 mb-3">
                     <label for="images" class="form-label">Upload images</label>
-                    <input class="form-control" name="images" type="file" id="images" multiple>
+                    <input class="form-control" name="images" type="file" id="images" multiple required>
                 </div>
                 <div class="col-12 mb-3">
                     <button type="submit" class="btn btn-primary">Add Product</button>

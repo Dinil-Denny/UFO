@@ -9,10 +9,13 @@
         </div>
         <div class="userRegisterForm d-flex align-items-center justify-content-center">
             <form class="mt-5" action="/otp" method="post">
-                <input class="formDetails text-center" type="text" inputmode="numeric" autocomplete="one-time-code" name="otp" placeholder="Enter otp">
+                <input class="formDetails text-center" type="text" inputmode="numeric" autocomplete="one-time-code" name="otp" placeholder="Enter otp" required>
                 <div class="separator mb-3 ms-5"></div>
                 <button class="formDetails mt-5 " style="width: 80%; border-radius: 30px; background-color:#72383D; color:white" type="submit" class="btn btn-primary m-2">Verify OTP</button> 
                 <a href="/resendOTP" class="text-center ms-5 ps-4">Resend OTP</a>
+                <div class="timer text-center">
+                    <span id="counter"></span>
+                </div>
                 {{!-- <p class="or mt-2 text-center">New to UFO? <a class="accountCreation p-0" href="/user_register">Register</a></p> --}}
                 <div class="notification text-center text-danger">
                     {{#if message}}
@@ -23,3 +26,24 @@
         </div>
     </div>
 </div>
+
+
+{{!-- countdown timer --}}
+<script>
+    function countdown() {
+        var seconds = 59;
+        function tick() {
+          var counter = document.getElementById("counter");
+          seconds--;
+          counter.innerHTML =
+            "0:" + (seconds < 10 ? "0" : "") + String(seconds);
+          if (seconds > 0) {
+            setTimeout(tick, 1000);
+          } else {
+            document.getElementById("counter").innerHTML = "";
+          }
+        }
+        tick();
+      }
+      countdown();
+</script>

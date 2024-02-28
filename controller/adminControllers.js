@@ -1,5 +1,6 @@
-const mongoose = require('mongoose');
+
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const userCollection = require('../model/userSchema');
 const adminCollection = require('../model/adminSchema');
 const categoryCollection = require('../model/categorySchema');
@@ -35,13 +36,13 @@ module.exports = {
             await userCollection.findByIdAndUpdate(req.params.id, {blocked:true});
             // const user = await userCollection.findById(req.params.id);
             // console.log(user.blocked);
-            res.send("User blocked");
+            res.redirect('/admin/customers');
         }
         if(user.blocked){
             await userCollection.findByIdAndUpdate(req.params.id, {blocked:false});
             // const user = await userCollection.findById(req.params.id);
             // console.log(user.blocked);
-            res.send("User unblocked");
+            res.redirect('/admin/customers');
         }
     },
     getAdminLogin : (req,res,next)=>{
@@ -126,7 +127,7 @@ module.exports = {
                 const {catagoryName,description} = req.body;
                 console.log(req.body);
                 const categoryExists = await categoryCollection.findOne({catagoryName});
-                console.log("category: "+categoryExists);
+                console.log("category: ",categoryExists);
                 if(!categoryExists){
                     const categoryData = {
                         catagoryName,
@@ -156,9 +157,22 @@ module.exports = {
         postEditCategory: async(req,res)=>{
             try{
                 const {catagoryName,description} = req.body;
-                await categoryCollection.findByIdAndUpdate(req.params.id,{catagoryName,description});
-                res.redirect('/admin/category');
-                // res.render('admin/addCategory',{admin:true,title:"Category",adminName:admin});
+                console.log("req.body: ",req.body);
+                console.log("req.params.id: ",req.params.id);
+                const category = await categoryCollection.findById(req.params.id).lean();
+                const categoryIdToExclude = new mongoose.Types.ObjectId(req.params.id);
+                const categoryExist = await categoryCollection.findOne({
+                    catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")},
+                    _id:{$ne:categoryIdToExclude}
+                });
+                
+                console.log("categoryExist: ",categoryExist);
+                if(!categoryExist){
+                    await categoryCollection.findByIdAndUpdate(req.params.id,{catagoryName,description});
+                    res.redirect('/admin/category');  
+                }
+                res.render('admin/editCategory',{admin:true,adminName:admin,title:"Edit Category",message:"Category name already exists.",category});
+                
             }catch(err){
                 console.log(`An error occured:- ${err}`);   
             }
@@ -166,7 +180,8 @@ module.exports = {
 
         productList: async(req,res)=>{
             try {
-                const products = await productCollection.find({}).lean();
+                const products = await productCollection.find().lean();
+                console.log("products: ",products);
                 res.render('admin/productList',{admin:true, adminName:admin, title:"Products",products});
             } catch (error) {
                 console.log(`An error occured : ${err.message}`);
@@ -182,12 +197,30 @@ module.exports = {
                     console.log(`An error occured : ${err.message}`);
             }
         },
+        blockProducts:async(req,res)=>{
+            try{
+                const id= req.params.id;
+                console.log(id);
+                const product = await productCollection.findById(id);
+                if(!product.active){
+                    await productCollection.findByIdAndUpdate(req.params.id, {active:true});
+                    res.redirect('/admin/products');
+                }
+                if(product.active){
+                    await productCollection.findByIdAndUpdate(req.params.id, {active:false});
+                    res.redirect('/admin/products');
+                }
+            }catch(err){
+                console.log("An error occured: ",err)
+            }
+        },
         postAddProducts: async(req,res)=>{
             try {
                 console.log("post addproducts");
-                console.log("req.body : "+JSON.stringify(req));
+                console.log("req: ",req.body);
                 const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category} = req.body;
-                console.log("req.body : "+req.body);
+                console.log("req.body : ",req.body);
+                
                 // creating a new product document
                 const product = new productCollection({
                     productName,
@@ -202,24 +235,34 @@ module.exports = {
                     category,
                     images: [], 
                 });
+                console.log("Product : ",product);
+
                 // resizing and save uploaded images
                 if(req.files){
-                    console.log("got req.files");
+                    console.log("got req.files: ",req.files);
                     for(const file of req.files){
                         const resizeImg = await sharp(file.path)
                         .resize({width:500, height: 550, fit: sharp.fit.fill})
                         .toBuffer();
-                        const uniqueFileName = file.oringinalname.replace(/\.[^.]+$/,`-${Date.now()}.${extname}`);
-                        const imgURL = `/images/imgUploads/${uniqueFileName}`;
-                        await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFileName}`);
+                        const uniqueFilename = file.originalname.replace(/\.[^.]+$/, `-${Date.now()}${file.originalname.match(/\.[^.]+$/)}`);
+                        const imgURL = `/images/imgUploads/${uniqueFilename}`;
+                        // await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
                         product.images.push(imgURL);
+                        console.log("imgs pushed to array");
                     }
                 }
-                console.log("Product : "+product)
                 await product.save();
                 res.redirect('/admin/products');
             } catch (err) {
                 if(err)console.log(`An error occured!: ${err}`);
+            }
+        },
+
+        getEditPorducts:async(req,res)=>{
+            try{
+                res.render('admin/')
+            }catch(err){
+                console.log("Unexpected error occured: ",err);
             }
         }
 }

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getDashboard,getUserList,getAdminLogin,postAdminLogin,getAdminRegister,postAdminRegister,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,getEditCategory,postEditCategory,getAddProduct,postAddProducts} = require('../../controller/adminControllers');
+const {getDashboard,getUserList,getAdminLogin,postAdminLogin,getAdminRegister,postAdminRegister,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,getEditCategory,postEditCategory,getAddProduct,postAddProducts,blockProducts} = require('../../controller/adminControllers');
 const { upload } = require('../../config/multerStorage');
 
 // get admin dashboard
@@ -45,7 +45,8 @@ router.get('/products',productList);
 router.get('/addProduct',getAddProduct);
 router.post('/addProduct',upload.array('images',5),postAddProducts);
 
-
+// unlist or list the products(soft delete)
+router.get('/active/:id',blockProducts);
 
 
 router.get('/banner',async(req,res,next)=>{

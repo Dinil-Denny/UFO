@@ -32,12 +32,15 @@
                 <td>{{this.mobilenumber}}</td>
                 {{#if this.blocked}}
                     <td>Blocked</td>
+                    <td>
+                    <a href="/admin/block/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to unblock this user`)"><i class="bi bi-ban"></i></a>
+                </td>
                 {{else}}
                     <td>Active</td>
-                {{/if}}
-                <td>
-                    <a href="/admin/block/{{this._id}}" class="btn btn-warning btn-small"><i class="bi bi-ban"></i></a>
+                    <td>
+                    <a href="/admin/block/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to block this user`)"><i class="bi bi-ban"></i></a>
                 </td>
+                {{/if}}
                 </tr>
                 {{/each}}
             </tbody>
