@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const userCollection = require('../model/userSchema');
 const otpCollection = require('../model/otpSchema');
+const productCollection = require('../model/productSchema');
 // const transporter = require('../utils/mailTransporter');
 const sendOTPVerificationMail = require('../utils/otpVerificationMail');
 const transporter = require('../utils/mailTransporter');
@@ -226,8 +227,15 @@ module.exports = {
       }
     },
     
-    getProductListing : (req,res,next)=>{
-      res.render('user/productList',{title:"Products"});
+    getProductListing : async(req,res,next)=>{
+      try {
+        const products = await productCollection.find().lean();
+        console.log("Products in product list: ",products);
+        res.render('user/productList',{title:"Products",products});
+      } catch (error) {
+        console.log("Error!! : ",error);
+      }
+      
     },
 
     getProductDetails : (req,res)=>{

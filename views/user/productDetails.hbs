@@ -3,16 +3,27 @@
         <!-- left side -->
         <div class="img-card ms-5" style="width: 45%;">
             <div id="imgContainer">
-                <img src="/images/products/men-hoodies-white.jpg" alt="" id="featured-image">
+                <img src="/images/products/men-hoodies-white.jpg" alt="" id="target">
             </div>
-            
+
+            {{!-- <div class="zoom" id="imgContainer">
+            <!-- Small Image -->
+            <div class="original">
+                <img src="/images/products/men-hoodies-white.jpg" id="target">
+            </div>
+            <!-- Large Image -->
+            <div class="viewer">
+                <img src="/images/products/men-hoodies-white.jpg" id="zoomImg">
+            </div>
+            <!-- Magnifier Effect -->
+            <div class="magnifier"></div>
+            </div>  --}}
+
             <!-- small img -->
             <div class="small-Card">
                 <img src="/images/products/men-hoodies-white.jpg" alt="" id="featured-image" class="small-Img">
                 <img src="/images/products/men-tshirt-white (2).jpg" alt="" class="small-Img">
                 <img src="/images/products/tshirt-mockup-grey.jpg" alt="" class="small-Img">
-                {{!-- <img src="/images/products/tshirt-mockup-white.jpg" alt="" class="small-Img">
-                <img src="/images/products/tshirt-mockup-grey.jpg" alt="" class="small-Img"> --}}
             </div>
         </div>
         <!-- Right side -->
@@ -95,7 +106,8 @@
 <script>
     const imgContainer = document.getElementById('imgContainer');
     const img = imgContainer.querySelector('img');
-    const featuredImage = document.getElementById('featured-image');
+    const featuredImage = document.getElementById('target');
+    {{!-- const zoomImg = document.getElementById('zoomImg'); --}}
     const smallImages = document.querySelectorAll('.small-Img');
 
     imgContainer.addEventListener('mousemove',(e) => {
@@ -113,7 +125,15 @@
         img.addEventListener('click', () => {
             // Replace the current image with the clicked image
             featuredImage.src = img.src;
+            {{!-- zoomImg.src = img.src; --}}
         });
     });
  
 </script>
+{{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="zoom.js"></script>
+
+<script>
+    var x = $('#target').zoom(5);
+    x.setZoom(5);
+</script> --}}

@@ -181,10 +181,17 @@ module.exports = {
         productList: async(req,res)=>{
             try {
                 const products = await productCollection.find().lean();
-                console.log("products: ",products);
+                // getting only category names
+                const categories = await categoryCollection.find({},'catagoryName').lean();
+                // map product id to category name
+                const productMap = {};
+                categories.forEach(category => productMap[category._id]= category.catagoryName);
+                // Add category names to product objects
+                products.forEach(product => product.catagoryName= productMap[product.category]);
+                // console.log("products: ",products);
                 res.render('admin/productList',{admin:true, adminName:admin, title:"Products",products});
             } catch (error) {
-                console.log(`An error occured : ${err.message}`);
+                console.log(`An error occured : ${error}`);
             }
             
         },
@@ -217,7 +224,6 @@ module.exports = {
         postAddProducts: async(req,res)=>{
             try {
                 console.log("post addproducts");
-                console.log("req: ",req.body);
                 const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category} = req.body;
                 console.log("req.body : ",req.body);
                 
@@ -242,11 +248,11 @@ module.exports = {
                     console.log("got req.files: ",req.files);
                     for(const file of req.files){
                         const resizeImg = await sharp(file.path)
-                        .resize({width:500, height: 550, fit: sharp.fit.fill})
+                        .resize({width:450, height: 550, fit: sharp.fit.fill})
                         .toBuffer();
                         const uniqueFilename = file.originalname.replace(/\.[^.]+$/, `-${Date.now()}${file.originalname.match(/\.[^.]+$/)}`);
                         const imgURL = `/images/imgUploads/${uniqueFilename}`;
-                        // await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
+                        await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
                         product.images.push(imgURL);
                         console.log("imgs pushed to array");
                     }
@@ -260,9 +266,73 @@ module.exports = {
 
         getEditPorducts:async(req,res)=>{
             try{
-                res.render('admin/')
+                const product = await productCollection.findById(req.params.id).lean();
+                // console.log("product: ",product);
+                // fetching category information
+                const categories = await categoryCollection.find().lean();
+                const category = await categoryCollection.findById(product.category).lean();
+                // console.log("category: ",category);
+                
+                res.render('admin/editProduct',{admin:true, adminName:admin,title:"Edit Product",product,category,categories});
             }catch(err){
                 console.log("Unexpected error occured: ",err);
             }
+        },
+        postEditProducts: async(req,res)=>{
+            try {
+                console.log("req.body: ",req.body);
+                const productId = req.params.id;
+                const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category,removeImages} = req.body;
+                const product = await productCollection.findById(productId);
+
+                product.productName = productName;
+                product.brandName = brandName;
+                product.description = description;
+                product.gender = gender;
+                product.price = parseFloat(price);
+                product.offerPrice = parseFloat(offerPrice);
+                product.size = size;
+                product.color = color;
+                product.stock = parseInt(stock);
+                product.category = category;
+
+                // ensuring removeImages is an array
+                Array.isArray(removeImages) ? removeImages : [removeImages];
+
+                // removing images
+                if(removeImages && removeImages.length){
+                    console.log("removeImages: ",removeImages);
+                    console.log("removeImages.length: ",removeImages.length);
+                    for(const image of removeImages){
+                        console.log("image: ",image);
+                        const imgIndex = product.images.indexOf(image);
+                        console.log("imgIndex: ",imgIndex);
+                        if(imgIndex !== -1){
+                            product.images.splice(imgIndex,1);
+                        }
+                    }
+                }
+
+                // new image upload - after cropping and resizing
+                if(req.files){
+                    console.log("got req.files: ",req.files);
+                    for(const file of req.files){
+                        const resizeImg = await sharp(file.path)
+                        .resize({width:450, height: 550, fit: sharp.fit.fill})
+                        .toBuffer();
+                        const uniqueFilename = file.originalname.replace(/\.[^.]+$/, `-${Date.now()}${file.originalname.match(/\.[^.]+$/)}`);
+                        const imgURL = `/images/imgUploads/${uniqueFilename}`;
+                        await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
+                        product.images.push(imgURL);
+                        console.log("imgs pushed to array");
+                    }
+                }
+                await product.save();
+                console.log("product :- ",product);
+                res.redirect('/admin/products')
+            } catch (error) {
+                console.log("An error occured: ",error);
+            }
         }
+
 }

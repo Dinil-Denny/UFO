@@ -30,23 +30,22 @@
                 {{#each products}}
                 <tr>
                 <td>{{this.productName}}</td>
-                <td>{{this.category}}</td>
+                <td>{{this.catagoryName}}</td>
                 <td>{{this.offerPrice}}</td>
                 <td>{{this.stock}}</td>
                 {{#if this.active}}
                     <td>Listed</td>
                     <td>
                     <a href="/admin/active/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to unlist this product`)"><i class="bi bi-ban"></i></a>
+                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning btn-small"><i class="bi bi-pencil-square"></i></a>
                 </td>
                 {{else}}
                     <td>Unlisted</td>
                     <td>
                     <a href="/admin/active/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to list this product`)"><i class="bi bi-ban"></i></a>
+                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning btn-small"><i class="bi bi-pencil-square"></i></a>
                 </td>
                 {{/if}}
-                {{!-- <td>
-                    <a href="/admin/block/{{this._id}}" class="btn btn-success btn-small"><i class="bi bi-ban"></i></i></a>
-                </td> --}}
                 </tr>
                 {{/each}}
             </tbody>
