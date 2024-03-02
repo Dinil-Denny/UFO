@@ -43,6 +43,6 @@ router.post('/forgetPassword',postForgetPasswordEmail);
 router.get('/products',getProductListing);
 
 // product details
-router.get('/productDetails',getProductDetails);
+router.get('/productDetails/:id',getProductDetails);
 
 module.exports = router;

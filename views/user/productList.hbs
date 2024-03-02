@@ -83,7 +83,7 @@
             <div class="products mb-3 d-flex flex-wrap justify-content-evenly">
                 {{#each products}}
                 <div class="card mb-3" style="width: 18rem;">
-                    <a class="productListCart" style="text-decoration: none; color: black;" href="">
+                    <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
                     <img src="{{this.images.[0]}}" class="card-img-top" style="height:350px;" alt="Product image">
                     <div class="card-body text-center">
                         <h5 class="card-title">{{this.brandName}}</h5>

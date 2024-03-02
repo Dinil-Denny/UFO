@@ -238,9 +238,20 @@ module.exports = {
       
     },
 
-    getProductDetails : (req,res)=>{
-      res.render('user/productDetails',{title:"Product Details"});
+    getProductDetails : async(req,res)=>{
+      try {
+        console.log("id:",req.params.id);
+        // converting this string id into object id
+        const objectId = new mongoose.Types.ObjectId(req.params.id);
+        console.log("objectId: ",objectId);
+        const product = await productCollection.findById(objectId).lean();
+        console.log("product: ",product);
+        res.render('user/productDetails',{title:"Product Details",product});
+      } catch (error) {
+        console.log("Error!!: ",error);
+      }   
     },
 
+    
 
 }
