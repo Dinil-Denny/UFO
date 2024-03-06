@@ -3,39 +3,49 @@ const bcrypt = require('bcrypt');
 const userCollection = require('../model/userSchema');
 const otpCollection = require('../model/otpSchema');
 const productCollection = require('../model/productSchema');
-// const transporter = require('../utils/mailTransporter');
 const sendOTPVerificationMail = require('../utils/otpVerificationMail');
 const transporter = require('../utils/mailTransporter');
 require('dotenv').config();
 
 module.exports = {
     getHomePage : (req, res, next)=>{
-      const userName = req.session.username;
-      console.log(userName);
-      res.render('user/index', {title:"UFO",loginName : userName});
+      try {
+        console.log(req.session.userid);
+        const userName = req.session.username;
+        console.log(userName);
+        res.render('user/index', {title:"UFO",loginName : userName});
+      } catch (error) {
+        console.log("Error!!: ",error);
+      }
+      
     },
 
     getUserLogin : (req,res,next)=>{
+      try {
         res.render('user/userLogin',{title:"Login"});
+      } catch (error) {
+        console.log("Error!!: ",error);
+      }
+       
     },
 
     postUserLogin : async(req,res,next)=>{
       const{email,password} = req.body;
       try{
         if(!email){
-          res.render('user/userLogin',{message:"Email required",title:"Login"});
+          return res.render('user/userLogin',{message:"Email required",title:"Login"});
         }if(!password){
-          res.render('user/userLogin',{message:"Password required",title:"Login"});
+          return res.render('user/userLogin',{message:"Password required",title:"Login"});
         }if(!email && !password){
-          res.render('user/userLogin',{message:"Email and Password required",title:"Login"});
+          return res.render('user/userLogin',{message:"Email and Password required",title:"Login"});
         }
         const userExist = await userCollection.findOne({email});
         if(!userExist){
-          res.render('user/userLogin',{message:"Email not registered",title:"Login"});
+          return res.render('user/userLogin',{message:"Email not registered",title:"Login"});
         }else{
           const match = await bcrypt.compare(password,userExist.password);
           if(!match){
-            res.render('user/userLogin',{message:"Incorrect Password",title:"Login"});
+            return res.render('user/userLogin',{message:"Incorrect Password",title:"Login"});
           }else{
             req.session.userid = req.body.email; 
             // Storing the user's name in the session
@@ -52,34 +62,48 @@ module.exports = {
     },
 
     userLogout : async(req,res,next)=>{
-      await req.session.destroy();
-      res.render('user/userLogin',{title:"Login"}); 
+      try {
+        await req.session.destroy();
+        res.render('user/userLogin',{title:"Login"}); 
+      } catch (error) {
+        console.log("Error!!: ",error);
+      }
+      
     },
 
     getUserRegister : (req, res, next)=>{
+      try {
         res.render('user/userRegister',{title:"Register"});
+      } catch (error) {
+        console.log("Error!!: ",error);
+      }
+        
     },
 
-    // user registration with otp sending to email
+    // user registration with otp sending to email 
     postUserRegister : async(req,res)=>{
         try{
           const{name,email,mobilenumber,password,confirmPassword} = req.body;
-          req.session.useremail = req.body.email;
+          
           if(!email && !mobilenumber && !password && !confirmPassword && !name){
-            res.render('user/userRegister',{message : "Enter full details",title:"Register"});
+            return res.render('user/userRegister',{message : "Enter full details",title:"Register"});
           }if(!name){
-            res.render('user/userRegister',{ message: 'Enter name',title:"Register"});
+            return res.render('user/userRegister',{ message: 'Enter name',title:"Register"});
           }if(!email){
-            res.render('user/userRegister',{ message: 'Enter email',title:"Register"});
+            return res.render('user/userRegister',{ message: 'Enter email',title:"Register"});
           }if(!mobilenumber){
-            res.render('user/userRegister',{ message: 'Enter mobile number',title:"Register"});
+            return res.render('user/userRegister',{ message: 'Enter mobile number',title:"Register"});
           }if(!password){
-            res.render('user/userRegister',{ message: 'Enter password',title:"Register"});
+            return res.render('user/userRegister',{ message: 'Enter password',title:"Register"});
           }if(!confirmPassword){
-            res.render('user/userRegister',{ message: 'Confirm your password',title:"Register"});
+            return res.render('user/userRegister',{ message: 'Confirm your password',title:"Register"});
           }if(password !== confirmPassword){
-            res.render('user/userRegister',{message : "Both passwords should be same",title:"Register"});
+            return res.render('user/userRegister',{message : "Both passwords should be same",title:"Register"});
           }
+
+          // storing email in session
+          req.session.useremail = req.body.email;
+          
             // checking if the user is already registered
             const userExist = await userCollection.findOne({email});
             if(userExist){
@@ -88,17 +112,22 @@ module.exports = {
             // hashing password
                 const hashedPassword = await bcrypt.hash(password,10);
             // saving user in db
-                const userData = {
-                name ,
-                email ,
-                mobilenumber ,
-                password : hashedPassword,
-                createdAt : Date.now()
-                }
-                console.log(userData);
+                // const userData = {
+                // name ,
+                // email ,
+                // mobilenumber ,
+                // password : hashedPassword,
+                // createdAt : Date.now()
+                // }
+                // console.log(userData);
                 // send otp verification email
+
                 await sendOTPVerificationMail(email);
-                await userCollection.insertMany([userData]);
+                // storing user credentials in session
+                req.session.userName = req.body.name;
+                req.session.mobileNumber = req.body.mobilenumber;
+                req.session.password = hashedPassword;
+                // await userCollection.insertMany([userData]);
                 res.render('user/userOTPVerification',{title:"OTP verification"});
         }catch(err){
           console.error("An error occured :"+err);
@@ -115,12 +144,12 @@ module.exports = {
       try{
         let {otp} = req.body;
         if(!otp) {
-          res.render('user/userOTPVerification',{ message:"OTP is required",title:"OTP verification"});
+          return res.render('user/userOTPVerification',{ message:"OTP is required",title:"OTP verification"});
         }else{
           const otpExists = await otpCollection.findOne({otp});
           console.log("otpExists: "+otpExists);
           if(!otpExists){
-            res.render('user/userOTPVerification',{message:"Incorrect OTP",title:"OTP verification"});
+            return res.render('user/userOTPVerification',{message:"Incorrect OTP",title:"OTP verification"});
           }
           const {expiresAt} = otpExists;
           console.log("expiresAt : "+expiresAt)
@@ -130,15 +159,25 @@ module.exports = {
             console.log("date now : "+time);
             await otpCollection.deleteOne({otp:otp});
             console.log("otp deleted");
-            res.render('user/userOTPVerification',{message:"OTP expired! Try again",title:"OTP verification"});
+            return res.render('user/userOTPVerification',{message:"OTP expired! Try again",title:"OTP verification"});
           }
           if(otp === otpExists.otp){
+            // saving user in db after otp verification
+            const userData = {
+              name : req.session.userName,
+              email : req.session.useremail,
+              mobilenumber :req.session.mobileNumber,
+              password : req.session.password,
+              createdAt : Date.now()
+              }
+            console.log(userData);
+            await userCollection.insertMany([userData]);
             res.render('user/userLogin',{title:"Login"});
             console.log("user registered redirecting to login");
             await otpCollection.deleteOne({otp:otp});
             console.log("OTP deleted");
           }else{
-            res.render('user/userOTPVerification',{message:"Invalid OTP! Try again",title:"OTP verification"});
+            return res.render('user/userOTPVerification',{message:"Invalid OTP! Try again",title:"OTP verification"});
           }
         }
       }catch(err){
@@ -147,10 +186,9 @@ module.exports = {
 
     },
     getResendOTP : async(req,res)=>{
-      // const recentUser = await userCollection.find({}).sort({createdAt:-1}).limit(1);
-      // console.log(recentUser[0].email);
       const email = req.session.useremail;
       console.log("email: ",email);
+      await otpCollection.deleteOne({userId:email});
       try{
         // generate otp
         const otp = `${(Math.floor(1000+Math.random()*9000))}`;
@@ -181,12 +219,12 @@ module.exports = {
       try{
         const {otp} = req.body;
         if(!otp) {
-          res.render('user/userResendOTP',{ message:"OTP is required"});
+          return res.render('user/userResendOTP',{ message:"OTP is required"});
         }else{
           const otpExists = await otpCollection.findOne({otp});
           console.log(otpExists);
           if(!otpExists){
-            res.render('user/userResendOTP',{message:"OTP not found....check once more"});
+            return res.render('user/userResendOTP',{message:"OTP not found....check once more"});
           }
           const {expiresAt} = otpExists;
           // checking if otp expired or not
@@ -195,14 +233,27 @@ module.exports = {
             console.log("exprire at : "+time);
             console.log("date now: "+Date.now());
             await otpCollection.deleteOne({otp:otp});
-            res.render('user/userResendOTP',{message:"OTP expired! Try again"});
+            console.log("otp deleted");
+            return res.render('user/userResendOTP',{message:"OTP expired! Try again"});
           }
           if(otp === otpExists.otp){
+
+            // saving user in db after otp verification
+            const userData = {
+              name : req.session.userName,
+              email : req.session.useremail,
+              mobilenumber :req.session.mobileNumber,
+              password : req.session.password,
+              createdAt : Date.now()
+              }
+            console.log(userData);
+            await userCollection.insertMany([userData]);
+            await otpCollection.deleteOne({otp:otp});
             res.render('user/userLogin');
-            console.log("user registered redirecting to login page")
-            otpCollection.deleteOne({otp:otp});
+            console.log("user registered redirecting to login page");
+            
           }else{
-            res.render('user/userResendOTP',{message:"Invalid OTP! Try again"});
+            return res.render('user/userResendOTP',{message:"Invalid OTP! Try again"});
           }
         }
       }catch(err){
@@ -211,27 +262,131 @@ module.exports = {
     },
 
     getForgetPasswordEmail : (req,res,next)=>{
-          res.render('user/userForgetPassMail');
+      try{
+        res.render('user/userForgetPassMail');
+      }catch(error){
+        console.log("Error!!: ",error);
+      } 
     },
+
     postForgetPasswordEmail: async(req,res,next)=>{
       try{
         const {email} = req.body;
+        // storing email in session
+        req.session.useremail = req.body.email;
         console.log(email);
         if(!email){
-          res.render('user/userForgetPassMail',{title:'Forget Password',message:"Email id is required"});
+          return res.render('user/userForgetPassMail',{title:'Forget Password',message:"Email id is required"});
         }
-        await sendOTPVerificationMail(email);
-        res.render('user/userResetPass',{title:'Forget Password'});
+        const user = await userCollection.findOne({email:email});
+        console.log("User in reset pass: ",user);
+        if(user){
+          await sendOTPVerificationMail(email);
+          res.render('user/userForgetPassOTP',{title:'Forget Password'});
+        }else{
+          return res.render('user/userForgetPassMail',{title:'Forget Password',message:"Email id is not registered"});
+        }
+        
       }catch(err){
         console.log("An error occured: "+err.message);
       }
     },
+
+    postForgetPasswordOtp : async(req,res,next)=>{
+      try {
+        const {otp} = req.body;
+        if(!otp){
+          return res.render('user/userForgetPassOTP',{title: "Forger Password",message:"OTP is required"});
+        }else{
+          const otpExists = await otpCollection.findOne({otp});
+          console.log(otpExists);
+          if(!otpExists){
+            return res.render('user/userForgetPassOTP',{title:"Forget Password",message:"OTP not found....check once more"});
+          }
+          const {expiresAt} = otpExists;
+          // checking if otp expired or not
+          let time = Date.now();
+          if(expiresAt<time){
+            console.log("exprire at : "+time);
+            console.log("date now: "+Date.now());
+            await otpCollection.deleteOne({otp:otp});
+            console.log("otp deleted");
+            return res.render('user/userForgetPassOTP',{message:"OTP expired! Try again",title:"Forget Password"});
+          }
+          if(otp === otpExists.otp){
+            await otpCollection.deleteOne({otp:otp});
+            return res.render('user/userResetPass',{title:"Reset Password"});
+          }
+        }
+        
+      } catch (error) {
+        console.log("Error : ",error);
+      }
+    },
+
+    getResetResendOTP : async(req,res)=>{
+      const email = req.session.useremail;
+      console.log("email: ",email);
+      await otpCollection.deleteOne({userId:email});
+      try{
+        // generate otp
+        const otp = `${(Math.floor(1000+Math.random()*9000))}`;
+        // mail options
+        const oneMinute = 1*60*1000;
+        const mailOptions = {
+          from: process.env.AUTH_MAIL,
+          to : email,
+          subject : "Verify your Email",
+          html : `<p>Enter ${otp} to verify your account(OTP expires in 3 mins)</p>`
+        }
+        const userOTP = {
+          userId : email,
+          otp : otp,
+          createdAt : Date.now(),
+          expiresAt : Date.now() + oneMinute
+        }
+        await otpCollection.insertMany([userOTP]); 
+        // sending email using transporter
+        await transporter.sendMail(mailOptions);
+        console.log("Email send");
+        res.render('user/userForgetPassOTP');
+      }catch(err){
+        console.log("An error occured !!! "+err.message);
+      }
+    },
     
+    resetPassword: async(req,res,next)=>{
+      const email = req.session.useremail;
+  
+      try {
+        const {password,password1} = req.body;
+        console.log("req.body: ",req.body);
+        if(!password){
+          return res.render('user/userResetPass',{title:"Reset Password",message:"Enter password"});
+        }
+        if(!password1){
+          return res.render('user/userResetPass',{title:"Reset Password",message:"Enter confirm password"});
+        }
+        if(password!==password1){
+          return res.render('user/userResetPass',{title:"Reset Password",message:"Both passwords should be same"});
+        }
+        const hashedPassword = await bcrypt.hash(password,10);
+        const user = await userCollection.findOne({email:email});
+        console.log("user to reset password: ",user);
+        await userCollection.findByIdAndUpdate(user._id,{password:hashedPassword})
+        console.log("password updated");
+        res.redirect('/login');
+
+      } catch (error) {
+        console.log("Error: ",error);
+      }
+    },
+
     getProductListing : async(req,res,next)=>{
       try {
         const products = await productCollection.find().lean();
         console.log("Products in product list: ",products);
-        res.render('user/productList',{title:"Products",products});
+        res.render('user/productList',{title:"Products",products,loginName:req.session.username});
       } catch (error) {
         console.log("Error!! : ",error);
       }
@@ -246,12 +401,12 @@ module.exports = {
         console.log("objectId: ",objectId);
         const product = await productCollection.findById(objectId).lean();
         console.log("product: ",product);
-        res.render('user/productDetails',{title:"Product Details",product});
+        res.render('user/productDetails',{title:"Product Details", product, loginName:req.session.username});
       } catch (error) {
         console.log("Error!!: ",error);
       }   
     },
 
-    
+
 
 }

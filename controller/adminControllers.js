@@ -22,48 +22,63 @@ module.exports = {
         } 
     },
     getUserList : async(req,res,next)=>{
-        let session = req.session;
-        if(session.adminid){
-            const userList = await userCollection.find({}).lean();
-            res.render('admin/adminCustomers',{admin:true, userList, adminName:admin,title:"User_List"});
+        try {
+            let session = req.session;
+            if(session.adminid){
+                const userList = await userCollection.find({}).lean();
+                res.render('admin/adminCustomers',{admin:true, userList, adminName:admin,title:"User_List"});
+            } 
+        } catch (error) {
+            console.log("Error: ",error);
         }
+        
     },
     blockUser : async(req,res,next)=>{
-        const id= req.params.id;
-        console.log(id);
-        const user = await userCollection.findById(req.params.id);
-        if(!user.blocked){
-            await userCollection.findByIdAndUpdate(req.params.id, {blocked:true});
-            // const user = await userCollection.findById(req.params.id);
-            // console.log(user.blocked);
-            res.redirect('/admin/customers');
+        try {
+            const id= req.params.id;
+            console.log(id);
+            const user = await userCollection.findById(req.params.id);
+            if(!user.blocked){
+                await userCollection.findByIdAndUpdate(req.params.id, {blocked:true});
+                // const user = await userCollection.findById(req.params.id);
+                // console.log(user.blocked);
+                res.redirect('/admin/customers');
+            }
+            if(user.blocked){
+                await userCollection.findByIdAndUpdate(req.params.id, {blocked:false});
+                // const user = await userCollection.findById(req.params.id);
+                // console.log(user.blocked);
+                res.redirect('/admin/customers');
+            } 
+        } catch (error) {
+            console.log("Error! : ",err);
         }
-        if(user.blocked){
-            await userCollection.findByIdAndUpdate(req.params.id, {blocked:false});
-            // const user = await userCollection.findById(req.params.id);
-            // console.log(user.blocked);
-            res.redirect('/admin/customers');
-        }
+        
     },
     getAdminLogin : (req,res,next)=>{
+        try{
             res.render('admin/adminLogin',{admin:true,title:"Admin_Login"});
+        }catch(err){
+            console.log("Error! : ",err);
+        }
+            
     },
     postAdminLogin : async(req,res,next)=>{
         const {email,password} = req.body;
         // console.log(email,password);
         try{
             if(!email || !password){
-                res.render('admin/adminLogin',{admin: true , message: "Email and Password required",title:"Admin_Login"});
+                return res.render('admin/adminLogin',{admin: true , message: "Email and Password required",title:"Admin_Login"});
             } 
             const adminExist = await adminCollection.findOne({email});
             console.log("adminExist: "+adminExist);
             if(!adminExist){
-                res.render('admin/adminLogin',{admin: true , message: "Email not found! Check once again",title:"Admin_Login"});
+                return res.render('admin/adminLogin',{admin: true , message: "Email not found! Check once again",title:"Admin_Login"});
             } 
             const match = await bcrypt.compare(password,adminExist.password);
             if(!match)
             {
-                res.render('admin/adminLogin',{admin: true , message: "Incorrect password",title:"Admin_Login"});
+                return res.render('admin/adminLogin',{admin: true , message: "Incorrect password",title:"Admin_Login"});
             }
             req.session.adminid = req.body.email;
             admin = adminExist.name
@@ -73,47 +88,52 @@ module.exports = {
         }
     },
     adminLogout:async(req,res,next)=>{
-        req.session.destroy();
-        res.render('admin/adminLogin',{admin:true});
+        try{
+            req.session.destroy();
+            res.render('admin/adminLogin',{admin:true});
+        }catch(err){
+            console.log("Error !! - ",err);
+        }
+        
     },
         
    
-    getAdminRegister : (req,res,next)=>{
-        res.render('admin/adminRegister',{admin:true,title:"Admin_Register"})
-    },
-    postAdminRegister : async(req,res,next)=>{
-            const{name,email,password} = req.body;
-            try{
-                if(!email ){
-                    res.render('admin/adminRegister',{admin:true, message:"Email cannot be empty",title:"Admin_Register"});
-                }
-                else if(!password){
-                    res.render('admin/adminRegister',{admin:true, message:"Password cannot be empty",title:"Admin_Register"});
-                }
-                else if(!name){
-                    res.render('admin/adminRegister',{admin:true, message:"name cannot be empty",title:"Admin_Register"});
-                }
-                if(name && email && password){
-                    const adminExist = await adminCollection.findOne({email})
-                    if(adminExist){
-                        res.render('admin/adminRegister',{admin:true, message:"Email already registered",title:"Admin_Register"});
-                    }
-                    let hashedAdminPassword = await bcrypt.hash(password,10);
-                    const adminData = {
-                        name ,
-                        email ,
-                        password : hashedAdminPassword
-                    }
-                    console.log(adminData);
-                    await adminCollection.insertMany([adminData]);
-                    res.render('admin/adminLogin',{admin:true,title:"Admin_Register",title:"Admin_Login"});
-                }
+    // getAdminRegister : (req,res,next)=>{
+    //     res.render('admin/adminRegister',{admin:true,title:"Admin_Register"})
+    // },
+    // postAdminRegister : async(req,res,next)=>{
+    //         const{name,email,password} = req.body;
+    //         try{
+    //             if(!email ){
+    //                 res.render('admin/adminRegister',{admin:true, message:"Email cannot be empty",title:"Admin_Register"});
+    //             }
+    //             else if(!password){
+    //                 res.render('admin/adminRegister',{admin:true, message:"Password cannot be empty",title:"Admin_Register"});
+    //             }
+    //             else if(!name){
+    //                 res.render('admin/adminRegister',{admin:true, message:"name cannot be empty",title:"Admin_Register"});
+    //             }
+    //             if(name && email && password){
+    //                 const adminExist = await adminCollection.findOne({email})
+    //                 if(adminExist){
+    //                     res.render('admin/adminRegister',{admin:true, message:"Email already registered",title:"Admin_Register"});
+    //                 }
+    //                 let hashedAdminPassword = await bcrypt.hash(password,10);
+    //                 const adminData = {
+    //                     name ,
+    //                     email ,
+    //                     password : hashedAdminPassword
+    //                 }
+    //                 console.log(adminData);
+    //                 await adminCollection.insertMany([adminData]);
+    //                 res.render('admin/adminLogin',{admin:true,title:"Admin_Register",title:"Admin_Login"});
+    //             }
                 
-            }catch(err){
-                console.log("An error occured "+err);
-                res.render('admin/adminRegister',{admin:true, message:"Something went wrong",title:"Admin_Register"});
-            }
-        },
+    //         }catch(err){
+    //             console.log("An error occured "+err);
+    //             res.render('admin/adminRegister',{admin:true, message:"Something went wrong",title:"Admin_Register"});
+    //         }
+    //     },
         getAddCatagory: async(req,res)=>{
             try{
                 const categoryList = await categoryCollection.find({}).lean();
@@ -126,7 +146,10 @@ module.exports = {
             try{
                 const {catagoryName,description} = req.body;
                 console.log(req.body);
-                const categoryExists = await categoryCollection.findOne({catagoryName});
+                // const categoryExists = await categoryCollection.findOne({catagoryName});
+                const categoryExists = await categoryCollection.findOne({
+                    catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")}
+                });
                 console.log("category: ",categoryExists);
                 if(!categoryExists){
                     const categoryData = {
@@ -144,14 +167,23 @@ module.exports = {
         },
         
         deleteCategory:async(req,res)=>{
-            await categoryCollection.findByIdAndDelete(req.params.id);
-            res.redirect('/admin/category');
+            try {
+                await categoryCollection.findByIdAndDelete(req.params.id);
+                res.redirect('/admin/category');
+            } catch (error) {
+                console.log(`An error occured: ${err.message}`);
+            }
+            
         },
 
         getEditCategory: async(req,res)=>{
-            const category = await categoryCollection.findById(req.params.id).lean();
-            console.log("category: "+category)
-            res.render('admin/editCategory',{admin:true,adminName:admin,title:"Edit Category",category});
+            try {
+                const category = await categoryCollection.findById(req.params.id).lean();
+                console.log("category: "+category)
+                res.render('admin/editCategory',{admin:true,adminName:admin,title:"Edit Category",category});
+            } catch (error) {
+                console.log("Error !: ",error);
+            }
         },
 
         postEditCategory: async(req,res)=>{

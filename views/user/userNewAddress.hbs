@@ -1,0 +1,45 @@
+<div class="tab-pane container mb-5" id="newAddress" role="tabpanel" aria-labelledby="account-detail-tab">
+    <div class="card">
+        <div class="card-header">
+            <h5>Add new address</h5>
+        </div>
+        <div class="card-body">
+            <form action="/addAddress" method="post">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label>Full name <span class="required">*</span></label>
+                    <input required class="form-control square" name="name" type="text" placeholder="Enter full name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Mobile number<span class="required">*</span></label>
+                    <input required class="form-control square" name="mobileNumber" type="tel" placeholder="Mobile number(0-9 & 10 digits only)" pattern="[0-9]{10}">
+                </div>
+                <div class="form-group col-md-12">
+                    <label>Address<span class="required">*</span></label>
+                    <textarea class="form-control square" name="address" rows="3" placeholder="Houser name/number, locality etc..." required></textarea>
+                                                                
+                </div>
+                <div class="form-group col-md-6">
+                    <label>Street<span class="required">*</span></label>
+                    <input required class="form-control square" name="street" type="text" >
+                </div>
+                <div class="form-group col-md-6">
+                    <label>City<span class="required">*</span></label>
+                    <input required class="form-control square" name="city" type="text">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>State <span class="required">*</span></label>
+                    <input required class="form-control square" name="state" type="text">
+                </div>
+                <div class="form-group col-md-6">
+                    <label>PIN code <span class="required">*</span></label>
+                    <input required class="form-control square" name="pinCode" type="text">
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary btn-fill-out submit">Save</button>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>                                        

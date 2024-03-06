@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const {getDashboard,getUserList,getAdminLogin,postAdminLogin,getAdminRegister,postAdminRegister,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,getEditCategory,postEditCategory,getAddProduct,postAddProducts,blockProducts,getEditPorducts,postEditProducts} = require('../../controller/adminControllers');
+const {getDashboard,getUserList,getAdminLogin,postAdminLogin,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,getEditCategory,postEditCategory,getAddProduct,postAddProducts,blockProducts,getEditPorducts,postEditProducts} = require('../../controller/adminControllers');
 const { upload } = require('../../config/multerStorage');
 
 // get admin dashboard
 router.get('/', getDashboard);
 
 // get admin registration
-router.get('/register',getAdminRegister);
+// router.get('/register',getAdminRegister);
 
 // post admin registration details
-router.post('/register',postAdminRegister);
+// router.post('/register',postAdminRegister);
 
 // get admin login page
 router.get('/login',getAdminLogin);
@@ -56,9 +56,9 @@ router.post('/editProduct/:id',upload.array('images',5),postEditProducts);
 
 
 
-router.get('/banner',async(req,res,next)=>{
-    res.render('admin/adminBanner',{admin:true});
-})
+// router.get('/banner',async(req,res,next)=>{
+//     res.render('admin/adminBanner',{admin:true});
+// })
 
 
 module.exports = router;

@@ -1,4 +1,6 @@
 const createError = require('http-errors');
+const userCollection = require('../model/userSchema');
+
 module.exports = {
     catchError : function(req, res, next) {
         next(createError(404));
@@ -11,6 +13,6 @@ module.exports = {
         // render the error page
         res.status(err.status || 500);
         res.render('error');
-    }
+    },
 
 }
