@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 // const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
 const session = require('express-session');
@@ -27,6 +28,9 @@ app.use(session({
   saveUninitialized:true,
   cookie: {maxAge: oneDay}
 }))
+
+// parse incoming json requests
+app.use(bodyParser.json());
 
 app.use(logger('dev'));
 app.use(express.json());

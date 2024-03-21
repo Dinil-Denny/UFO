@@ -35,16 +35,15 @@
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                         <option value="unisex">Unisex</option>
-                        <option value="other">Other</option>
                     </select>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="price" class="form-label">Price</label>
-                    <input type="text" name="price" class="form-control" id="price" required>
+                    <input type="text" name="price" class="form-control" id="price" onchange="preventNegative(this)" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="offerPrice" class="form-label">Offer Price</label>
-                    <input type="text" name="offerPrice" class="form-control" id="offerPrice" required>
+                    <input type="text" name="offerPrice" class="form-control" id="offerPrice" onchange=" priceCheck(this)" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="size" class="form-label">Size</label>
@@ -63,7 +62,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="stock" class="form-label">Total number of stock</label>
-                    <input type="text" name="stock" class="form-control" id="stock" required>
+                    <input type="text" name="stock" class="form-control" id="stock" onchange="preventNegative(this)" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="category" class="form-label">Category</label>
@@ -75,13 +74,18 @@
                     </select>
                 </div>
                 <div class="mb-3 col-md-8 mb-3">
-                    <label for="images" class="form-label">Upload images</label>
-                    <input class="form-control" name="images" type="file" id="images" multiple required>
+                    <label for="images" class="form-label">Upload images (Max. 5 images only)</label>
+                    <input class="form-control" accept="image/*" name="images" type="file" id="images" onchange="countImage(event);previewImage(event);" multiple required>
                 </div>
                 <div class="col-12 mb-3">
                     <button type="submit" class="btn btn-primary">Add Product</button>
                 </div>
+                <hr>
             </form>
+            <h5 class="text-center" >Selected images</h5>
+            <div class="d-flex flex-wrap" id="imgPreviewContainer" style="background-color: white;">
+                
+            </div>
             <div class="notification text-center text-danger">
                 {{#if message}}
                     <p>{{message}}</p>
@@ -91,3 +95,79 @@
     </div>
 </div> 
 
+<script>
+    //preventing entering negative values 
+    function preventNegative(input){
+        if(parseFloat(input.value)<0){
+            input.setCustomValidity('Value cannot be negative');
+        }else{
+            input.setCustomValidity('');
+        }
+    }
+
+    //checking offer-price is greater than original price
+    function priceCheck(input){
+        const originalPrice = document.getElementById('price');
+        if(parseFloat(input.value)>parseFloat(originalPrice.value)){
+            input.setCustomValidity('Offer price should be less than normal price');
+        }else if(parseFloat(input.value)<0){
+            input.setCustomValidity('Price value should be positive');
+        }else{
+            input.setCustomValidity('');
+        }
+    }
+
+    //for showing selected images
+    function previewImage(event){
+        const files = event.target.files;
+        console.log("files: ",files);
+        const previewImgContainer = document.getElementById('imgPreviewContainer');
+        previewImgContainer.innerHTML = null;
+        for(let i=0;i<files.length;i++){
+            const file = files[i];
+            const reader = new FileReader();
+            reader.onload = function(e){
+                const divElement = document.createElement('div');
+                const imageElement = document.createElement('img');
+                imageElement.src = e.target.result;
+                imageElement.style.maxWidth = '200px';
+                imageElement.style.maxHeight = '200px';
+                imageElement.style.margin = '20px';
+                
+                const buttonElement = document.createElement('button');
+                buttonElement.textContent = "Delete";
+                buttonElement.classList = 'btn btn-danger btn-small ms-4 mb-3';
+                buttonElement.addEventListener('click',function(){
+                    const inputElement = document.getElementById('images');
+                    //converting fileList object to an array
+                    const fileList = Array.from(inputElement.files);
+                    fileList.splice(i,1);
+                    //creating a new fileList object after removing the specified file
+                    const newFileList = new DataTransfer();
+                    fileList.forEach(file => {
+                        newFileList.items.add(file);
+                    });
+                    inputElement.files = newFileList.files;
+
+                    previewImgContainer.removeChild(divElement);
+                })
+                
+                divElement.appendChild(imageElement);
+                divElement.appendChild(buttonElement);
+
+                previewImgContainer.appendChild(divElement);
+            }
+            reader.readAsDataURL(file);
+            
+        };
+    }   
+    //counting image
+    function countImage(event){
+        const maxImage = 5;
+        const input = event.target;
+        if(input.files.length>maxImage){
+            alert("You can upload maximun of 5 images only!!!");
+            input.value = '';
+        }
+    }
+</script>

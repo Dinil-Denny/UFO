@@ -23,11 +23,9 @@ module.exports = {
     },
     getUserList : async(req,res,next)=>{
         try {
-            let session = req.session;
-            if(session.adminid){
-                const userList = await userCollection.find({}).lean();
-                res.render('admin/adminCustomers',{admin:true, userList, adminName:admin,title:"User_List"});
-            } 
+            const userList = await userCollection.find({}).lean();
+            res.render('admin/adminCustomers',{admin:true, userList, adminName:admin,title:"User_List"});
+            
         } catch (error) {
             console.log("Error: ",error);
         }
@@ -81,90 +79,55 @@ module.exports = {
                 return res.render('admin/adminLogin',{admin: true , message: "Incorrect password",title:"Admin_Login"});
             }
             req.session.adminid = req.body.email;
-            admin = adminExist.name
-            res.render('admin/adminDashboard',{admin:true, adminName:admin, title:"Admin_Login",title:"Admin_Dashboard"});
+            admin = adminExist.name;
+            res.redirect('/admin')
+            // res.render('admin/adminDashboard',{admin:true, adminName:admin, title:"Admin_Login",title:"Admin_Dashboard"});
         }catch(err){
             console.log("error...!!! "+err.message);
         }
     },
     adminLogout:async(req,res,next)=>{
         try{
-            req.session.destroy();
-            res.render('admin/adminLogin',{admin:true});
+            req.sessionStore.destroy(req.session.adminid,(err)=>{
+                if(err) console.log("error while destroying admin session",err);
+                else res.render('admin/adminLogin',{admin:true});
+            });
         }catch(err){
             console.log("Error !! - ",err);
         }
         
     },
-        
-   
-    // getAdminRegister : (req,res,next)=>{
-    //     res.render('admin/adminRegister',{admin:true,title:"Admin_Register"})
-    // },
-    // postAdminRegister : async(req,res,next)=>{
-    //         const{name,email,password} = req.body;
-    //         try{
-    //             if(!email ){
-    //                 res.render('admin/adminRegister',{admin:true, message:"Email cannot be empty",title:"Admin_Register"});
-    //             }
-    //             else if(!password){
-    //                 res.render('admin/adminRegister',{admin:true, message:"Password cannot be empty",title:"Admin_Register"});
-    //             }
-    //             else if(!name){
-    //                 res.render('admin/adminRegister',{admin:true, message:"name cannot be empty",title:"Admin_Register"});
-    //             }
-    //             if(name && email && password){
-    //                 const adminExist = await adminCollection.findOne({email})
-    //                 if(adminExist){
-    //                     res.render('admin/adminRegister',{admin:true, message:"Email already registered",title:"Admin_Register"});
-    //                 }
-    //                 let hashedAdminPassword = await bcrypt.hash(password,10);
-    //                 const adminData = {
-    //                     name ,
-    //                     email ,
-    //                     password : hashedAdminPassword
-    //                 }
-    //                 console.log(adminData);
-    //                 await adminCollection.insertMany([adminData]);
-    //                 res.render('admin/adminLogin',{admin:true,title:"Admin_Register",title:"Admin_Login"});
-    //             }
-                
-    //         }catch(err){
-    //             console.log("An error occured "+err);
-    //             res.render('admin/adminRegister',{admin:true, message:"Something went wrong",title:"Admin_Register"});
-    //         }
-    //     },
-        getAddCatagory: async(req,res)=>{
-            try{
-                const categoryList = await categoryCollection.find({}).lean();
-                res.render('admin/addCategory',{categoryList,admin:true,adminName:admin,title:"Category"});
-            }catch(err){
-                console.log(`Error occured!! : ${err.message}`);
-            }
-        },
-        postAddCatagory: async(req,res)=>{
-            try{
-                const {catagoryName,description} = req.body;
-                console.log(req.body);
-                // const categoryExists = await categoryCollection.findOne({catagoryName});
-                const categoryExists = await categoryCollection.findOne({
-                    catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")}
-                });
-                console.log("category: ",categoryExists);
-                if(!categoryExists){
-                    const categoryData = {
-                        catagoryName,
-                        description
-                    }
-                    await categoryCollection.insertMany([categoryData]);
-                    res.redirect('/admin/category');
+     getAddCatagory: async(req,res)=>{
+        try{
+            const categoryList = await categoryCollection.find({}).lean();
+            res.render('admin/addCategory',{categoryList,admin:true,adminName:admin,title:"Category"});
+        }catch(err){
+            console.log(`Error occured!! : ${err.message}`);
+        }
+    },
+     postAddCatagory: async(req,res)=>{
+        try{
+            const {catagoryName,description} = req.body;
+            console.log(req.body);
+            // const categoryExists = await categoryCollection.findOne({catagoryName});
+             const categoryExists = await categoryCollection.findOne({
+                catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")}
+            });
+            console.log("category: ",categoryExists);
+            if(!categoryExists){
+                const categoryData = {
+                    catagoryName,
+                    description
                 }
-                const categoryList = await categoryCollection.find({}).lean();
-                res.render('admin/addCategory',{admin:true, adminName:admin, message:"Category already exists!", title:"Category",categoryList});
-            }catch(err){
-                console.log(`An error occured: ${err.message}`);
+                await categoryCollection.insertMany([categoryData]);
+                res.redirect('/admin/category');
             }
-        },
+            const categoryList = await categoryCollection.find({}).lean();
+            res.render('admin/addCategory',{admin:true, adminName:admin, message:"Category already exists!", title:"Category",categoryList});
+        }catch(err){
+            console.log(`An error occured: ${err.message}`);
+        }
+    },
         
         deleteCategory:async(req,res)=>{
             try {
@@ -236,23 +199,7 @@ module.exports = {
                     console.log(`An error occured : ${err.message}`);
             }
         },
-        blockProducts:async(req,res)=>{
-            try{
-                const id= req.params.id;
-                console.log(id);
-                const product = await productCollection.findById(id);
-                if(!product.active){
-                    await productCollection.findByIdAndUpdate(req.params.id, {active:true});
-                    res.redirect('/admin/products');
-                }
-                if(product.active){
-                    await productCollection.findByIdAndUpdate(req.params.id, {active:false});
-                    res.redirect('/admin/products');
-                }
-            }catch(err){
-                console.log("An error occured: ",err)
-            }
-        },
+        
         postAddProducts: async(req,res)=>{
             try {
                 console.log("post addproducts");
@@ -364,6 +311,33 @@ module.exports = {
                 res.redirect('/admin/products')
             } catch (error) {
                 console.log("An error occured: ",error);
+            }
+        },
+
+        blockProducts:async(req,res)=>{
+            try{
+                const id= req.params.id;
+                console.log(id);
+                const product = await productCollection.findById(id);
+                if(!product.active){
+                    await productCollection.findByIdAndUpdate(req.params.id, {active:true});
+                    res.redirect('/admin/products');
+                }
+                if(product.active){
+                    await productCollection.findByIdAndUpdate(req.params.id, {active:false});
+                    res.redirect('/admin/products');
+                }
+            }catch(err){
+                console.log("An error occured: ",err)
+            }
+        },
+        deleteProducts: async(req,res)=>{
+            try{
+                const id = req.params.id;
+                await productCollection.findByIdAndDelete(id);
+                res.redirect('/admin/products');
+            }catch(err){
+                console.log("Error while deleting product: ",err.message);
             }
         }
 

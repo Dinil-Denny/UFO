@@ -1,75 +1,56 @@
-<div class="container-fluid productList d-flex">
-    <div class="options_sidebar col-xs-3 col-sm-3 me-2 ps-4">
-        <div class="filterOptions">
+<div class="container-fluid productList d-flex ">
+    <div class="options_sidebar col-xs-3 col-sm-3 me-2 ps-4" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 15px 0 rgba(45, 45, 44, 0.05); border-radius: 10px;">
+        {{!-- <div class="filterOptions">
             <h5>Catagory</h5>
             <label for="catgMen" style="display:block;">
-                <input type="checkbox" id="catgMen" name="catagory" value="men">Men
+                <input type="checkbox" id="catgMen" name="category" value="men" onchange="filterProducts()">Men
             </label>
             <label for="catgWomen" style="display:block;">
-                <input type="checkbox" id="catgWomen" name="catagory" value="Women">Women
+                <input type="checkbox" id="catgWomen" name="category" value="women" onchange="filterProducts()">Women
             </label>
             <label for="catgKids" style="display:block;">
-                <input type="checkbox" id="catgKids" name="catagory" value="Kids">Kids
+                <input type="checkbox" id="catgKids" name="category" value="kids" onchange="filterProducts()">Kids
+            </label>
+            <div class="separator my-4"></div>
+        </div> --}}
+        <div class="filterOptions">
+            <h5>Gender</h5>
+            <label for="male" style="display:block;">
+                <input type="checkbox" id="male" name="gender" value="male" onchange="filterProducts()">Male
+            </label>
+            <label for="female" style="display:block;">
+                <input type="checkbox" id="female" name="gender" value="female" onchange="filterProducts()">Female
+            </label>
+            <label for="unisex" style="display:block;">
+                <input type="checkbox" id="unisex" name="gender" value="unisex" onchange="filterProducts()">Unisex
             </label>
             <div class="separator my-4"></div>
         </div>
         <div class="filterOptions">
             <h5>Brands</h5>
-            <label for="AllBrand" style="display:block;">
-                <input type="checkbox" id="AllBrand" name="brand" value="AllBrand">All brands
+            {{#each products}}
+            <label for="{{this.brandName}}" style="display:block;">
+                <input type="checkbox" id="{{this.brandName}}" name="brand" value="{{this.brandName}}" onchange="filterProducts()">{{this.brandName}}
             </label>
-            <label for="AllenSolly" style="display:block;">
-                <input type="checkbox" id="AllenSolly" name="brand" value="AllenSolly">Allen Solly
-            </label>
-            <label for="Roadster" style="display:block;">
-                <input type="checkbox" id="Roadster" name="brand" value="Roadster">Roadster
-            </label>
-            <label for="Arrow" style="display:block;">
-                <input type="checkbox" id="Arrow" name="brand" value="Arrow">Arrow
-            </label>
-            <label for="IndianTerrain" style="display:block;">
-                <input type="checkbox" id="IndianTerrain" name="brand" value="IndianTerrain">Indian Terrain
-            </label>
-            <label for="Levis" style="display:block;">
-                <input type="checkbox" id="Levis" name="brand" value="Levis">Levis
-            </label>
+            {{/each}}
             <div class="separator my-4"></div>
         </div>
         <div class="filterOptions">
             <h5>Price</h5>
             <label for="gt3k" style="display:block;">
-                <input type="checkbox" id="gt3k" name="price" value="gt3000">Above Rs.3000
+                <input type="checkbox" id="gt3k" name="offerPrice" value="gt3000">Above Rs.3000
             </label>
             <label for="lt0_5k" style="display:block;">
-                <input type="checkbox" id="lt0_5k" name="price" value="lt500">Below Rs.500
+                <input type="checkbox" id="lt0_5k" name="offerPrice" value="lt500">Below Rs.500
             </label>
             <label for="0_5kto1k" style="display:block;">
-                <input type="checkbox" id="0_5kto1k" name="price" value="500to1000">Rs.500 - Rs.1000
+                <input type="checkbox" id="0_5kto1k" name="offerPrice" value="500to1000">Rs.500 - Rs.1000
             </label>
             <label for="1kto2k" style="display:block;">
-                <input type="checkbox" id="1kto2k" name="price" value="1000to2000">Rs.1000 - Rs.2000
+                <input type="checkbox" id="1kto2k" name="offerPrice" value="1000to2000">Rs.1000 - Rs.2000
             </label>
             <label for="2kto3k" style="display:block;">
-                <input type="checkbox" id="2kto3k" name="price" value="2000to3000">Rs.2000 - Rs.3000
-            </label>
-            <div class="separator my-4"></div>
-        </div>
-        <div class="filterOptions">
-            <h5>Rating</h5>
-            <label for="fiveStar" style="display:block;">
-                <input type="checkbox" id="fiveStar" name="rating" value="fiveStar">5<i class="bi bi-star-fill"></i>
-            </label>
-            <label for="fourStar" style="display:block;">
-                <input type="checkbox" id="fourStar" name="rating" value="fourStar">4<i class="bi bi-star-fill"></i>
-            </label>
-            <label for="threeStar" style="display:block;">
-                <input type="checkbox" id="threeStar" name="rating" value="threeStar">3<i class="bi bi-star-fill"></i>
-            </label>
-            <label for="twoStar" style="display:block;">
-                <input type="checkbox" id="twoStar" name="rating" value="twoStar">2<i class="bi bi-star-fill"></i>
-            </label>
-            <label for="oneStar" style="display:block;">
-                <input type="checkbox" id="oneStar" name="rating" value="oneStar">1<i class="bi bi-star-fill"></i>
+                <input type="checkbox" id="2kto3k" name="offerPrice" value="2000to3000">Rs.2000 - Rs.3000
             </label>
             <div class="separator my-4"></div>
         </div>
@@ -77,25 +58,37 @@
             
         </div>
     </div>
+
     {{!-- product listing --}}
     <div class="productsContainer d-flex flex-column">
+        <select class="mb-3 ms-5" id="sortOptions" onchange="sortProducts()" style="width: 10%;">
+            <option value="">Sort By</option>
+            <option value="priceLowToHigh">Price: Low to High</option>
+            <option value="priceHighToLow">Price: High to Low</option>
+        </select>
         <div class="productList d-flex justify-content-center">
+            
             <div class="products mb-3 d-flex flex-wrap justify-content-evenly">
+                
                 {{#each products}}
+                {{#if this.active}}
                 <div class="card mb-3" style="width: 18rem;">
                     <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
                     <img src="{{this.images.[0]}}" class="card-img-top" style="height:350px;" alt="Product image">
                     <div class="card-body text-center">
                         <h5 class="card-title">{{this.brandName}}</h5>
                         <p class="card-text">{{this.productName}}</p>
-                        <h6 class="card-title">{{this.offerPrice}}</h6>
+                        <h6 class="card-title">RS. {{this.offerPrice}}</h6>
                     </div>
                     </a>
                 </div>
+                {{/if}}
                 {{/each}}
             </div>
         </div>
-        
+        {{!-- product listing --}}
+
+        {{!-- pagination --}}
         <div class="d-flex justify-content-center">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
@@ -115,6 +108,79 @@
                 </ul>
             </nav>
         </div>
+        {{!-- pagination --}}
     </div>
 </div>
-{{!-- pagination --}}
+
+
+
+{{!-- js for checkbox selection and sorting and filtering --}}
+
+<script>
+    const updateProductList = (filteredData) => {
+        const productList = document.querySelector('.products');
+        // Clear existing products
+        productList.innerHTML = ''; 
+
+        filteredData.forEach(product => {
+            const productCard = document.createElement('div');
+            productCard.classList.add('productList', 'd-flex', 'justify-content-center','text-center');
+            productCard.style.width = '18rem';
+            const innerDiv = document.createElement('div');
+            innerDiv.classList.add('products', 'mb-3', 'd-flex', 'flex-wrap', 'justify-content-evenly','card-body');
+            productCard.appendChild(innerDiv);
+
+            innerDiv.innerHTML = `
+                <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/${product._id}">
+                    <img src="${product.images[0]}" class="card-img-top" style="height:350px;" alt="Product image">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">${product.brandName}</h5>
+                        <p class="card-text">${product.productName}</p>
+                        <h6 class="card-title">RS. ${product.offerPrice}</h6>
+                    </div>
+                </a>
+            `;
+
+            productList.appendChild(productCard);
+        });
+    };
+
+    async function filterProducts(){
+        console.log("filterProducts function called")
+        const selectedFilters = {};
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        console.log(checkboxes);
+
+        //constructing query string with url parameters
+        let queryString = '';
+        for(const checkbox of checkboxes){
+            const filterName = checkbox.name;
+            const filterValue = checkbox.value;
+            selectedFilters[filterName] = filterValue;
+            queryString += `${filterName}=${filterValue}&`;
+        }
+        console.log("Selected filters: ",selectedFilters);
+        
+        //removing the trailing & if any
+        queryString = queryString.slice(0,-1);
+        const url = `/filter?${queryString}`;
+        console.log("queryString: ",queryString);
+
+        const response = await fetch(url,{
+            method:'GET',
+            headers:{'Content-Type':'application/json'}
+        });
+
+        //update the product list with filtered data
+        const filteredData = await response.json();
+
+        updateProductList(filteredData);
+    }
+
+
+    //when the sort dropdown changes
+    {{!-- const sortProducts = async (sortOption)=>{
+        const response = await fetch(`/products/sort?=${sortOption}`);
+        const sortedData = await response.json();
+    } --}}
+</script>

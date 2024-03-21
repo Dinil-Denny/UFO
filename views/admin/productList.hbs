@@ -12,7 +12,7 @@
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span class="menuLabel"> Settings</span></button></a>
         <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
     </div>
-    <div class="customerDetails">
+    <div class="customerDetails ">
         <a href="/admin/addProduct" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Product</a>
         <table class="table" id="myTable" style="width: 100%;">
             <h3>Your Products</h3>
@@ -20,6 +20,7 @@
                 <tr>
                 <th scope="col">Product Name</th>
                 <th scope="col">Category</th>
+                <th scope="col">Brand name</th>
                 <th scope="col">Selling Price</th>
                 <th scope="col">Stock</th>
                 <th scope="col">Status</th>
@@ -31,19 +32,22 @@
                 <tr>
                 <td>{{this.productName}}</td>
                 <td>{{this.catagoryName}}</td>
+                <td>{{this.brandName}}</td>
                 <td>{{this.offerPrice}}</td>
                 <td>{{this.stock}}</td>
                 {{#if this.active}}
                     <td>Listed</td>
                     <td>
-                    <a href="/admin/active/{{this._id}}" class="btn btn-warning mb-2" onclick="return confirm(`Are you sure you want to unlist this product`)"><i class="bi bi-ban"></i></a>
+                    <a href="/admin/active/{{this._id}}" class="btn btn-success mb-2" onclick="return confirm(`Are you sure you want to unlist this product`)"><i class="bi bi-ban"></i></a>
                     <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning mb-2"><i class="bi bi-pencil-square"></i></a>
+                    <a href="/admin/deleteProduct/{{this._id}}" class="btn btn-danger mb-2"><i class="bi bi-x-circle"></i></i></a>
                 </td>
                 {{else}}
                     <td>Unlisted</td>
                     <td>
-                    <a href="/admin/active/{{this._id}}" class="btn btn-warning btn-small" onclick="return confirm(`Are you sure you want to list this product`)"><i class="bi bi-ban"></i></a>
-                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning btn-small"><i class="bi bi-pencil-square"></i></a>
+                    <a href="/admin/active/{{this._id}}" class="btn btn-danger" onclick="return confirm(`Are you sure you want to list this product`)"><i class="bi bi-ban"></i></a>
+                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                    <a href="/admin/deleteProduct/{{this._id}}" class="btn btn-danger" onclick="return confirm(`Are you sure want to delete this product?`)"><i class="bi bi-x-circle"></i></i></a>
                 </td>
                 {{/if}}
                 </tr>

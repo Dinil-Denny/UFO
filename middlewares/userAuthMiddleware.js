@@ -5,13 +5,11 @@ module.exports = {
     userAuthentication : async(req,res,next)=>{
         try {
             if(req.session && req.session.userid){
-                console.log("req.session.userid: ",req.session.userid);
                 const user = await userCollection.findOne({email : req.session.userid});
-                console.log("User in auth middleware: ",user);
                     if(!user || user.blocked){
-                        req.session.destroy((err)=>{
+                        req.sessionStore.destroy(req.session.userid,(err)=>{
                             if(err){
-                                console.log("Error in destroying session: ",err);
+                                console.log("Error in destroying user session: ",err);
                             }
                             return res.redirect('/login');
                         });
@@ -26,9 +24,8 @@ module.exports = {
             console.log("Error!!: ",error);
         }
     },
-    preventBackToLogin : async(req,res,next)=>{
+    preventUserBackToLogin : async(req,res,next)=>{
         try {
-            console.log(`req.session.userid: ${req.session.userid}, req.session: ${req.session}`);
             if(req.session && req.session.userid && req.originalUrl === '/login'){
                     return res.redirect('/');
             }

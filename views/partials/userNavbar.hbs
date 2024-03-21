@@ -54,16 +54,9 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="/products">All Products</a>
         </li>
-        {{!-- <form class="d-flex" style="margin-left: 200px;">
-          <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn" type="submit"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-              </svg>
-            </button>
-      </form> --}}
       </ul>
       <form class="d-flex">
-          <input class="form-control ms-5" type="search" placeholder="Search" aria-label="Search">
+          <input class="form-control ms-5" type="search" placeholder="Search" aria-label="Search" name="search">
             <button class="btn btn-outline-secondary ms-3" type="submit"><i class="bi bi-search"></i>
             </button>
       </form>
@@ -102,9 +95,11 @@
             </svg></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link ms-3 me-3" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-bag-fill" viewBox="0 0 16 20">
+          <a class="nav-link ms-3 me-3" href="/cart"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-bag-fill" viewBox="0 0 16 20">
               <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4z"/>
-            </svg></a>
+            </svg><span class="badge badge-success" style="background-color: rgb(5, 231, 47); width:15px; height:15px; font-size: 10px; padding-right: 10px;">0</span>
+          </a>
+        
         </li>
       </ul>
     </div>

@@ -1,5 +1,5 @@
 
-<section class="product-container container">
+<section class="product-container container mb-5">
         <!-- left side -->
         <div class="img-card ms-5" style="width: 45%;">
             <div id="imgContainer">
@@ -10,8 +10,6 @@
             <div class="small-Card">
                 {{#each product.images}}
                 <img src="{{this}}" alt="images" id="featured-image" class="small-Img">
-                {{!-- <img src="/images/products/men-tshirt-white (2).jpg" alt="" class="small-Img">
-                <img src="/images/products/tshirt-mockup-grey.jpg" alt="" class="small-Img"> --}}
                 {{/each}}
             </div>
         </div>
@@ -19,23 +17,24 @@
         <div class="product-info ms-5" style="width: 65%;">
             <h3>{{product.brandName}}</h3>
             <h4>{{product.productName}}</h4>
-            <h5>Price: Rs.{{product.offerPrice}}<del>RS.{{product.price}}</del></h5>
+            <h5>Price: Rs.{{product.offerPrice}} <del>RS.{{product.price}}</del></h5>
             <p>{{product.description}}</p>
             
             <div class="sizes">
                 <p>Size:</p>
                 <select name="Size" id="size" class="size-option">
-                    <option value="xxl">XL</option>
-                    <option value="xl">L</option>
-                    <option value="medium">M</option>
-                    <option value="small">S</option>
+                    <option value="{{product.size}}">{{product.size}}</option>
                 </select>
             </div>
 
             <div class="quantity">
-                {{!-- <p>Quantity:</p>
-                <input type="number" value="1" min="1"> --}}
-                <button style="display: block;">Add to Cart</button>
+                {{#if isInStock }}
+                <form action="/addToCart/{{product._id}}" method="post">
+                    <button style="display: block;">Add to Cart</button>
+                </form>
+                {{else}}
+                <button style="display: block;" disabled>Out of stock</button>
+                {{/if}}
             </div>
 
             <div>
@@ -46,7 +45,7 @@
         </div>
     </section>
 
-    <section class="suggestion mt-5">
+    {{!-- <section class="suggestion mt-5">
         <h4 class="text-center pt-3">Suggested products</h4>
         <div class="d-flex justify-content-center flex-wrap my-4">
             <div class="card mb-3 ms-5 " style="width: 18rem;">
@@ -90,7 +89,7 @@
                 </a>
             </div>
         </div>
-    </section>
+    </section> --}}
 
 {{!-- image zoom  and image selection--}} 
 <script>

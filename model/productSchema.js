@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const productSchema = new mongoose.Schema({
     productName:{
         type: String,
@@ -10,7 +11,7 @@ const productSchema = new mongoose.Schema({
     },
     category:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'catagory'
+        ref: 'category'
     },
     price:{
         type: Number,
