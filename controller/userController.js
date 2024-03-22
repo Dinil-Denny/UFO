@@ -487,13 +487,10 @@ module.exports = {
       if(cart){
         const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
         // console.log("existingProduct: ",existingProduct);
-        
-        // console.log("quantity: ",quantity);
-        
         if(existingProduct){
           const quantity = existingProduct.quantity;
           // checking if product is in stock
-          const isInStock = product.stock > quantity
+          let isInStock = product.stock > quantity
           return res.render("user/productDetails", {
             title: "Product Details",
             product,
@@ -502,11 +499,12 @@ module.exports = {
           });
         }
       }
+      let isInStock = product.stock > 0
       res.render("user/productDetails", {
         title: "Product Details",
         product,
         loginName: req.session.username,
-        isInStock:true
+        isInStock
       });
       // const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
       // console.log("existingProduct: ",existingProduct);

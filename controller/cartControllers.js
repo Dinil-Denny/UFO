@@ -1,6 +1,8 @@
 const Cart = require('../model/cartSchema');
 const Product = require('../model/productSchema');
 const User = require('../model/userSchema');
+const Address = require('../model/userAddressSchema');
+const Orders = require('../model/orderSchema');
 
 module.exports = {
     getCart : async(req,res)=>{
@@ -10,6 +12,10 @@ module.exports = {
             const userId = user._id;
             const userCart = await Cart.findOne({userId}).populate('products.productId').lean();
             // console.log("userCart: ",userCart);
+            
+            if(!userCart) 
+                return res.render('user/cart',{title:"Cart",loginName: req.session.username});
+
             let cartProducts = userCart.products;
             let subTotal = 0;
             cartProducts.forEach( item =>{
@@ -18,9 +24,7 @@ module.exports = {
             }); 
             subTotal = subTotal.toFixed(2);
             console.log("subTotal: ",subTotal);
-            if(!userCart) 
-                return res.render('user/cart',{title:"Cart",loginName: req.session.username});
-
+            
             res.render('user/cart',{title:"Cart",userCart,loginName: req.session.username,subTotal});
 
             // ---------------------testing--------------------
@@ -33,7 +37,7 @@ module.exports = {
 
             
         } catch (error) {
-            console.log("Error : ",error.message)
+            console.log("Error while fetching cart : ",error)
         }
     },
     addToCart : async(req,res)=>{
@@ -43,7 +47,6 @@ module.exports = {
         const userId = user._id;
         // default quantity is 1
         const quantity = 1;
-        // console.log("productId: ",productId);
         try {
             // cart exist 
             const cart = await Cart.findOne({userId : user._id});
@@ -123,6 +126,7 @@ module.exports = {
             console.log("Error while updating product quantity: ",error);
             res.status(500).json({message:"Error in updating cart quantity"});
         }
-    }
+    },
+    
 
 }

@@ -6,6 +6,8 @@ const{getAddnewAddress,postAddnewAddress,getAccountOverview,getEditAddress,postE
 
 const{getCart,addToCart,removeItemInCart,updateCartQuantity} = require('../../controller/cartControllers');
 
+const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/orderController')
+
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
 
 /* GET user home page. */
@@ -86,5 +88,12 @@ router.post('/addToCart/:id',userAuthentication,addToCart);
 router.post('/updateCartQuantity',userAuthentication,updateCartQuantity);
 
 // delete product from cart 
-router.get('/removeCartItem/:id',userAuthentication,removeItemInCart)
+router.get('/removeCartItem/:id',userAuthentication,removeItemInCart);
+
+// cart checkout page
+router.get('/checkout',userAuthentication,getCartCheckout);
+router.post('/checkout',userAuthentication,postCartCheckout);
+
+//order success
+router.get('/orderSuccess',userAuthentication,getOrderSuccessPage);
 module.exports = router;

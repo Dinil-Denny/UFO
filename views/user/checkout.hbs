@@ -1,0 +1,78 @@
+<section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="divider mt-50 mb-50"></div>
+                    </div>
+                </div>
+                <form action="/checkout" method="post">
+                    <div class="row">
+                        <div class="col-md-6 mb-5">
+                            <div class="mb-25">
+                                <h4>Select Address</h4>
+                            </div>
+                            {{#each userAddress}}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userAddressId" id="{{this._id}}" value="{{this._id}}" required>
+                                <label class="form-check-label" for="{{this._id}}">
+                                    <div class="card" id="{{this._id}}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{this.name}}</h5>
+                                            <p class="card-text">{{this.address}}, {{this.city}}, {{this.state}} <br>Pincode: {{this.pinCode}}, Mobile number: {{this.mobileNumber}}</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="order_review">
+                                <div class="mb-20">
+                                    <h4>Price Details</h4>
+                                </div>
+                                <div class="table-responsive order_table text-center">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <th>SubTotal</th>
+                                                <td class="product-subtotal" colspan="2">RS. {{subTotal}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Shipping</th>
+                                                <td colspan="2"><em>Free Shipping</em></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Total</th>
+                                                <input type="text" hidden value="{{subTotal}}" name="cartTotal">
+                                                <input type="text" hidden value="{{userCartId}}" name="userCartId">
+                                                <input type="text" hidden value="{{userId}}" name="userId">
+                                                <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900">RS. {{subTotal}}</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                <div class="payment_method">
+                                    <div class="mb-25">
+                                        <h5>Payment</h5>
+                                    </div>
+                                    <div class="payment_option">
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" checked value="COD">
+                                            <label class="form-check-label" for="paymentRadio1" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Cash on delivery</label>
+                                            
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio2"  value="ONLINE">
+                                            <label class="form-check-label" for="paymentRadio2" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Paypal</label>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success">Place Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>

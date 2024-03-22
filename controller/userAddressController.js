@@ -1,16 +1,20 @@
 const addressCollection = require('../model/userAddressSchema');
 const userCollection = require('../model/userSchema');
+const orderCollection = require('../model/orderSchema');
 const mongoose = require('mongoose');
 module.exports = {
     // accoutn overview
     getAccountOverview : async(req,res)=>{
         try {
           const userid = req.session.userid;
+          const user = await userCollection.findOne({email:userid}).lean();
+          console.log("userId",userid);
+          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').lean();
+          console.log("ordres: ",orders);
           const addresses = await addressCollection.find().lean();
           console.log("addresses: ",addresses);
-          const user = await userCollection.findOne({email:userid}).lean();
           console.log(`user in account overview: ${user}`);
-          res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses});
+          res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,orders});
         } catch (error) {
           console.log(`An error occured on loading account overview : ${error}`);
         }
