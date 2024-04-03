@@ -40,7 +40,7 @@
                         <div class="col-md-3 quantity m-auto d-flex">
                             <button class="btn-sm btn-outline-secondary" value="{{this.productId._id}}" onclick="decreaseQuantity(this)">-</button>
                             <input
-                            id="quantityDisplay"
+                            id="{{this.productId._id}}"
                             type="number"
                             min="1"
                             max="{{this.productId.stock}}"
@@ -111,7 +111,7 @@
                         <tr>
                           <td class="cart_total_label">Cart Subtotal</td>
                           <td class="cart_total_amount"><span
-                              class="font-lg fw-900 text-brand"
+                              class="font-lg fw-900 text-brand" id="subtotal"
                             ><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></td>
                         </tr>
                         <tr>
@@ -123,7 +123,7 @@
                         <tr>
                           <td class="cart_total_label">Total</td>
                           <td class="cart_total_amount"><strong><span
-                                class="font-xl fw-900 text-brand"
+                                class="font-xl fw-900 text-brand" id="total"
                               ><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></strong></td>
                         </tr>
                       </tbody>
@@ -159,6 +159,8 @@
     if(currentQuantity<maxStock){
       quantityInput.value = currentQuantity + 1;
       updateQuantityInCart(quantityInput.value,element.value);
+    }else{
+      alert("No more stock is available for this product!!!");
     }
   }
 
@@ -169,6 +171,8 @@
     if(currentQuantity>1){
       quantityInput.value = currentQuantity - 1;
       updateQuantityInCart(quantityInput.value,element.value);
+    }else{
+      alert("Quantity can't be less than one");
     }
   }
 
@@ -183,17 +187,18 @@
       body: JSON.stringify(data)
     })
     .then(response => {
-      const resData = response.json();
-      console.log("data in response: ",resData);
-      response.json();
-      location.reload();
+      return response.json();
       })
     .then(data => {
-      console.log("data: ",data);
-      const updatedQuantity = data.quantity;
-      const quantityInput = document.getElementById('quantityDisplay'); 
+      updatedQuantity = data.data.quantity;
+      const prodId = data.data.productId;
+      const quantityInput = document.getElementById(prodId); 
       quantityInput.value = updatedQuantity;
+      const subtotal = document.getElementById('subtotal');
+      const total = document.getElementById('total');
+      subtotal.innerText = data.data.subtotal;
+      total.innerText = data.data.subtotal;
     })
-    .catch(err => console.error("Error: ",err));
+    .catch((err) => console.log("Error: ",err));
   }
 </script>

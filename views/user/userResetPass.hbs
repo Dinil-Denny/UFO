@@ -14,11 +14,16 @@
                 <input class="formDetails" type="password" name="password1" placeholder="Confirm password">
                 <div class="separator mb-4"></div>
                 <button class="formDetails mt-5 ms-4" style="width: 80%; border-radius: 30px; background-color:#72383D; color:white" type="submit" class="btn btn-primary m-2">Reset Password</button> 
-                <div class="notification text-center text-danger">
+                {{!-- <div class="notification text-center text-danger">
                     {{#if message}}
                         <p>{{message}}</p>
                     {{/if}}
+                </div> --}}
+                {{#if message}}
+                <div class="notification text-center text-danger alert alert-danger" style="height: 40px; padding: 6px; margin-right: 25px;"> 
+                    <p>{{message}}</p>
                 </div>
+                {{/if}}
             </form>
         </div>
     </div>

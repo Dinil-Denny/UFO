@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts} = require('../../controller/userController')
 
-const{getAddnewAddress,postAddnewAddress,getAccountOverview,getEditAddress,postEditAddress,getEditDetails,postEditDetails,deleteAddress} = require('../../controller/userAddressController');
+const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,deleteAddress,cancelProduct} = require('../../controller/userAddressController');
 
 const{getCart,addToCart,removeItemInCart,updateCartQuantity} = require('../../controller/cartControllers');
 
@@ -11,7 +11,7 @@ const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../con
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
 
 /* GET user home page. */
-router.get('/',getHomePage);
+router.get('/',userAuthentication,getHomePage);
 
 // get user login form
 router.get('/login',preventUserBackToLogin,getUserLogin);
@@ -57,8 +57,14 @@ router.get('/products',userAuthentication,getProductListing);
 // product details
 router.get('/productDetails/:id',userAuthentication,getProductDetails);
 
-// account overview
+// account overview - order history
 router.get('/account_overview',userAuthentication,getAccountOverview);
+
+//order details 
+router.get('/orderDetails/:id',userAuthentication,getOrderDetails);
+
+//cancel ordered product
+router.get('/cancelProduct/:orderId/:productObjId',userAuthentication,cancelProduct);
 
 // get add address
 router.get('/addAddress',userAuthentication,getAddnewAddress);

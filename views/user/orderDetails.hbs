@@ -1,0 +1,50 @@
+<div class="orderDetails d-flex justify-content-center" style="">
+        <section class="content-main" style="width: 90%;">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title my-5">Order Details </h2>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            
+                            <thead>
+                                <tr>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Product Details</th>
+                                    <th scope="col">Delivery Address</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Order Status</th>
+                                    <th scope="col">Order Cancellation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each orderDetails}}  
+                                {{!-- <form action="/cancelProduct/{{this.productsData._id}}" method="post"></form> --}}
+                                <tr>
+                                    <td class="image"><img src="{{this.productImages.[0].[0]}}" alt="productImage" style="width: 5rem;"></td>
+                                    <td>{{this.productName}}, {{this.brandName}}, <br>Size: {{this.size}}, Color: {{this.color}}</td>
+                                    <td>{{this.name}}, {{this.houseName}}, {{this.street}} <br>{{this.city}}, {{this.state}}</td>
+                                    <td>{{this.quantity}}</td>
+                                    <td>{{this.productPrice}}</td>
+                                    <td class=" text-center">{{this.productsData.orderStatus}}</td>
+                                    {{!-- {{#if eq this.productsData.orderStatus "placed"}} --}}
+                                    <td><a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" onclick="return confirm(`Do you want to cancel this order?`)">Cancel</a></td>
+                                    {{!-- {{/if}} --}}
+                                    
+                                </tr>
+                                {{!-- </form> --}}
+                                {{/each}}
+                            </tbody>
+                            
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div>
+            </div>
+        </section>
+</div>
+
+   

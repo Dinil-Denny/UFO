@@ -23,7 +23,6 @@ module.exports = {
                 subTotal += (item.productId.offerPrice * item.quantity);
             }); 
             subTotal = subTotal.toFixed(2);
-            console.log("subTotal: ",subTotal);
             
             res.render('user/cart',{title:"Cart",userCart,loginName: req.session.username,subTotal});
 
@@ -52,7 +51,6 @@ module.exports = {
             const cart = await Cart.findOne({userId : user._id});
             // console.log("cart finding");
             if(!cart){
-                console.log("no cart");
                 const newCart = new Cart({
                     userId,
                     products : [{productId,quantity}]
@@ -60,7 +58,6 @@ module.exports = {
                 await newCart.save();
             }else{
                 const existingProduct = cart.products.find(product => product.productId.toString() === productId);
-                console.log("existingProduct: ",existingProduct);
                 if(existingProduct)
                     existingProduct.quantity += quantity;
                 else
@@ -68,8 +65,8 @@ module.exports = {
 
                 // checking if product is in stock
                 const product = await Product.findById(productId);
-                if(product.stock < quantity)
-                    res.redirect('/productDetails/'+productId);
+                // if(product.stock < quantity)
+                //     res.redirect('/productDetails/'+productId);
                 await cart.save();
             }
             
@@ -98,16 +95,13 @@ module.exports = {
         // console.log(req.session.userid);
         try {
             const user = await User.findOne({email : req.session.userid});
-            console.log("user: ",user)
             const userId = user._id;
             const cart = await Cart.findOne({userId:userId});
-            console.log("Cart:",cart);
             await Cart.findOneAndUpdate(
                 {userId:userId, 'products.productId':productId},
                 {$set:{'products.$.quantity':quantity}}
             );
-            const userCart = await Cart.findOne({userId}).populate('products.productId');
-            console.log("userCart.products: ",userCart.products);
+            const userCart = await Cart.findOne({userId:userId}).populate('products.productId');
             //cart subtotal
             let cartProducts = userCart.products;
             let subTotal = 0;
@@ -116,11 +110,21 @@ module.exports = {
                 subTotal += (item.productId.offerPrice * item.quantity);
             }); 
             subTotal = subTotal.toFixed(2);
-            console.log("userCart: ",userCart);
             // updated product quantity
-            const quantityUpdated = await Cart.findOne({productId});
-            console.log("quantityUpdated",quantityUpdated);
-            res.json({message:"quantity updated successfully",data : userCart});
+            const quantityUpdated = await Cart.aggregate([
+                {
+                    $match:{userId:userId}
+                },
+                {
+                    $project:{products:1,_id:0}
+                },
+                {
+                    $unwind:"$products"
+                },
+            ])
+            const productUpdated = quantityUpdated.find(object => object.products.productId == productId);
+            const data = {productId: productUpdated.products.productId,quantity:productUpdated.products.quantity,subtotal:subTotal}
+            res.json({message:"quantity updated successfully",data : data});
             
         } catch (error) {
             console.log("Error while updating product quantity: ",error);

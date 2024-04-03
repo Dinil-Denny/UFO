@@ -486,7 +486,7 @@ module.exports = {
 
       if(cart){
         const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
-        // console.log("existingProduct: ",existingProduct);
+        
         if(existingProduct){
           const quantity = existingProduct.quantity;
           // checking if product is in stock
@@ -517,19 +517,11 @@ module.exports = {
   },
 
   // product filtering
-  filterProducts: async (req, res, next) => {
+   filterProducts: async (req, res, next) => {
     const filters = req.query;
     console.log("filters: ",filters);
     let query = {};
 
-    // category filter
-    // if(Array.isArray(filters.category)){
-    //   query.$or = filters.category.map(category => ({
-    //     'category.catagoryName':{$in:[category]}
-    //   }));
-    // }else if(filters.category){
-    //   query['category.catagoryName'] = new RegExp(filters.category,'i');
-    // }
 
     // filter based on gender
     if(Array.isArray(filters.gender)){
@@ -546,19 +538,30 @@ module.exports = {
     }
       
     // filter on price
-    // if(Array.isArray(filters.offerPrice)){
-    //   query.offerPrice = {$in : filters.offerPrice};
-    // }else if(filters.offerPrice){
-      
-    // }
+    if(Array.isArray(filters.offerPrice)){
+      const parsedPriceFilter = filters.offerPrice.map(value => parseInt(value));
+      query.offerPrice = {$gte: Math.min(...parsedPriceFilter),$lte:Math.max(...parsedPriceFilter)+500}
+    }else if(filters.offerPrice){
+      if(filters.offerPrice === '3000') 
+      query.offerPrice = {$gte:Number(filters.offerPrice)}
+      else
+      query.offerPrice = {$gte:Number(filters.offerPrice),$lte:Number(filters.offerPrice)+500}
+    }
 
     console.log("query: ",query);
     try {
-      const filteredProducs = await productCollection.find(query).populate('category').lean();
-      console.log("Filtered products: ",filteredProducs);
-      res.send(filteredProducs);
+      if(filters.sort){
+        const filteredProducs = await productCollection.find(query).populate('category').sort({offerPrice:Number(filters.sort)}).lean();
+        res.send(filteredProducs);
+      }else{
+        const filteredProducs = await productCollection.find(query).populate('category').lean();
+        res.send(filteredProducs);
+      }
+      
+      // console.log("Filtered products: ",filteredProducs);
+      
     } catch (error) {
-      console.log("Error occured while sorting: ", error);
+      console.log("Error occured while sorting: ", error.message);
     }
   },
 };

@@ -3,7 +3,7 @@
         <a href="/admin"><button type="button" class="btn btn-light sideMenuButton" ><i class="bi bi-view-list"></i> <span class="menuLabel"> Dashboard</span></button></a>
         <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
         <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
+        <a href="/admin/orders"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span class="menuLabel"> Banner Management</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
@@ -75,7 +75,7 @@
                 </div>
                 <div class="mb-3 col-md-8 mb-3">
                     <label for="images" class="form-label">Upload images (Max. 5 images only)</label>
-                    <input class="form-control" accept="image/*" name="images" type="file" id="images" onchange="countImage(event);previewImage(event);" multiple required>
+                    <input class="form-control" accept="image/png,image/jpeg,image/jpg" name="images" type="file" id="images" onchange="countImage(event);previewImage(event);" multiple required>
                 </div>
                 <div class="col-12 mb-3">
                     <button type="submit" class="btn btn-primary">Add Product</button>
@@ -119,8 +119,19 @@
 
     //for showing selected images
     function previewImage(event){
+        const fileInput = event.target;
+        console.log(fileInput);
         const files = event.target.files;
         console.log("files: ",files);
+        for(const file of files){
+            const fileType = file.type;
+            console.log("fileType: ",fileType)
+            if(fileType!=='image/jpeg' && fileType!=='image/png' && fileType!=='image/jpg'){
+                alert("Only image files are allowed...!");
+                fileInput.value = '';
+                break;
+            }
+        }
         const previewImgContainer = document.getElementById('imgPreviewContainer');
         previewImgContainer.innerHTML = null;
         for(let i=0;i<files.length;i++){

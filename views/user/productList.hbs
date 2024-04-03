@@ -1,118 +1,142 @@
-<div class="container-fluid productList d-flex ">
-    <div class="options_sidebar col-xs-3 col-sm-3 me-2 ps-4" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.15), 0 6px 15px 0 rgba(45, 45, 44, 0.05); border-radius: 10px;">
-        {{!-- <div class="filterOptions">
-            <h5>Catagory</h5>
-            <label for="catgMen" style="display:block;">
-                <input type="checkbox" id="catgMen" name="category" value="men" onchange="filterProducts()">Men
-            </label>
-            <label for="catgWomen" style="display:block;">
-                <input type="checkbox" id="catgWomen" name="category" value="women" onchange="filterProducts()">Women
-            </label>
-            <label for="catgKids" style="display:block;">
-                <input type="checkbox" id="catgKids" name="category" value="kids" onchange="filterProducts()">Kids
-            </label>
-            <div class="separator my-4"></div>
-        </div> --}}
-        <div class="filterOptions">
-            <h5>Gender</h5>
-            <label for="male" style="display:block;">
-                <input type="checkbox" id="male" name="gender" value="male" onchange="filterProducts()">Male
-            </label>
-            <label for="female" style="display:block;">
-                <input type="checkbox" id="female" name="gender" value="female" onchange="filterProducts()">Female
-            </label>
-            <label for="unisex" style="display:block;">
-                <input type="checkbox" id="unisex" name="gender" value="unisex" onchange="filterProducts()">Unisex
-            </label>
-            <div class="separator my-4"></div>
-        </div>
-        <div class="filterOptions">
-            <h5>Brands</h5>
-            {{#each products}}
-            <label for="{{this.brandName}}" style="display:block;">
-                <input type="checkbox" id="{{this.brandName}}" name="brand" value="{{this.brandName}}" onchange="filterProducts()">{{this.brandName}}
-            </label>
-            {{/each}}
-            <div class="separator my-4"></div>
-        </div>
-        <div class="filterOptions">
-            <h5>Price</h5>
-            <label for="gt3k" style="display:block;">
-                <input type="checkbox" id="gt3k" name="offerPrice" value="gt3000">Above Rs.3000
-            </label>
-            <label for="lt0_5k" style="display:block;">
-                <input type="checkbox" id="lt0_5k" name="offerPrice" value="lt500">Below Rs.500
-            </label>
-            <label for="0_5kto1k" style="display:block;">
-                <input type="checkbox" id="0_5kto1k" name="offerPrice" value="500to1000">Rs.500 - Rs.1000
-            </label>
-            <label for="1kto2k" style="display:block;">
-                <input type="checkbox" id="1kto2k" name="offerPrice" value="1000to2000">Rs.1000 - Rs.2000
-            </label>
-            <label for="2kto3k" style="display:block;">
-                <input type="checkbox" id="2kto3k" name="offerPrice" value="2000to3000">Rs.2000 - Rs.3000
-            </label>
-            <div class="separator my-4"></div>
-        </div>
-        <div class="filterOptions">
-            
-        </div>
-    </div>
 
-    {{!-- product listing --}}
-    <div class="productsContainer d-flex flex-column">
-        <select class="mb-3 ms-5" id="sortOptions" onchange="sortProducts()" style="width: 10%;">
-            <option value="">Sort By</option>
-            <option value="priceLowToHigh">Price: Low to High</option>
-            <option value="priceHighToLow">Price: High to Low</option>
-        </select>
-        <div class="productList d-flex justify-content-center">
-            
-            <div class="products mb-3 d-flex flex-wrap justify-content-evenly">
-                
-                {{#each products}}
-                {{#if this.active}}
-                <div class="card mb-3" style="width: 18rem;">
-                    <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
-                    <img src="{{this.images.[0]}}" class="card-img-top" style="height:350px;" alt="Product image">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">{{this.brandName}}</h5>
-                        <p class="card-text">{{this.productName}}</p>
-                        <h6 class="card-title">RS. {{this.offerPrice}}</h6>
+
+<section class="mt-50 mb-50">
+            <div class="container">
+                <div class="row flex-row-reverse">
+                    <div class="col-lg-9">
+                        <div class="shop-product-fillter">
+                            <div class="sort-by-product-area">
+                                <div class="sort-by-cover">
+                                    <div class="sort-by-product-wrap">
+                                        <select name="sort" id="sortProducts" style="border: none; background:none;" onchange="filterProducts()">
+                                            <option value="" selected disabled>Sort</option>   
+                                            <option value="1">Price: Low to High</option>
+                                            <option value="-1">Price: High to Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- products --}}
+                        
+                        {{!-- <div class="row product-grid-3 products">
+                            {{#each products}}
+                            {{#if this.active}}
+                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                                <div class="product-cart-wrap mb-30">
+                                    <div class="product-img-action-wrap">
+                                        <div class="product-img product-img-zoom">
+                                            <a href="/productDetails/{{this._id}}">
+                                                <img class="default-img" src="{{this.images.[0]}}" alt="productImg">
+                                            </a>
+                                        </div>
+                                        <div class="product-action-1">   
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up " href="#"><i class="bi bi-heart-fill"></i></a>
+                                        </div>
+                                    </div>
+                                    <div class="product-content-wrap">
+                                        <div class="product-category mt-2">
+                                            {{this.productName}}
+                                        </div>
+                                        <h2 class="mt-2">{{this.brandName}}</h2>
+                                        <div class="product-price">
+                                            <span>Rs. {{this.offerPrice}} </span>
+                                            <span class="old-price">Rs. {{this.price}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{/if}}
+                            {{/each}}   
+                        </div> --}}
+                        
+                        <div class="productsContainer d-flex flex-column">  
+                            <div class="products mb-3 d-flex justify-content-center flex-wrap">
+                                {{#each products}}
+                                {{#if this.active}}
+                                <div class="card m-3" style="width: 18rem; border-top-right-radius: 25px; border-top-left-radius: 25px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                                    <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
+                                    <img src="{{this.images.[0]}}" class="card-img-top p-2" style="height:350px; border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
+                                    <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                                        <h5 class="card-title">{{this.brandName}}</h5>
+                                        <p class="card-text">{{this.productName}}</p>
+                                        {{!-- <h6 class="card-title">RS. {{this.offerPrice}}</h6> --}}
+                                        <div class="product-price">
+                                            <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. {{this.offerPrice}} </span>
+                                            <span class="old-price text-decoration-line-through">Rs. {{this.price}}</span>
+                                        </div>
+                                    </div>
+                                    </a>
+                                </div>
+                                {{/if}}
+                                {{/each}}
+                            </div>
+                            
+                        </div>
+
                     </div>
-                    </a>
+                    <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                        
+                        <!-- Fillter -->
+                        <div class="sidebar-widget price_range range mb-30">
+                            
+                            <div class="list-group">
+                                <div class="list-group-item mb-10 mt-10">
+                                    <div class="filterOptions">
+                                        <h5>Gender</h5>
+                                        <label for="male" style="display:block;">
+                                            <input type="checkbox" id="male" name="gender" value="male" onchange="filterProducts()">Male
+                                        </label>
+                                        <label for="female" style="display:block;">
+                                            <input type="checkbox" id="female" name="gender" value="female" onchange="filterProducts()">Female
+                                        </label>
+                                        <label for="unisex" style="display:block;">
+                                            <input type="checkbox" id="unisex" name="gender" value="unisex" onchange="filterProducts()">Unisex
+                                        </label>
+                                        <div class="separator my-4"></div>
+                                    </div>
+                                    <div class="filterOptions">
+                                        <h5>Brands</h5>
+                                        {{#each products}}
+                                        <label for="{{this.brandName}}" style="display:block;">
+                                            <input type="checkbox" id="{{this.brandName}}" name="brand" value="{{this.brandName}}" onchange="filterProducts()">{{this.brandName}}
+                                        </label>
+                                        {{/each}}
+                                        <div class="separator my-4"></div>
+                                    </div>
+                                    <div class="filterOptions">
+                                        <h5>Price</h5>
+                                        <label for="lt500" style="display:block;">
+                                            <input type="checkbox" id="lt500" name="offerPrice" value="0" onchange="filterProducts()">Below Rs.500
+                                        </label>
+                                        <label for="500to1000" style="display:block;">
+                                            <input type="checkbox" id="500to1000" name="offerPrice" value="500" onchange="filterProducts()">Rs.500 - Rs.1000
+                                        </label>
+                                        <label for="1000to1500" style="display:block;">
+                                            <input type="checkbox" id="1000to1500" name="offerPrice" value="1000" onchange="filterProducts()">Rs.1000 - Rs.1500
+                                        </label>
+                                        <label for="1500to2000" style="display:block;">
+                                            <input type="checkbox" id="1500to2000" name="offerPrice" value="1500" onchange="filterProducts()">Rs.1500 - Rs.2000
+                                        </label>
+                                        <label for="2000to2500" style="display:block;">
+                                            <input type="checkbox" id="2000to2500" name="offerPrice" value="2000" onchange="filterProducts()">Rs.2000 - Rs.2500
+                                        </label>
+                                        <label for="2500to3000" style="display:block;">
+                                            <input type="checkbox" id="2500to3000" name="offerPrice" value="2500" onchange="filterProducts()">Rs.2500 - Rs.3000
+                                        </label>
+                                        <label for="gt3000" style="display:block;">
+                                            <input type="checkbox" id="gt3000" name="offerPrice" value="3000" onchange="filterProducts()">Above Rs.3000
+                                        </label>
+                                        <div class="separator my-4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                {{/if}}
-                {{/each}}
             </div>
-        </div>
-        {{!-- product listing --}}
-
-        {{!-- pagination --}}
-        <div class="d-flex justify-content-center">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination">
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        {{!-- pagination --}}
-    </div>
-</div>
-
-
+        </section>
 
 {{!-- js for checkbox selection and sorting and filtering --}}
 
@@ -124,22 +148,58 @@
 
         filteredData.forEach(product => {
             const productCard = document.createElement('div');
-            productCard.classList.add('productList', 'd-flex', 'justify-content-center','text-center');
+            productCard.classList.add('card', 'm-3');
             productCard.style.width = '18rem';
+            productCard.style.borderTopRightRadius = '25px';
+            productCard.style.borderTopLeftRadius = '25px';
+            productCard.style.borderBottomRightRadius = '15px';
+            productCard.style.borderBottomLeftRadius = '15px';
             const innerDiv = document.createElement('div');
             innerDiv.classList.add('products', 'mb-3', 'd-flex', 'flex-wrap', 'justify-content-evenly','card-body');
             productCard.appendChild(innerDiv);
-
-            innerDiv.innerHTML = `
+            
+            productCard.innerHTML = `
                 <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/${product._id}">
-                    <img src="${product.images[0]}" class="card-img-top" style="height:350px;" alt="Product image">
-                    <div class="card-body text-center">
+                    <img src="${product.images[0]}" class="card-img-top p-2" style="height:350px;border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
+                    <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
                         <h5 class="card-title">${product.brandName}</h5>
                         <p class="card-text">${product.productName}</p>
-                        <h6 class="card-title">RS. ${product.offerPrice}</h6>
+                        <div class="product-price">
+                            <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. ${product.offerPrice} </span>
+                            <span class="old-price text-decoration-line-through">Rs. ${product.price}</span>
+                        </div>
                     </div>
                 </a>
             `;
+
+            {{!-- const productCard = document.createElement('div');
+            productCard.classList.add('col-lg-4','col-md-4','col-12','col-sm-6');
+            const productCardInner1Div = document.createElement('div');
+            productCardInner1Div.classList.add('product-img-action-wrap');
+            productCard.appendChild(productCardInner1Div);
+
+            productCard.innerHTML = `
+                <div class="product-img-action-wrap">
+                    <div class="product-img product-img-zoom">
+                        <a href="/productDetails/${product._id}">
+                            <img class="default-img" src="${product.images[0]}" alt="productImg">
+                        </a>
+                    </div>
+                    <div class="product-action-1">   
+                        <a aria-label="Add To Wishlist" class="action-btn hover-up " href="#"><i class="bi bi-heart-fill"></i></a>
+                    </div>
+                </div>
+                <div class="product-content-wrap">
+                    <div class="product-category mt-2">
+                        ${product.productName}
+                    </div>
+                    <h2 class="mt-2">${product.brandName}</h2>
+                    <div class="product-price">
+                        <span>Rs. ${product.offerPrice} </span>
+                        <span class="old-price">Rs. ${product.price}</span>
+                    </div>
+                </div>
+            ` --}}
 
             productList.appendChild(productCard);
         });
@@ -149,15 +209,21 @@
         console.log("filterProducts function called")
         const selectedFilters = {};
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-        console.log(checkboxes);
+        const sortValues = document.getElementById('sortProducts');
+        console.log(sortValues.name);
+        
+        console.log("sortValues:",sortValues.value);
+        console.log("checkboxes: ",checkboxes);
 
         //constructing query string with url parameters
         let queryString = '';
+        queryString += `${sortValues.name}=${sortValues.value}&`
         for(const checkbox of checkboxes){
             const filterName = checkbox.name;
             const filterValue = checkbox.value;
             selectedFilters[filterName] = filterValue;
             queryString += `${filterName}=${filterValue}&`;
+            console.log("queryString: ",queryString);
         }
         console.log("Selected filters: ",selectedFilters);
         
@@ -172,15 +238,10 @@
         });
 
         //update the product list with filtered data
-        const filteredData = await response.json();
+        const data = await response.json();
+        console.log(data);
 
-        updateProductList(filteredData);
+        updateProductList(data);
     }
 
-
-    //when the sort dropdown changes
-    {{!-- const sortProducts = async (sortOption)=>{
-        const response = await fetch(`/products/sort?=${sortOption}`);
-        const sortedData = await response.json();
-    } --}}
 </script>

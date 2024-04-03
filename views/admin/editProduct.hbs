@@ -3,7 +3,7 @@
         <a href="/admin"><button type="button" class="btn btn-light sideMenuButton" ><i class="bi bi-view-list"></i> <span class="menuLabel"> Dashboard</span></button></a>
         <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
         <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
+        <a href="/admin/orders"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span class="menuLabel"> Banner Management</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
@@ -40,11 +40,11 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="price" class="form-label">Price</label>
-                    <input type="text" name="price" class="form-control" id="price" value="{{product.price}}" required>
+                    <input type="text" name="price" class="form-control" id="price" value="{{product.price}}" onchange="preventNegative(this)" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="offerPrice" class="form-label">Offer Price</label>
-                    <input type="text" name="offerPrice" class="form-control" id="offerPrice" value="{{product.offerPrice}}" required>
+                    <input type="text" name="offerPrice" class="form-control" id="offerPrice" value="{{product.offerPrice}}" onchange=" priceCheck(this)" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="size" class="form-label">Size</label>
@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="stock" class="form-label">Total number of stock</label>
-                    <input type="text" name="stock" class="form-control" id="stock" value="{{product.stock}}" required>
+                    <input type="text" name="stock" class="form-control" id="stock" value="{{product.stock}}" onchange="preventNegative(this)" required>
                 </div>
                 <div class="col-md-4 mb-3">
                     <label for="category" class="form-label">Category</label>
@@ -82,14 +82,16 @@
                 {{#each product.images}}
                     <div class="col-md-3 mb-3">
                     <img src="{{this}}" alt="Product Image" class="img-thumbnail">
-                    <input type="checkbox" name="removeImages[]" value="{{this}}"> Remove Image
+                    <label for="{{this}}">
+                    <input id="{{this}}" type="checkbox" name="removeImages[]" value="{{this}}"> Remove Image
+                    </label>
                     </div>
                 {{/each}}
                 <div class="separator"></div>
                 {{!-- uploading new images --}}
                 <div class="mb-3 col-md-8 mt-5">
                     <label for="images" class="form-label">Upload New Images (optional)</label>
-                    <input class="form-control" accept="image/*" name="images" type="file" id="images" multiple>
+                    <input class="form-control" accept="image/*" name="images" type="file" id="images" onchange="countImage(event);previewImage(event);" multiple>
                 </div>
                 
                 <div class="col-12 d-flex justify-content-center">
@@ -104,3 +106,53 @@
         </div>
     </div>
 </div> 
+
+<script>
+    //preventing entering negative values 
+    function preventNegative(input){
+        if(parseFloat(input.value)<0){
+            input.setCustomValidity('Value cannot be negative');
+        }else{
+            input.setCustomValidity('');
+        }
+    }
+
+    //checking offer-price is greater than original price
+    function priceCheck(input){
+        const originalPrice = document.getElementById('price');
+        if(parseFloat(input.value)>parseFloat(originalPrice.value)){
+            input.setCustomValidity('Offer price should be less than normal price');
+        }else if(parseFloat(input.value)<0){
+            input.setCustomValidity('Price value should be positive');
+        }else{
+            input.setCustomValidity('');
+        }
+    }
+
+    //counting image
+    function countImage(event){
+        const maxImage = 5;
+        const input = event.target;
+        if(input.files.length>maxImage){
+            alert("You can upload maximun of 5 images only!!!");
+            input.value = '';
+        }
+    }
+
+     //for showing selected images
+    function previewImage(event){
+        fileInput = event.target;
+        console.log(fileInput);
+        const files = event.target.files;
+        console.log("files: ",files);
+        for(const file of files){
+            const fileType = file.type;
+            console.log("fileType: ",fileType)
+            if(fileType!=='image/jpeg' && fileType!=='image/png' && fileType!=='image/jpg'){
+                alert("Only image files are allowed...!");
+                fileInput.value = '';
+                break;
+            }
+        }
+    }
+</script>

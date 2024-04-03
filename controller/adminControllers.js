@@ -6,14 +6,15 @@ const adminCollection = require('../model/adminSchema');
 const categoryCollection = require('../model/categorySchema');
 const productCollection = require('../model/productSchema');
 const sharp = require('sharp');
+const fs = require('fs');
+const path = require('path')
 
-let admin = null;
 module.exports = {
     getDashboard : async(req,res,next)=>{
         let session = req.session;
         try{
             if(session.adminid){
-                res.render('admin/adminDashboard',{admin:true, adminName:admin,title:"Admin_Dashboard"});
+                res.render('admin/adminDashboard',{admin:true, adminName:req.session.admin,title:"Admin_Dashboard"});
             }else{
                 res.render('admin/adminLogin',{admin:true,title:"Admin_Login"});
             }
@@ -23,8 +24,8 @@ module.exports = {
     },
     getUserList : async(req,res,next)=>{
         try {
-            const userList = await userCollection.find({}).lean();
-            res.render('admin/adminCustomers',{admin:true, userList, adminName:admin,title:"User_List"});
+            const userList = await userCollection.find({}).sort({createdAt:-1}).lean();
+            res.render('admin/adminCustomers',{admin:true, userList, adminName:req.session.admin,title:"User_List"});
             
         } catch (error) {
             console.log("Error: ",error);
@@ -34,7 +35,6 @@ module.exports = {
     blockUser : async(req,res,next)=>{
         try {
             const id= req.params.id;
-            console.log(id);
             const user = await userCollection.findById(req.params.id);
             if(!user.blocked){
                 await userCollection.findByIdAndUpdate(req.params.id, {blocked:true});
@@ -69,7 +69,7 @@ module.exports = {
                 return res.render('admin/adminLogin',{admin: true , message: "Email and Password required",title:"Admin_Login"});
             } 
             const adminExist = await adminCollection.findOne({email});
-            console.log("adminExist: "+adminExist);
+            // console.log("adminExist: "+adminExist);
             if(!adminExist){
                 return res.render('admin/adminLogin',{admin: true , message: "Email not found! Check once again",title:"Admin_Login"});
             } 
@@ -79,7 +79,7 @@ module.exports = {
                 return res.render('admin/adminLogin',{admin: true , message: "Incorrect password",title:"Admin_Login"});
             }
             req.session.adminid = req.body.email;
-            admin = adminExist.name;
+            req.session.admin = adminExist.name;
             res.redirect('/admin')
             // res.render('admin/adminDashboard',{admin:true, adminName:admin, title:"Admin_Login",title:"Admin_Dashboard"});
         }catch(err){
@@ -100,7 +100,7 @@ module.exports = {
      getAddCatagory: async(req,res)=>{
         try{
             const categoryList = await categoryCollection.find({}).lean();
-            res.render('admin/addCategory',{categoryList,admin:true,adminName:admin,title:"Category"});
+            res.render('admin/addCategory',{categoryList,admin:true,adminName:req.session.admin,title:"Category"});
         }catch(err){
             console.log(`Error occured!! : ${err.message}`);
         }
@@ -108,12 +108,10 @@ module.exports = {
      postAddCatagory: async(req,res)=>{
         try{
             const {catagoryName,description} = req.body;
-            console.log(req.body);
             // const categoryExists = await categoryCollection.findOne({catagoryName});
              const categoryExists = await categoryCollection.findOne({
                 catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")}
             });
-            console.log("category: ",categoryExists);
             if(!categoryExists){
                 const categoryData = {
                     catagoryName,
@@ -123,7 +121,7 @@ module.exports = {
                 res.redirect('/admin/category');
             }
             const categoryList = await categoryCollection.find({}).lean();
-            res.render('admin/addCategory',{admin:true, adminName:admin, message:"Category already exists!", title:"Category",categoryList});
+            res.render('admin/addCategory',{admin:true, adminName:req.session.admin, message:"Category already exists!", title:"Category",categoryList});
         }catch(err){
             console.log(`An error occured: ${err.message}`);
         }
@@ -142,8 +140,8 @@ module.exports = {
         getEditCategory: async(req,res)=>{
             try {
                 const category = await categoryCollection.findById(req.params.id).lean();
-                console.log("category: "+category)
-                res.render('admin/editCategory',{admin:true,adminName:admin,title:"Edit Category",category});
+                
+                res.render('admin/editCategory',{admin:true,adminName:req.session.admin,title:"Edit Category",category});
             } catch (error) {
                 console.log("Error !: ",error);
             }
@@ -152,8 +150,6 @@ module.exports = {
         postEditCategory: async(req,res)=>{
             try{
                 const {catagoryName,description} = req.body;
-                console.log("req.body: ",req.body);
-                console.log("req.params.id: ",req.params.id);
                 const category = await categoryCollection.findById(req.params.id).lean();
                 const categoryIdToExclude = new mongoose.Types.ObjectId(req.params.id);
                 const categoryExist = await categoryCollection.findOne({
@@ -161,12 +157,12 @@ module.exports = {
                     _id:{$ne:categoryIdToExclude}
                 });
                 
-                console.log("categoryExist: ",categoryExist);
+                
                 if(!categoryExist){
                     await categoryCollection.findByIdAndUpdate(req.params.id,{catagoryName,description});
                     res.redirect('/admin/category');  
                 }
-                res.render('admin/editCategory',{admin:true,adminName:admin,title:"Edit Category",message:"Category name already exists.",category});
+                res.render('admin/editCategory',{admin:true,adminName:req.session.admin,title:"Edit Category",message:"Category name already exists.",category});
                 
             }catch(err){
                 console.log(`An error occured:- ${err}`);   
@@ -175,16 +171,24 @@ module.exports = {
 
         productList: async(req,res)=>{
             try {
-                const products = await productCollection.find().lean();
-                // getting only category names
-                const categories = await categoryCollection.find({},'catagoryName').lean();
-                // map product id to category name
-                const productMap = {};
-                categories.forEach(category => productMap[category._id]= category.catagoryName);
-                // Add category names to product objects
-                products.forEach(product => product.catagoryName= productMap[product.category]);
-                // console.log("products: ",products);
-                res.render('admin/productList',{admin:true, adminName:admin, title:"Products",products});
+                const currentPage = parseInt(req.query.page) || 1;
+                console.log("currentPage: ",currentPage);
+                const limit = 4 ; //items per page
+                const totalProductsCount = await productCollection.countDocuments();
+                console.log("totalProducts: ",totalProductsCount);
+                const totalPages = Math.ceil(totalProductsCount/limit);
+                console.log("total pages: ",totalPages);
+                const previousPage = currentPage>1 ? currentPage-1 : null;
+                console.log("previous page: ",previousPage);
+                const nextPage = currentPage<totalPages ? currentPage+1 : null;
+                console.log("next page: ",nextPage);
+
+                const products = await productCollection.find().populate('category')
+                .skip((currentPage-1) * limit)
+                .limit(limit)
+                .lean();
+                // console.log(products);
+                res.render('admin/productList',{admin:true, adminName:req.session.admin, title:"Products",products,previousPage,nextPage,currentPage});
             } catch (error) {
                 console.log(`An error occured : ${error}`);
             }
@@ -193,7 +197,7 @@ module.exports = {
         getAddProduct: async(req,res)=>{
             try {
                 const categories = await categoryCollection.find({}).lean();
-                res.render('admin/addProducts',{admin:true, adminName:admin, title:"Add Products", categories});
+                res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories});
             } catch (err) {
                 if(err)
                     console.log(`An error occured : ${err.message}`);
@@ -202,9 +206,8 @@ module.exports = {
         
         postAddProducts: async(req,res)=>{
             try {
-                console.log("post addproducts");
                 const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category} = req.body;
-                console.log("req.body : ",req.body);
+                
                 
                 // creating a new product document
                 const product = new productCollection({
@@ -220,11 +223,11 @@ module.exports = {
                     category,
                     images: [], 
                 });
-                console.log("Product : ",product);
+                // console.log("Product : ",product);
 
                 // resizing and save uploaded images
                 if(req.files){
-                    console.log("got req.files: ",req.files);
+                    // console.log("got req.files: ",req.files);
                     for(const file of req.files){
                         const resizeImg = await sharp(file.path)
                         .resize({width:450, height: 550, fit: sharp.fit.fill})
@@ -233,7 +236,7 @@ module.exports = {
                         const imgURL = `/images/imgUploads/${uniqueFilename}`;
                         await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
                         product.images.push(imgURL);
-                        console.log("imgs pushed to array");
+                        // console.log("imgs pushed to array");
                     }
                 }
                 await product.save();
@@ -252,14 +255,13 @@ module.exports = {
                 const category = await categoryCollection.findById(product.category).lean();
                 // console.log("category: ",category);
                 
-                res.render('admin/editProduct',{admin:true, adminName:admin,title:"Edit Product",product,category,categories});
+                res.render('admin/editProduct',{admin:true, adminName:req.session.admin,title:"Edit Product",product,category,categories});
             }catch(err){
                 console.log("Unexpected error occured: ",err);
             }
         },
         postEditProducts: async(req,res)=>{
             try {
-                console.log("req.body: ",req.body);
                 const productId = req.params.id;
                 const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category,removeImages} = req.body;
                 const product = await productCollection.findById(productId);
@@ -280,10 +282,14 @@ module.exports = {
 
                 // removing images
                 if(removeImages && removeImages.length){
-                    console.log("removeImages: ",removeImages);
-                    console.log("removeImages.length: ",removeImages.length);
                     for(const image of removeImages){
                         console.log("image: ",image);
+                        ;
+                        //deleting the image file from the server folder
+                        fs.unlink('public/'+image,(err)=>{
+                            if(err) console.log (err);
+                            else console.log("image removed from server folder");
+                        })
                         const imgIndex = product.images.indexOf(image);
                         console.log("imgIndex: ",imgIndex);
                         if(imgIndex !== -1){
@@ -294,7 +300,6 @@ module.exports = {
 
                 // new image upload - after cropping and resizing
                 if(req.files){
-                    console.log("got req.files: ",req.files);
                     for(const file of req.files){
                         const resizeImg = await sharp(file.path)
                         .resize({width:450, height: 550, fit: sharp.fit.fill})
@@ -307,7 +312,6 @@ module.exports = {
                     }
                 }
                 await product.save();
-                console.log("product :- ",product);
                 res.redirect('/admin/products')
             } catch (error) {
                 console.log("An error occured: ",error);
@@ -317,7 +321,6 @@ module.exports = {
         blockProducts:async(req,res)=>{
             try{
                 const id= req.params.id;
-                console.log(id);
                 const product = await productCollection.findById(id);
                 if(!product.active){
                     await productCollection.findByIdAndUpdate(req.params.id, {active:true});

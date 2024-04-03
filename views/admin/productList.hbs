@@ -3,7 +3,7 @@
         <a href="/admin"><button type="button" class="btn btn-light sideMenuButton" ><i class="bi bi-view-list"></i> <span class="menuLabel"> Dashboard</span></button></a>
         <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
         <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
+        <a href="/admin/orders"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span class="menuLabel"> Banner Management</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
@@ -31,7 +31,7 @@
                 {{#each products}}
                 <tr>
                 <td>{{this.productName}}</td>
-                <td>{{this.catagoryName}}</td>
+                <td>{{this.category.catagoryName}}</td>
                 <td>{{this.brandName}}</td>
                 <td>{{this.offerPrice}}</td>
                 <td>{{this.stock}}</td>
@@ -54,5 +54,16 @@
                 {{/each}}
             </tbody>
         </table>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination d-flex justify-content-center mt-5">
+                {{#if previousPage}}
+                <li class="page-item"><a class="page-link" href="/admin/products/?page={{previousPage}}">Previous</a></li>
+                {{/if}}
+                <li class="page-item"><a class="page-link" href="/admin/products/?page={{currentPage}}">{{currentPage}}</a></li>
+                {{#if nextPage}}
+                <li class="page-item"><a class="page-link" href="/admin/products/?page={{nextPage}}">Next</a></li>
+                {{/if}}
+            </ul>
+        </nav>
     </div>
 </div> 

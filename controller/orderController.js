@@ -30,15 +30,24 @@ module.exports = {
         try {
             const {userAddressId,cartTotal,userCartId,userId,paymentMethod} = req.body;
             console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
-            const userCart = await Cart.findOne({_id: userCartId})
-            console.log("userCart: ",userCart);
-            const cartProduts = userCart.products;
+            await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
+            const userCart = await Cart.findOne({_id: userCartId});
+            console.log("updatedCartProducts:",userCart);
+            const userAddress = await Address.findOne({_id:userAddressId});
+            const cartProduts = userCart.products;//cartProducts is array of products and quantity
             console.log("cartProduts: ",cartProduts);
+
             //creating order collection
             const newOrder = new Orders ({
                 userId,
-                productsData : userCart.products,
-                address : userAddressId,
+                productsData : cartProduts,
+                name:userAddress.name,
+                houseName:userAddress.address,
+                street:userAddress.street,
+                city:userAddress.city,
+                state:userAddress.state,
+                pinCode:userAddress.pinCode,
+                mobileNumber:userAddress.mobileNumber,
                 paymentMethod,
                 totalPrice : cartTotal,
             })
@@ -46,7 +55,7 @@ module.exports = {
             //updating the product stock in product collecion
             for(const{productId,quantity} of cartProduts){
                 try {
-                    await Product.findOneAndUpdate({_id:productId},{$inc:{stock: -quantity}})
+                    await Product.findOneAndUpdate({_id:productId},{$inc:{stock: -quantity}});
                 } catch (error) {
                     console.log("error while updating stock: ",error);
                 }

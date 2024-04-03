@@ -258,9 +258,9 @@ input:checked + .slider {
 .options_sidebar{
   padding-top: 3%;
   width: 20%;
-  height: auto;
+  height: fit-content;
   /* background-color: #0c9e2c; */
-  border-right: 1px solid rgba(0, 0, 0, 0.422);
+  border: 1px solid rgba(0, 0, 0, 0.183);
 }
 /* .product{
   width: 100%;
@@ -362,7 +362,7 @@ input:checked + .slider {
 }
 
 button {
-  background: #17696a;
+  background: #72383d;
   border-radius: 4px;
   padding: 10px 37px;
   border: none;
@@ -8432,7 +8432,7 @@ span.fi-rs-apps {
 }
 
 .pt-150 {
-  padding-top: 150px !important;
+  padding-top: 100px !important;
 }
 
 .pt-155 {

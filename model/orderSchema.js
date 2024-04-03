@@ -9,10 +9,26 @@ const orderSchema = new mongoose.Schema({
     productsData : {
         type: Array
     },
-    address : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'address',
-        required : true
+    name:{
+        type : String
+    },
+    houseName:{
+        type : String
+    },
+    street:{
+        type : String
+    },
+    city:{
+        type : String
+    },
+    state:{
+        type : String
+    },
+    pinCode:{
+        type : String
+    },
+    mobileNumber:{
+        type : Number
     },
     paymentMethod : {
         type : String,
@@ -22,10 +38,10 @@ const orderSchema = new mongoose.Schema({
         type: String,
         default : 'pending'
     },
-    orderStatus : {
-        type : String,
-        default : 'placed'
-    },
+    // orderStatus : {
+    //     type : String,
+    //     default : 'placed'
+    // },
     totalPrice : {
         type : Number,
         required : true

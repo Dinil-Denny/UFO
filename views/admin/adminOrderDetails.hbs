@@ -1,0 +1,107 @@
+<div class="container-fluid d-flex" style="background-color: #D9D9D9;">
+    <div class="sideMenu">
+        <a href="/admin"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-view-list"></i>
+                <span class="menuLabel"> Dashboard</span></button></a>
+        <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
+        <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
+        <a href="/admin/orders"><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span
+                    class="menuLabel"> Banner Management</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen
+                    Management</span></button></a>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
+        <a href="/admin/category"><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
+        <dir class="separator mt-5 pt-5"></dir>
+        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span
+                    class="menuLabel"> Settings</span></button></a>
+        <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i
+                    class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
+    </div>
+    <div class="orderDetails d-flex justify-content-center" style="width: 80%;">
+        <section class="content-main" style="width: 90%;">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title my-5">Order Details </h2>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Product</th>
+                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Phone</th>
+                                    <th scope="col">Address</th>
+                                    <th scope="col">Order Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each orders}}
+                                <tr>
+                                    <td class="image"><img src="{{this.productImages.[0].[0]}}" alt="productImage" style="width: 5rem;"></td>
+                                    <td>{{this.productName}}</td>
+                                    <td>{{this.quantity}}</td>
+                                    <td>{{this.mobileNumber}}</td>
+                                    <td>{{this.name}}, {{this.houseName}}, {{this.street}}, {{this.city}}, {{this.state}} <br>Pin-Code: {{this.pinCode}}</td>
+                                    <td><select class="form-select" name="orderStatus" id="{{this.productsData._id}}" onchange="updateOrderStatus(event,'{{this._id}}','{{this.productsData._id}}')">
+                                            <option value="{{this.productsData.orderStatus}}" selected >{{this.productsData.orderStatus}}</option>
+                                            <option value="placed" >placed</option>
+                                            <option value="shipped" >shipped</option>
+                                            <option value="delivered" >delivered</option>
+                                            <option value="cancelled" >cancelled</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive //end -->
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<script>
+    function updateOrderStatus(event,id,productsDataId){
+        
+        console.log("function called");
+        {{!-- console.log("event - ",event);
+        console.log("id - ",id);
+        console.log("productsDataId: ",productsDataId); --}}
+        const selectedValue = event.target.value;
+        {{!-- console.log(selectedValue); --}}
+        const data = {value:selectedValue,orderId:id,productsDataId:productsDataId}
+        fetch('/admin/updateOrderStatus',{
+            method:'POST',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(data)
+        })
+        .then(response => {
+            return response.json();
+            console.log("response.json:",response.json());
+            
+        })
+        .then(data => {
+            console.log(data);
+            const productsDataId = data.data.productsDataId
+            console.log(productsDataId);
+            const orderStatus = document.getElementById(productsDataId);
+            console.log(orderStatus);
+            orderStatus.value = data.data.orderStatus;
+            console.log(orderStatus.value);
+        })
+    }
+</script>

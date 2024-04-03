@@ -16,11 +16,11 @@
                 <div class="timer text-center">
                     <span id="counter"></span>
                 </div>
-                <div class="notification text-center text-danger">
-                    {{#if message}}
-                        <p>{{message}}</p>
-                    {{/if}} 
+                {{#if message}}
+                <div class="notification text-center text-danger alert alert-danger" style="height: 40px; padding: 6px; margin-right: 25px;"> 
+                    <p>{{message}}</p>
                 </div>
+                {{/if}}
             </form>
         </div>
     </div>

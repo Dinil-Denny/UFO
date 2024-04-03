@@ -6,19 +6,28 @@ module.exports = {
         try {
             if(req.session && req.session.userid){
                 const user = await userCollection.findOne({email : req.session.userid});
-                    if(!user || user.blocked){
+                    if(!user){
                         req.sessionStore.destroy(req.session.userid,(err)=>{
                             if(err){
                                 console.log("Error in destroying user session: ",err);
                             }
-                            return res.redirect('/login');
+                            return res.render('user/userLogin',{title:"Login"});
                         });
-                    }else{
+                    }
+                    else if(user.blocked){
+                        req.sessionStore.destroy(req.session.userid,(err)=>{
+                            if(err){
+                                console.log("Error in destroying user session: ",err);
+                            }
+                            return res.render('user/userLogin',{title:"Login",message:"Your account is blocked"});
+                        });
+                    }
+                    else{
                         next();
                     }
                 }
             else{
-                res.redirect('/login');
+                return res.redirect('/login');
             }
         } catch (error) {
             console.log("Error!!: ",error);
@@ -32,6 +41,13 @@ module.exports = {
             next();
         } catch (error) {
             console.log("An error occured: ",error.message);
+        }
+    },
+    userBlocked: async(req,res)=>{
+        try {
+            
+        } catch (error) {
+            console.log("Error in blocking user!!! ",error)
         }
     }
 }

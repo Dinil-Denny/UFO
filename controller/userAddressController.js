@@ -8,18 +8,75 @@ module.exports = {
         try {
           const userid = req.session.userid;
           const user = await userCollection.findOne({email:userid}).lean();
-          console.log("userId",userid);
-          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').lean();
+        //   console.log("userId",userid);
+          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:-1}).lean();
           console.log("ordres: ",orders);
           const addresses = await addressCollection.find().lean();
-          console.log("addresses: ",addresses);
-          console.log(`user in account overview: ${user}`);
+        //   console.log("addresses: ",addresses);
+        //   console.log(`user in account overview: ${user}`);
           res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,orders});
         } catch (error) {
           console.log(`An error occured on loading account overview : ${error}`);
         }
-      }
-    ,
+    },
+
+    getOrderDetails: async(req,res)=>{
+        try {
+            const orderId = req.params.id;
+            const orderDetails = await orderCollection.aggregate([
+                {
+                    $match:{_id: new mongoose.Types.ObjectId(orderId)}
+                },
+                {
+                    $unwind:"$productsData"
+                },
+                {
+                    $lookup:{
+                        from:"products",
+                        localField:"productsData.productId",
+                        foreignField:"_id",
+                        as:"orderedProducts"
+                    }
+                },  
+                {
+                    $project:{
+                        productsData:1,name:1,houseName:1,street:1,city:1,state:1,pinCode:1,mobileNumber:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,
+                        productName:"$orderedProducts.productName",
+                        productImages:"$orderedProducts.images",
+                        quantity:"$productsData.quantity",
+                        productPrice:"$orderedProducts.offerPrice",
+                        brandName:"$orderedProducts.brandName",
+                        gender:"$orderedProducts.gender",
+                        size:"$orderedProducts.size",
+                        color:"$orderedProducts.color"
+                        
+                    }
+                }
+            ]);
+            console.log("orderDetails: ",orderDetails);
+            res.render('user/orderDetails',{title:"Order Details",orderDetails});
+        } catch (error) {
+            console.log("error: ",error);
+        }
+    },
+
+    cancelProduct: async(req,res)=>{
+        try{
+            const orderId = req.params.orderId;
+            console.log("orderId: ",orderId);
+            const productsDataId = req.params.productObjId;
+            console.log("orderProductId: ",productsDataId);
+            const orderDetails = await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
+                {$set:{"productsData.$[product].orderStatus":"cancelled"}},
+                {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]});
+            
+            res.redirect(`/orderDetails/${orderId}`);
+        }catch(err){
+            console.log("Error while cancelling product-order: ",err.message);
+        }
+        
+    },
+    
     getAddnewAddress: async(req,res,next)=>{
         try {
             
