@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {getDashboard,getUserList,getAdminLogin,postAdminLogin,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,getEditCategory,postEditCategory,getAddProduct,postAddProducts,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers');
+const {getDashboard,getUserList,getAdminLogin,postAdminLogin,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,productListPagination,getEditCategory,postEditCategory,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers');
 
 const{getOrders,getOrderDetails,updateOrderStatus} = require('../../controller/adminOrderController');
 
 const { upload } = require('../../config/multerStorage');
 const {adminAuthentication} = require('../../middlewares/adminAuthMiddleware');
+const {pagination} = require('../../middlewares/pagination');
 
 // get admin dashboard
 router.get('/',adminAuthentication, getDashboard);
@@ -43,11 +44,16 @@ router.get('/editCategory/:id',adminAuthentication,getEditCategory);
 router.post('/editCategory/:id',adminAuthentication,postEditCategory);
 
 // getting products
-router.get('/products',adminAuthentication,productList);
+router.get('/products',adminAuthentication,pagination,productList);
+
+router.get('/pagination',adminAuthentication,pagination,productListPagination);
 
 // get the add new product form
 router.get('/addProduct',adminAuthentication,getAddProduct);
 router.post('/addProduct',upload.array('images',5),adminAuthentication,postAddProducts);
+
+//adding brand
+router.post('/addBrand',adminAuthentication,postAddBrand);
 
 // unlist or list the products(soft delete)
 router.get('/active/:id',adminAuthentication,blockProducts);

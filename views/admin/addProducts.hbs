@@ -14,16 +14,36 @@
     </div>
     <div class="product ms-5 my-5" style="width: 50vw;">
         <div class="productsForm">
+            <div class="col-md-4 mb-3" style="width: 30rem;">
+                <form action="/admin/addBrand" method="post">
+                    <label for="brand" class="form-label">Add New Brand Name (Optional)</label>
+                    <input type="text" name="brandName" class="form-control" id="brand" placeholder="Add new brand name" required>
+                    <button type="submit" class="btn btn-small btn-primary mt-2" style="margin-left: auto;">Add</button>
+                </form>
+                <div class="notification text-center text-danger">
+                    {{#if brandAddErrorMessage}}
+                        <p>{{brandAddErrorMessage}}</p>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <hr>
             <h3>Add Products</h3>
             <form class="row mt-3" action="/admin/addProduct" method="post" enctype="multipart/form-data">
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                     <label for="productName" class="form-label">Product Name</label>
                     <input type="text" name="productName" class="form-control" id="productName" required>
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-4 mb-3">
                     <label for="brandName" class="form-label">Brand Name</label>
-                    <input type="text" name="brandName" class="form-control" id="brandName" required>
+                    <select id="brandName" name="brandName" class="form-select" required>
+                        <option selected>Choose...</option>
+                        {{#each brands}}
+                            <option value="{{this._id}}">{{this.brandName}}</option>
+                        {{/each}}
+                    </select>
                 </div>
+                
                 <div class="col-12 mb-3">
                     <label for="productDescription" class="form-label">Product Description</label>
                     <textarea class="form-control" name="description" id="productDescription" rows="3" required></textarea>
@@ -67,10 +87,10 @@
                 <div class="col-md-4 mb-3">
                     <label for="category" class="form-label">Category</label>
                     <select id="category" name="category" class="form-select" required>
-                    <option selected>Choose...</option>
-                    {{#each categories}}
-                        <option value="{{this._id}}">{{this.catagoryName}}</option>
-                    {{/each}}
+                        <option selected>Choose...</option>
+                        {{#each categories}}
+                            <option value="{{this._id}}">{{this.catagoryName}}</option>
+                        {{/each}}
                     </select>
                 </div>
                 <div class="mb-3 col-md-8 mb-3">

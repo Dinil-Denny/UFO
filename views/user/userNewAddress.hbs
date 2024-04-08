@@ -6,6 +6,7 @@
         <div class="card-body">
             <form action="/addAddress" method="post">
             <div class="row">
+                <input type="text" name="userEmail" hidden value="{{userEmail}}">
                 <div class="form-group col-md-6">
                     <label>Full name <span class="required">*</span></label>
                     <input required class="form-control square" name="name" type="text" placeholder="Enter full name">

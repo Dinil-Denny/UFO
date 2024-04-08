@@ -1,14 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts} = require('../../controller/userController')
+const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts,productListingPagination} = require('../../controller/userController')
 
-const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,deleteAddress,cancelProduct} = require('../../controller/userAddressController');
+const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct} = require('../../controller/userAddressController');
 
 const{getCart,addToCart,removeItemInCart,updateCartQuantity} = require('../../controller/cartControllers');
 
 const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/orderController')
 
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
+
+const{pagination} = require('../../middlewares/pagination');
+
+const {filterSorting} = require('../../middlewares/filteringSortingMiddleware');
 
 /* GET user home page. */
 router.get('/',userAuthentication,getHomePage);
@@ -52,7 +56,11 @@ router.get('/resend-resetOTP',getResetResendOTP);
 router.post('/resetAccountPassword',resetPassword);
 
 // get products list
-router.get('/products',userAuthentication,getProductListing);
+router.get('/products',userAuthentication,pagination,getProductListing);
+router.get('/pagination',pagination,productListingPagination);
+
+// filter products
+router.get('/filter',filterSorting,pagination,filterProducts);
 
 // product details
 router.get('/productDetails/:id',userAuthentication,getProductDetails);
@@ -81,8 +89,9 @@ router.get('/deleteAddress/:id',userAuthentication,deleteAddress);
 router.get('/editDetails/:id',userAuthentication,getEditDetails);
 router.post('/editDetails/:id',userAuthentication,postEditDetails);
 
-// filter products
-router.get('/filter',filterProducts);
+//change password
+router.get('/changePassword/:id',userAuthentication,getChangePassword);
+router.post('/changePassword/:id',userAuthentication,postChangePassword);
 
 // get cart
 router.get('/cart',userAuthentication,getCart);

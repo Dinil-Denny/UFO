@@ -30,40 +30,158 @@
             <tbody>
                 {{#each products}}
                 <tr>
-                <td>{{this.productName}}</td>
-                <td>{{this.category.catagoryName}}</td>
-                <td>{{this.brandName}}</td>
-                <td>{{this.offerPrice}}</td>
-                <td>{{this.stock}}</td>
-                {{#if this.active}}
-                    <td>Listed</td>
-                    <td>
-                    <a href="/admin/active/{{this._id}}" class="btn btn-success mb-2" onclick="return confirm(`Are you sure you want to unlist this product`)"><i class="bi bi-ban"></i></a>
-                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning mb-2"><i class="bi bi-pencil-square"></i></a>
-                    <a href="/admin/deleteProduct/{{this._id}}" class="btn btn-danger mb-2" onclick="return confirm(`Are you sure want to delete this product?`)"><i class="bi bi-x-circle"></i></i></a>
-                </td>
-                {{else}}
-                    <td>Unlisted</td>
-                    <td>
-                    <a href="/admin/active/{{this._id}}" class="btn btn-danger" onclick="return confirm(`Are you sure you want to list this product`)"><i class="bi bi-ban"></i></a>
-                    <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
-                    <a href="/admin/deleteProduct/{{this._id}}" class="btn btn-danger" onclick="return confirm(`Are you sure want to delete this product?`)"><i class="bi bi-x-circle"></i></i></a>
-                </td>
-                {{/if}}
+                    <td id="productName">{{this.productName}}</td>
+                    <td id="category">{{this.category.catagoryName}}</td>
+                    <td id="brandName">{{this.brandName.brandName}}</td>
+                    <td id="offerPrice">{{this.offerPrice}}</td>
+                    <td id="stock">{{this.stock}}</td>
+                    {{#if this.active}}
+                        <td id="listed">Listed</td>
+                        <td>
+                        <a href="/admin/active/{{this._id}}" class="btn btn-success mb-2" onclick="return confirm(`Are you sure you want to unlist this product`)"><i class="bi bi-ban"></i></a>
+                        <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning mb-2"><i class="bi bi-pencil-square"></i></a>
+                        <a href="/admin/deleteProduct/{{this._id}}" class="btn btn-danger mb-2" onclick="return confirm(`Are you sure want to delete this product?`)"><i class="bi bi-x-circle"></i></a>
+                        </td>
+                    {{else}}
+                        <td id="unlisted">Unlisted</td>
+                        <td>
+                        <a href="/admin/active/{{this._id}}" class="btn btn-danger" onclick="return confirm(`Are you sure you want to list this product`)"><i class="bi bi-ban"></i></a>
+                        <a href="/admin/editProduct/{{this._id}}" class="btn btn-warning"><i class="bi bi-pencil-square"></i></a>
+                        <a href="/admin/deleteProduct/{{this._id}}" class="btn btn-danger" onclick="return confirm(`Are you sure want to delete this product?`)"><i class="bi bi-x-circle"></i></a>
+                        </td>
+                    {{/if}}
                 </tr>
                 {{/each}}
             </tbody>
         </table>
         <nav aria-label="Page navigation example">
             <ul class="pagination d-flex justify-content-center mt-5">
-                {{#if previousPage}}
-                <li class="page-item"><a class="page-link" href="/admin/products/?page={{previousPage}}">Previous</a></li>
-                {{/if}}
-                <li class="page-item"><a class="page-link" href="/admin/products/?page={{currentPage}}">{{currentPage}}</a></li>
-                {{#if nextPage}}
-                <li class="page-item"><a class="page-link" href="/admin/products/?page={{nextPage}}">Next</a></li>
-                {{/if}}
+                {{!-- {{#if previousPage}} --}}
+                <li class="page-item" id="previousPage" value="{{previousPage}}" onclick="pagination(this)"><a class="page-link">Previous</a></li>
+                {{!-- {{/if}} --}}
+                <li class="page-item" id="currentPageValue" value="{{currentPage}}" onclick="pagination(this)"><a class="page-link" id="currentPage">{{currentPage}}</a></li>
+                {{!-- {{#if nextPage}} --}}
+                <li class="page-item" id="nextPage" value="{{nextPage}}" onclick="pagination(this)"><a class="page-link">Next</a></li> 
+                {{!-- {{/if}} --}}
             </ul>
         </nav>
     </div>
 </div> 
+
+<script>
+    const pagination= async(value)=>{
+        try{
+            {{!-- console.log("value: ",value); --}}
+        const response = await fetch(`/admin/pagination/?page=${value.value}`,{
+            method:'GET',
+            headers:{'Content-Type':'application/json'}
+        });
+        const data = await response.json();
+        console.log("data",data);
+        if(data.previousPage){
+            const previousPage = document.getElementById('previousPage');
+            previousPage.value = data.previousPage;
+            {{!-- console.log("previousPage:",previousPage) --}}
+        }
+        const currentPageValue = document.getElementById('currentPageValue');
+        currentPageValue.value = data.currentPage;
+        const currentPage = document.getElementById('currentPage');
+        currentPage.textContent = data.currentPage;
+        {{!-- console.log("currentPage:",currentPage.innerHTML) --}}
+        if(data.nextPage){
+            const nextPage = document.getElementById('nextPage');
+            nextPage.value = data.nextPage;
+            {{!-- console.log("nextPage:",nextPage) --}}
+        }
+        const tableBody = document.querySelector('tbody');
+        tableBody.innerHTML = '';
+        data.products.forEach(product => {
+            const row = document.createElement('tr');
+
+            const productNameCell = document.createElement('td');
+            productNameCell.textContent = product.productName;
+            row.appendChild(productNameCell);
+
+            const categoryCell = document.createElement('td');
+            categoryCell.textContent = product.category.catagoryName;
+            row.appendChild(categoryCell);
+
+            const brandNameCell = document.createElement('td');
+            brandNameCell.textContent = product.brandName.brandName;
+            row.appendChild(brandNameCell);
+
+            const sellingPriceCell = document.createElement('td');
+            sellingPriceCell.textContent = product.offerPrice;
+            row.appendChild(sellingPriceCell);
+
+            const stockCell = document.createElement('td');
+            stockCell.textContent = product.stock;
+            row.appendChild(stockCell);
+
+            if(product.active){
+                const statusCell = document.createElement('td');
+                statusCell.textContent = "Listed";
+                row.appendChild(statusCell);
+            }else{
+                const statusCell = document.createElement('td');
+                statusCell.textContent = "Unlisted";
+                row.appendChild(statusCell);
+            }
+            if(product.active){
+                const updateCell = document.createElement('td');
+
+                const unlistButton = document.createElement('a');
+                unlistButton.classList.add('btn', 'btn-success', 'mb-2','me-1');
+                unlistButton.innerHTML = '<i class="bi bi-ban"></i>';
+                unlistButton.setAttribute('href', `/admin/active/${product._id}`);
+                unlistButton.setAttribute('onclick', `return confirm("Are you sure you want to unlist this product?")`);
+                updateCell.appendChild(unlistButton);   
+
+                const editButton = document.createElement('a');
+                editButton.classList.add('btn','btn-warning','mb-2','me-1');
+                editButton.innerHTML = '<i class="bi bi-pencil-square">';
+                editButton.setAttribute('href', `/admin/editProduct/${product._id}`);
+                updateCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('a');
+                deleteButton.classList.add('btn', 'btn-danger', 'mb-2','me-1');
+                deleteButton.innerHTML = '<i class="bi bi-x-circle"></i>';
+                deleteButton.setAttribute('href', `/admin/deleteProduct/${product._id}`);
+                deleteButton.setAttribute('onclick', `return confirm("Are you sure want to delete this product?")`);
+                updateCell.appendChild(deleteButton);     
+
+                row.appendChild(updateCell);                        
+            }else{
+                const updateCell = document.createElement('td');
+
+                const listButton = document.createElement('a');
+                listButton.classList.add('btn', 'btn-danger', 'mb-2','me-1');
+                listButton.innerHTML = '<i class="bi bi-ban"></i>';
+                listButton.setAttribute('href', `/admin/active/${product._id}`);
+                listButton.setAttribute('onclick', `return confirm("Are you sure you want to list this product?")`);
+                updateCell.appendChild(listButton);   
+
+                const editButton = document.createElement('a');
+                editButton.classList.add('btn','btn-warning','mb-2','me-1');
+                editButton.innerHTML = '<i class="bi bi-pencil-square">';
+                editButton.setAttribute('href', `/admin/editProduct/${product._id}`);
+                updateCell.appendChild(editButton);
+
+                const deleteButton = document.createElement('a');
+                deleteButton.classList.add('btn', 'btn-danger', 'mb-2','me-1');
+                deleteButton.innerHTML = '<i class="bi bi-x-circle"></i>';
+                deleteButton.setAttribute('href', `/admin/deleteProduct/${product._id}`);
+                deleteButton.setAttribute('onclick', `return confirm("Are you sure want to delete this product?")`);
+                updateCell.appendChild(deleteButton);     
+
+                row.appendChild(updateCell);
+            }
+
+            tableBody.appendChild(row)
+        })
+        }catch(err){
+            console.log("error:",err.message);
+        }
+        
+    }
+</script>

@@ -43,11 +43,4 @@ module.exports = {
             console.log("An error occured: ",error.message);
         }
     },
-    userBlocked: async(req,res)=>{
-        try {
-            
-        } catch (error) {
-            console.log("Error in blocking user!!! ",error)
-        }
-    }
 }

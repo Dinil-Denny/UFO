@@ -49,7 +49,7 @@ const orderSchema = new mongoose.Schema({
     date : {
         type : String,
         required : true,
-        default : new Date().toLocaleString()
+        default : ()=> new Date()
     },
 })
 

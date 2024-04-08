@@ -80,11 +80,11 @@ module.exports = {
   userLogout: async (req, res, next) => {
     try {
       await req.sessionStore.destroy(req.session.userid,(err)=>{
-        if(err) console.log("error while destroying user session: ",err)
+        if(err) throw err;
         else res.render("user/userLogin",{title:"Login"});
       });
-    } catch (error) {
-      console.log("Error!!: ", error);
+    } catch (err) {
+      console.log("Error!!: ", err.message);
     }
   },
 
@@ -463,14 +463,48 @@ module.exports = {
 
   getProductListing: async (req, res, next) => {
     try {
-      const products = await productCollection.find().lean();
+      const paginationData = req.paginationData;
+      const previousPage = paginationData.previousPage;
+      const nextPage = paginationData.nextPage;
+      const currentPage = paginationData.currentPage;
+      const limit = paginationData.limit;
+
+      //const products = await productCollection.find().lean();
+      const products = await productCollection.find().populate('category').populate('brandName')
+      .skip((currentPage-1) * limit)
+      .limit(limit)
+      .lean();
+      console.log("products:",products);
       res.render("user/productList", {
         title: "Products",
         products,
         loginName: req.session.username,
+        previousPage,
+        currentPage,
+        nextPage
       });
     } catch (error) {
       console.log("Error!! : ", error);
+    }
+  },
+
+  productListingPagination: async(req,res)=>{
+    try {
+      const paginationData = req.paginationData;
+      const previousPage = paginationData.previousPage;
+      const nextPage = paginationData.nextPage;
+      const currentPage = paginationData.currentPage;
+      const limit = paginationData.limit;
+
+      const products = await productCollection.find().populate('category').populate('brandName')
+      .skip((currentPage-1) * limit)
+      .limit(limit)
+      .lean();
+      console.log("products in pagination: ",products);
+      const data = {products:products,previousPage:previousPage,currentPage:currentPage,nextPage:nextPage};
+      res.json(data);
+    } catch (error) {
+      console.log("Error while products pagination: ",error.message);
     }
   },
 
@@ -478,11 +512,11 @@ module.exports = {
     try {
       // converting this string id into object id
       const objectId = new mongoose.Types.ObjectId(req.params.id);
-      const product = await productCollection.findById(objectId).lean();
+      const product = await productCollection.findById(objectId).populate('brandName').lean();
       const user = await userCollection.findOne({email:req.session.userid});
       const userId = user._id;
       const cart = await cartCollection.findOne({userId});
-      console.log("cart : ",cart);
+      //console.log("cart : ",cart);
 
       if(cart){
         const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
@@ -518,46 +552,57 @@ module.exports = {
 
   // product filtering
    filterProducts: async (req, res, next) => {
-    const filters = req.query;
-    console.log("filters: ",filters);
-    let query = {};
 
+    // const filters = req.query;
+    // console.log("filters: ",filters);
+    // let query = {};
 
-    // filter based on gender
-    if(Array.isArray(filters.gender)){
-      query.gender = {$in : filters.gender};
-    }else if(filters.gender){
-      query.gender = filters.gender;
-    }
+    const filteredProducts = req.filteredProducts;
 
-    // filter based on brand name
-    if(Array.isArray(filters.brand)){
-      query.brandName = {$in : filters.brand};
-    }else if(filters.brand){
-      query.brandName = filters.brand;
-    }
+    const paginationData = req.paginationData;
+    const previousPage = paginationData.previousPage;
+    const nextPage = paginationData.nextPage;
+    const currentPage = paginationData.currentPage;
+    const limit = paginationData.limit;
+
+    // // filter based on gender
+    // if(Array.isArray(filters.gender)){
+    //   query.gender = {$in : filters.gender};
+    // }else if(filters.gender){
+    //   query.gender = filters.gender;
+    // }
+
+    // // filter based on brand name
+    // if(Array.isArray(filters.brand)){
+    //   query.brandName = {$in : filters.brand};
+    // }else if(filters.brand){
+    //   query.brandName = filters.brand;
+    // }
       
-    // filter on price
-    if(Array.isArray(filters.offerPrice)){
-      const parsedPriceFilter = filters.offerPrice.map(value => parseInt(value));
-      query.offerPrice = {$gte: Math.min(...parsedPriceFilter),$lte:Math.max(...parsedPriceFilter)+500}
-    }else if(filters.offerPrice){
-      if(filters.offerPrice === '3000') 
-      query.offerPrice = {$gte:Number(filters.offerPrice)}
-      else
-      query.offerPrice = {$gte:Number(filters.offerPrice),$lte:Number(filters.offerPrice)+500}
-    }
+    // // filter on price
+    // if(Array.isArray(filters.offerPrice)){
+    //   const parsedPriceFilter = filters.offerPrice.map(value => parseInt(value));
+    //   query.offerPrice = {$gte: Math.min(...parsedPriceFilter),$lte:Math.max(...parsedPriceFilter)+500}
+    // }else if(filters.offerPrice){
+    //   if(filters.offerPrice === '3000') 
+    //   query.offerPrice = {$gte:Number(filters.offerPrice)}
+    //   else
+    //   query.offerPrice = {$gte:Number(filters.offerPrice),$lte:Number(filters.offerPrice)+500}
+    // }
 
-    console.log("query: ",query);
+    //console.log("query: ",query);
     try {
-      if(filters.sort){
-        const filteredProducs = await productCollection.find(query).populate('category').sort({offerPrice:Number(filters.sort)}).lean();
-        res.send(filteredProducs);
-      }else{
-        const filteredProducs = await productCollection.find(query).populate('category').lean();
-        res.send(filteredProducs);
-      }
-      
+      // if(filters.sort){
+      //   const filteredProducs = await productCollection.find(query).populate('category').populate('brandName').sort({offerPrice:Number(filters.sort)}).skip((currentPage-1) * limit).limit(limit).lean();
+      //   //const data = {filteredProducs:filteredProducs,previousPage:previousPage,nextPage:nextPage,currentPage:currentPage}
+      //   res.send(filteredProducs);
+      // }else{
+      //   const filteredProducs = await productCollection.find(query).populate('category').populate('brandName').skip((currentPage-1) * limit).limit(limit).lean();
+      //   //const data = {filteredProducs:filteredProducs,previousPage:previousPage,nextPage:nextPage,currentPage:currentPage}
+      //   res.send(filteredProducs);
+      // }
+      const data = {filteredProducts:filteredProducts,previousPage:previousPage,nextPage:nextPage,currentPage:currentPage}
+      res.json(data)
       // console.log("Filtered products: ",filteredProducs);
       
     } catch (error) {

@@ -19,38 +19,6 @@
                         </div>
 
                         {{!-- products --}}
-                        
-                        {{!-- <div class="row product-grid-3 products">
-                            {{#each products}}
-                            {{#if this.active}}
-                            <div class="col-lg-4 col-md-4 col-12 col-sm-6">
-                                <div class="product-cart-wrap mb-30">
-                                    <div class="product-img-action-wrap">
-                                        <div class="product-img product-img-zoom">
-                                            <a href="/productDetails/{{this._id}}">
-                                                <img class="default-img" src="{{this.images.[0]}}" alt="productImg">
-                                            </a>
-                                        </div>
-                                        <div class="product-action-1">   
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up " href="#"><i class="bi bi-heart-fill"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="product-content-wrap">
-                                        <div class="product-category mt-2">
-                                            {{this.productName}}
-                                        </div>
-                                        <h2 class="mt-2">{{this.brandName}}</h2>
-                                        <div class="product-price">
-                                            <span>Rs. {{this.offerPrice}} </span>
-                                            <span class="old-price">Rs. {{this.price}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            {{/if}}
-                            {{/each}}   
-                        </div> --}}
-                        
                         <div class="productsContainer d-flex flex-column">  
                             <div class="products mb-3 d-flex justify-content-center flex-wrap">
                                 {{#each products}}
@@ -59,9 +27,9 @@
                                     <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
                                     <img src="{{this.images.[0]}}" class="card-img-top p-2" style="height:350px; border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
                                     <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
-                                        <h5 class="card-title">{{this.brandName}}</h5>
+                                        
+                                        <h5 class="card-title">{{this.brandName.brandName}}</h5>
                                         <p class="card-text">{{this.productName}}</p>
-                                        {{!-- <h6 class="card-title">RS. {{this.offerPrice}}</h6> --}}
                                         <div class="product-price">
                                             <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. {{this.offerPrice}} </span>
                                             <span class="old-price text-decoration-line-through">Rs. {{this.price}}</span>
@@ -72,8 +40,22 @@
                                 {{/if}}
                                 {{/each}}
                             </div>
-                            
                         </div>
+                        {{!-- products --}}
+
+                    {{!---------------- pagination --------------------}}
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination d-flex justify-content-center mt-5">
+                                {{!-- {{#if previousPage}} --}}
+                                <li class="page-item" id="previousPage" value="{{previousPage}}" onclick="pagination(this)"><a class="page-link">Previous</a></li>
+                                {{!-- {{/if}} --}}
+                                <li class="page-item" id="currentPageValue" value="{{currentPage}}" onclick="pagination(this)"><a class="page-link" id="currentPage">{{currentPage}}</a></li>
+                                {{!-- {{#if nextPage}} --}}
+                                <li class="page-item" id="nextPage" value="{{nextPage}}" onclick="pagination(this)"><a class="page-link">Next</a></li> 
+                                {{!-- {{/if}} --}}
+                            </ul>
+                        </nav>
+                    {{!---------------- pagination --------------------}}
 
                     </div>
                     <div class="col-lg-3 primary-sidebar sticky-sidebar">
@@ -99,8 +81,8 @@
                                     <div class="filterOptions">
                                         <h5>Brands</h5>
                                         {{#each products}}
-                                        <label for="{{this.brandName}}" style="display:block;">
-                                            <input type="checkbox" id="{{this.brandName}}" name="brand" value="{{this.brandName}}" onchange="filterProducts()">{{this.brandName}}
+                                        <label for="{{this.brandName._id}}" style="display:block;">
+                                            <input type="checkbox" id="{{this.brandName._id}}" name="brand" value="{{this.brandName._id}}" onchange="filterProducts()">{{this.brandName.brandName}}
                                         </label>
                                         {{/each}}
                                         <div class="separator my-4"></div>
@@ -141,6 +123,37 @@
 {{!-- js for checkbox selection and sorting and filtering --}}
 
 <script>
+
+    const pagination = async(value)=>{
+        try{
+            console.log("value:",value);
+            const response = await fetch(`/pagination/?page=${value.value}`,{
+                method:'GET',
+                headers:{'Content-Type':'application/json'}
+            });
+            const data = await response.json();
+            updateProductList(data.products);
+            console.log("data:",data);
+            if(data.previousPage){
+                const previousPage = document.getElementById('previousPage');
+                previousPage.value = data.previousPage;
+                console.log("previousPage:",previousPage)
+            }
+            const currentPageValue = document.getElementById('currentPageValue');
+            currentPageValue.value = data.currentPage;
+            const currentPage = document.getElementById('currentPage');
+            currentPage.textContent = data.currentPage;
+            console.log("currentPage:",currentPage.innerHTML)
+            if(data.nextPage){
+                const nextPage = document.getElementById('nextPage');
+                nextPage.value = data.nextPage;
+                console.log("nextPage:",nextPage)
+            }
+        }catch(err){
+            console.log("Error:",err.message);
+        }
+    }
+
     const updateProductList = (filteredData) => {
         const productList = document.querySelector('.products');
         // Clear existing products
@@ -162,7 +175,7 @@
                 <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/${product._id}">
                     <img src="${product.images[0]}" class="card-img-top p-2" style="height:350px;border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
                     <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
-                        <h5 class="card-title">${product.brandName}</h5>
+                        <h5 class="card-title">${product.brandName.brandName}</h5>
                         <p class="card-text">${product.productName}</p>
                         <div class="product-price">
                             <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. ${product.offerPrice} </span>
@@ -171,36 +184,6 @@
                     </div>
                 </a>
             `;
-
-            {{!-- const productCard = document.createElement('div');
-            productCard.classList.add('col-lg-4','col-md-4','col-12','col-sm-6');
-            const productCardInner1Div = document.createElement('div');
-            productCardInner1Div.classList.add('product-img-action-wrap');
-            productCard.appendChild(productCardInner1Div);
-
-            productCard.innerHTML = `
-                <div class="product-img-action-wrap">
-                    <div class="product-img product-img-zoom">
-                        <a href="/productDetails/${product._id}">
-                            <img class="default-img" src="${product.images[0]}" alt="productImg">
-                        </a>
-                    </div>
-                    <div class="product-action-1">   
-                        <a aria-label="Add To Wishlist" class="action-btn hover-up " href="#"><i class="bi bi-heart-fill"></i></a>
-                    </div>
-                </div>
-                <div class="product-content-wrap">
-                    <div class="product-category mt-2">
-                        ${product.productName}
-                    </div>
-                    <h2 class="mt-2">${product.brandName}</h2>
-                    <div class="product-price">
-                        <span>Rs. ${product.offerPrice} </span>
-                        <span class="old-price">Rs. ${product.price}</span>
-                    </div>
-                </div>
-            ` --}}
-
             productList.appendChild(productCard);
         });
     };
@@ -211,7 +194,6 @@
         const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
         const sortValues = document.getElementById('sortProducts');
         console.log(sortValues.name);
-        
         console.log("sortValues:",sortValues.value);
         console.log("checkboxes: ",checkboxes);
 
@@ -241,7 +223,23 @@
         const data = await response.json();
         console.log(data);
 
-        updateProductList(data);
+        updateProductList(data.filteredProducts);
+
+        if(data.previousPage){
+            const previousPage = document.getElementById('previousPage');
+            previousPage.value = data.previousPage;
+            console.log("previousPage:",previousPage)
+        }
+        const currentPageValue = document.getElementById('currentPageValue');
+        currentPageValue.value = data.currentPage;
+        const currentPage = document.getElementById('currentPage');
+        currentPage.textContent = data.currentPage;
+        console.log("currentPage:",currentPage.innerHTML);
+        if(data.nextPage){
+            const nextPage = document.getElementById('nextPage');
+            nextPage.value = data.nextPage;
+            console.log("nextPage:",nextPage)
+        }
     }
 
 </script>

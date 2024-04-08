@@ -52,7 +52,7 @@
                                     <td>{{this.quantity}}</td>
                                     <td>{{this.mobileNumber}}</td>
                                     <td>{{this.name}}, {{this.houseName}}, {{this.street}}, {{this.city}}, {{this.state}} <br>Pin-Code: {{this.pinCode}}</td>
-                                    <td><select class="form-select" name="orderStatus" id="{{this.productsData._id}}" onchange="updateOrderStatus(event,'{{this._id}}','{{this.productsData._id}}')">
+                                    <td><select class="form-select" style="width: fit-content;" name="orderStatus" id="{{this.productsData._id}}" onchange="updateOrderStatus(event,'{{this._id}}','{{this.productsData._id}}')">
                                             <option value="{{this.productsData.orderStatus}}" selected >{{this.productsData.orderStatus}}</option>
                                             <option value="placed" >placed</option>
                                             <option value="shipped" >shipped</option>

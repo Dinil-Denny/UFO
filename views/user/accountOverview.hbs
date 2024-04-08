@@ -14,9 +14,6 @@
                                         <li class="nav-item">
                                             <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                         </li>
-                                        {{!-- <li class="nav-item">
-                                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
-                                        </li> --}}
                                         <li class="nav-item">
                                             <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address" role="tab" aria-controls="address" aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Address</a>
                                         </li>
@@ -52,7 +49,6 @@
                                                             <tr>
                                                                 {{!-- <th>Product</th> --}}
                                                                 <th>Date and Time</th>
-                                                                <th>Status</th>
                                                                 <th>Total</th>
                                                                 <th>Payment</th>
                                                                 <th>Details</th>
@@ -63,7 +59,6 @@
                                                             <tr>
                                                                 {{!-- <td>#1357</td> --}}
                                                                 <td>{{this.date}}</td>
-                                                                <td>{{this.orderStatus}}</td>
                                                                 <td>Rs. {{this.totalPrice}}</td>
                                                                 <td>{{this.paymentMethod}}</td>
                                                                 <td><a href="/orderDetails/{{this._id}}" class="btn-small d-block">View</a></td>
@@ -110,7 +105,7 @@
                                         <a href="/addAddress" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Address</a>
                                         
                                         <div class="row">
-                                            
+                                            {{#if addresses}}
                                             {{#each addresses}}
                                             {{#if this.isActive}}
                                             <div class="col-lg-6 mb-3">
@@ -129,6 +124,18 @@
                                             </div>
                                             {{/if}}
                                             {{/each}}
+                                            {{else}}
+                                            <div class="col-lg-6 mb-3">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <h5 class="mb-0">Shipping Address</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <h5>No address found</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{/if}}
                                             
                                         </div>
                                         
@@ -162,8 +169,12 @@
                                                         </div>
                                                     </div>
                                                 </form>
-                                                <a href="/editDetails/{{user._id}}" class="btn btn-primary ms-auto mb-5" style="width: auto;">Edit details</a>
+                                                <a href="/editDetails/{{user._id}}" class="btn btn-primary ms-auto me-2 mb-3" style="width: auto;">Edit details</a>
+                                                
+                                                <a href="/changePassword/{{user._id}}" class="btn ms-5 btn-primary mb-3">Change Password</a>
+                                                
                                             </div>
+                                            
                                         </div>
                                     </div>
                                     {{!-- ----------------------------------------------------------------------------------------------------------- --}}

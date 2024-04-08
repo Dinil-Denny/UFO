@@ -11,19 +11,33 @@
                             <div class="mb-25">
                                 <h4>Select Address</h4>
                             </div>
-                            {{#each userAddress}}
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="userAddressId" id="{{this._id}}" value="{{this._id}}" required>
-                                <label class="form-check-label" for="{{this._id}}">
-                                    <div class="card" id="{{this._id}}">
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{this.name}}</h5>
-                                            <p class="card-text">{{this.address}}, {{this.city}}, {{this.state}} <br>Pincode: {{this.pinCode}}, Mobile number: {{this.mobileNumber}}</p>
+                            {{#if userAddress}}
+                                {{#each userAddress}}
+                                    {{#if this.isActive}}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="userAddressId" id="{{this._id}}" value="{{this._id}}" required>
+                                            <label class="form-check-label" for="{{this._id}}">
+                                                <div class="card" id="{{this._id}}">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">{{this.name}}</h5>
+                                                        <p class="card-text">{{this.address}}, {{this.city}}, {{this.state}} <br>Pincode: {{this.pinCode}}, Mobile number: {{this.mobileNumber}}</p>
+                                                    </div>
+                                                </div>
+                                            </label>
                                         </div>
+                                    {{else}}
+                                    <div class="form-check">
+                                        <h5>No address found - add a new address to continue checkout</h5>
+                                        <a href="/addAddress" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Address</a>
                                     </div>
-                                </label>
-                            </div>
-                            {{/each}}
+                                    {{/if}}
+                                {{/each}}    
+                            {{else}}
+                                <div class="form-check">
+                                    <h5>No address found - add a new address to continue checkout</h5>
+                                    <a href="/addAddress" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Address</a>
+                                </div>
+                            {{/if}}
                         </div>
                         <div class="col-md-6">
                             <div class="order_review">
@@ -69,7 +83,14 @@
                                         </div>
                                     </div>
                                 </div>
+                                {{#if userAddress}}
+                                {{#if this.isActive}}
                                 <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success">Place Order</button>
+                                
+                                {{else}}
+                                <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success" disabled>Place Order</button>
+                                {{/if}}
+                                {{/if}}
                             </div>
                         </div>
                     </div>

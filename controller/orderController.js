@@ -7,7 +7,7 @@ const Orders = require('../model/orderSchema');
 module.exports = {
     getCartCheckout : async(req,res)=>{
         try {
-            const userAddress = await Address.find().lean();
+            const userAddress = await Address.find({userEmail:req.session.userid}).lean();
             const user = await User.findOne({email : req.session.userid});
             const userId = user._id;
             const userCart = await Cart.findOne({userId}).populate('products.productId');

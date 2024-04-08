@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 module.exports = {
     getOrders : async(req,res)=>{
         try {
-            const orders = await Orders.find().sort({date:-1}).lean();
+            const orders = await Orders.find().sort({date:1}).lean();
             console.log("orders: ",orders);
             res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,orders});
         } catch (error) {

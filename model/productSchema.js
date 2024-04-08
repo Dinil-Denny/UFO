@@ -26,7 +26,8 @@ const productSchema = new mongoose.Schema({
         required: true
     },
     brandName:{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'brand',
         required: true
     },
     size:{

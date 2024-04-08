@@ -25,7 +25,7 @@
                                 {{#each orderDetails}}  
                                 {{!-- <form action="/cancelProduct/{{this.productsData._id}}" method="post"></form> --}}
                                 <tr>
-                                    <td class="image"><img src="{{this.productImages.[0].[0]}}" alt="productImage" style="width: 5rem;"></td>
+                                    <td class="image"><img src="{{this.productImages.[0]}}" alt="productImage" style="width: 5rem;"></td>
                                     <td>{{this.productName}}, {{this.brandName}}, <br>Size: {{this.size}}, Color: {{this.color}}</td>
                                     <td>{{this.name}}, {{this.houseName}}, {{this.street}} <br>{{this.city}}, {{this.state}}</td>
                                     <td>{{this.quantity}}</td>
@@ -46,5 +46,3 @@
             </div>
         </section>
 </div>
-
-   

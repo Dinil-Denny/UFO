@@ -10,8 +10,7 @@ module.exports = {
         try {
             const user = await User.findOne({email:userEmail});
             const userId = user._id;
-            const userCart = await Cart.findOne({userId}).populate('products.productId').lean();
-            // console.log("userCart: ",userCart);
+            const userCart = await Cart.findOne({userId}).populate({path:'products.productId',populate:{path:'brandName'}}).lean();
             
             if(!userCart) 
                 return res.render('user/cart',{title:"Cart",loginName: req.session.username});
@@ -19,6 +18,7 @@ module.exports = {
             let cartProducts = userCart.products;
             let subTotal = 0;
             cartProducts.forEach( item =>{
+                console.log(item.productId.brandName)
                 console.log("item : ",item.productId.offerPrice);
                 subTotal += (item.productId.offerPrice * item.quantity);
             }); 
@@ -34,7 +34,6 @@ module.exports = {
             // });
             //-------------------------------------------------
 
-            
         } catch (error) {
             console.log("Error while fetching cart : ",error)
         }

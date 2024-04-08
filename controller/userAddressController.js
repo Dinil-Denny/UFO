@@ -2,6 +2,8 @@ const addressCollection = require('../model/userAddressSchema');
 const userCollection = require('../model/userSchema');
 const orderCollection = require('../model/orderSchema');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
 module.exports = {
     // accoutn overview
     getAccountOverview : async(req,res)=>{
@@ -9,9 +11,9 @@ module.exports = {
           const userid = req.session.userid;
           const user = await userCollection.findOne({email:userid}).lean();
         //   console.log("userId",userid);
-          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:-1}).lean();
+          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:1}).lean();
           console.log("ordres: ",orders);
-          const addresses = await addressCollection.find().lean();
+          const addresses = await addressCollection.find({userEmail:userid}).lean();
         //   console.log("addresses: ",addresses);
         //   console.log(`user in account overview: ${user}`);
           res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,orders});
@@ -37,6 +39,17 @@ module.exports = {
                         foreignField:"_id",
                         as:"orderedProducts"
                     }
+                },
+                {
+                    $unwind:"$orderedProducts"
+                }, 
+                {
+                    $lookup:{
+                        from:"brands",
+                        localField:"orderedProducts.brandName",
+                        foreignField:"_id",
+                        as:"brand"
+                    }
                 },  
                 {
                     $project:{
@@ -45,7 +58,7 @@ module.exports = {
                         productImages:"$orderedProducts.images",
                         quantity:"$productsData.quantity",
                         productPrice:"$orderedProducts.offerPrice",
-                        brandName:"$orderedProducts.brandName",
+                        brandName:"$brand.brandName",
                         gender:"$orderedProducts.gender",
                         size:"$orderedProducts.size",
                         color:"$orderedProducts.color"
@@ -54,7 +67,7 @@ module.exports = {
                 }
             ]);
             console.log("orderDetails: ",orderDetails);
-            res.render('user/orderDetails',{title:"Order Details",orderDetails});
+            res.render('user/orderDetails',{title:"Order Details",orderDetails,loginName:req.session.username});
         } catch (error) {
             console.log("error: ",error);
         }
@@ -79,17 +92,18 @@ module.exports = {
     
     getAddnewAddress: async(req,res,next)=>{
         try {
-            
-            res.render('user/userNewAddress',{title:"Add address",loginName:req.session.username});
+            //console.log("userid:",req.session.userid)
+            res.render('user/userNewAddress',{title:"Add address",loginName:req.session.username,userEmail:req.session.userid});
         } catch (error) {
             console.log("Error in gettin add address form: ",error.message);
         }
     },
     postAddnewAddress: async(req,res,next)=>{
         try {
-            const{name,mobileNumber,address,street,city,state,pinCode} = req.body;
+            const{userEmail,name,mobileNumber,address,street,city,state,pinCode} = req.body;
             console.log("req.body: ",req.body);
             const userAddress = {
+                userEmail,
                 name,
                 mobileNumber,
                 address,
@@ -155,6 +169,28 @@ module.exports = {
             res.redirect('/account_overview');
         } catch (error) {
             console.log(`Error : ${error.message}`);
+        }
+    },
+    getChangePassword : async(req,res)=>{
+        try {
+            const user = await userCollection.findById(req.params.id).lean();
+            res.render('user/changePassword',{title:"Change Password",user});
+        } catch (error) {
+            console.log("Error while changing password: ",error.message);
+        }
+    },
+    postChangePassword: async(req,res)=>{
+        try {
+            const{newPassword,confirmPassword} = req.body;
+            const user = await userCollection.findById(req.params.id).lean();
+            if(!newPassword) return res.render('user/changePassword',{title:"Change Password",user,message:"Enter new password"});
+            if(!confirmPassword) return res.render('user/changePassword',{title:"Change Password",user,message:"Enter confirm password"});
+            if(newPassword !== confirmPassword) return res.render('user/changePassword',{title:"Change Password",user,message:"Both passwords should be same"});
+            const hashedPassword = await bcrypt.hash(confirmPassword,10);
+            await userCollection.findByIdAndUpdate({_id:req.params.id},{$set:{password:hashedPassword}});
+            res.redirect('/account_overview');
+        } catch (error) {
+            console.log("Error while changing password: ",error.message);
         }
     }
 }

@@ -5,6 +5,7 @@ const userCollection = require('../model/userSchema');
 const adminCollection = require('../model/adminSchema');
 const categoryCollection = require('../model/categorySchema');
 const productCollection = require('../model/productSchema');
+const brandNameCollection = require('../model/brandSchema');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path')
@@ -171,33 +172,76 @@ module.exports = {
 
         productList: async(req,res)=>{
             try {
-                const currentPage = parseInt(req.query.page) || 1;
-                console.log("currentPage: ",currentPage);
-                const limit = 4 ; //items per page
-                const totalProductsCount = await productCollection.countDocuments();
-                console.log("totalProducts: ",totalProductsCount);
-                const totalPages = Math.ceil(totalProductsCount/limit);
-                console.log("total pages: ",totalPages);
-                const previousPage = currentPage>1 ? currentPage-1 : null;
-                console.log("previous page: ",previousPage);
-                const nextPage = currentPage<totalPages ? currentPage+1 : null;
-                console.log("next page: ",nextPage);
+                // const currentPage = parseInt(req.query.page) || 1;
+                // console.log("currentPage: ",currentPage);
+                // const limit = 4 ; //items per page
+                // const totalProductsCount = await productCollection.countDocuments();
+                // console.log("totalProducts: ",totalProductsCount);
+                // const totalPages = Math.ceil(totalProductsCount/limit);
+                // console.log("total pages: ",totalPages);
+                // const previousPage = currentPage>1 ? currentPage-1 : null;
+                // console.log("previous page: ",previousPage);
+                // const nextPage = currentPage<totalPages ? currentPage+1 : null;
+                // console.log("next page: ",nextPage);
 
-                const products = await productCollection.find().populate('category')
+                const paginationData = req.paginationData;
+                const previousPage = paginationData.previousPage;
+                const nextPage = paginationData.nextPage;
+                const currentPage = paginationData.currentPage;
+                const limit = paginationData.limit;
+
+                const products = await productCollection.find().populate('category').populate('brandName')
                 .skip((currentPage-1) * limit)
                 .limit(limit)
                 .lean();
                 // console.log(products);
-                res.render('admin/productList',{admin:true, adminName:req.session.admin, title:"Products",products,previousPage,nextPage,currentPage});
+                res.render('admin/productList',{admin:true, adminName:req.session.admin, title:"Products",products,previousPage,currentPage,nextPage});
+                
             } catch (error) {
                 console.log(`An error occured : ${error}`);
             }
             
         },
+
+        productListPagination: async(req,res)=>{
+            try {
+                // const currentPage = parseInt(req.query.page) || 1;
+                // console.log("currentPage: ",currentPage);
+                // const limit = 4 ; //items per page
+                // const totalProductsCount = await productCollection.countDocuments();
+                // console.log("totalProducts: ",totalProductsCount);
+                // const totalPages = Math.ceil(totalProductsCount/limit);
+                // console.log("total pages: ",totalPages);
+                // const previousPage = currentPage>1 ? currentPage-1 : null;
+                // console.log("previous page: ",previousPage);
+                // const nextPage = currentPage<totalPages ? currentPage+1 : null;
+                // console.log("next page: ",nextPage);
+
+                const paginationData = req.paginationData;
+                const previousPage = paginationData.previousPage;
+                const nextPage = paginationData.nextPage;
+                const currentPage = paginationData.currentPage;
+                const limit = paginationData.limit;
+                
+                const products = await productCollection.find().populate('category').populate('brandName')
+                .skip((currentPage-1) * limit)
+                .limit(limit)
+                .lean();
+                // console.log(products);
+                const data = {products:products,previousPage:previousPage,nextPage:nextPage,currentPage:currentPage};
+                console.log("data:",data);
+                res.json(data);
+            } catch (error) {
+                console.log("Error while paginatin: ",error.message);
+            }
+        },
+
         getAddProduct: async(req,res)=>{
             try {
                 const categories = await categoryCollection.find({}).lean();
-                res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories});
+                const brands = await brandNameCollection.find().lean();
+                console.log("brands:",brands);
+                res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories,brands});
             } catch (err) {
                 if(err)
                     console.log(`An error occured : ${err.message}`);
@@ -207,7 +251,6 @@ module.exports = {
         postAddProducts: async(req,res)=>{
             try {
                 const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category} = req.body;
-                
                 
                 // creating a new product document
                 const product = new productCollection({
@@ -243,6 +286,26 @@ module.exports = {
                 res.redirect('/admin/products');
             } catch (err) {
                 if(err)console.log(`An error occured!: ${err}`);
+            }
+        },
+        postAddBrand : async(req,res,next)=>{
+            try {
+                const {brandName} = req.body;
+                console.log("brandName:",brandName);
+                const categories = await categoryCollection.find().lean();
+                const brands = await brandNameCollection.find().lean();
+                const brandExist = await brandNameCollection.findOne({brandName:{$regex:new RegExp("^"+brandName+"$","i")}});  
+                console.log("brandExists:",brandExist);
+                if(!brandExist){
+                    const brand = new brandNameCollection({
+                        brandName
+                    });
+                    await brand.save();
+                    return res.redirect('/admin/addProduct');
+                }
+                res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories,brands,brandAddErrorMessage:"Brand already exists"});
+            } catch (error) {
+                console.log("Error while adding brand: ",error.message);
             }
         },
 
