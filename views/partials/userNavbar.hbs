@@ -55,11 +55,14 @@
           <a class="nav-link active" aria-current="page" href="/products">All Products</a>
         </li>
       </ul>
-      <form class="d-flex">
-          <input class="form-control ms-5" type="search" placeholder="Search" aria-label="Search" name="search">
-            <button class="btn btn-outline-secondary ms-3" type="submit"><i class="bi bi-search"></i>
-            </button>
+
+      {{!-- search --}}
+      <form class="d-flex" action="/search" method="get">
+          <input class="form-control ms-5" type="search" placeholder="search" aria-label="Search" name="search" value="{{#if search}}{{search}}{{/if}}" required>
+            <button class="btn btn-outline-secondary ms-3" type="submit"><i class="bi bi-search"></i></button>
       </form>
+      {{!-- search --}}
+
       <ul class="navbar-nav me-5 mb-2 mb-lg-0 ms-auto">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -83,12 +86,6 @@
           {{/if}}
         </li>
 
-        {{!-- <li class="nav-item">
-          <a class="nav-link" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 20 18">
-              <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-              <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-            </svg> {{#if message}}{{message}}{{else}}Login{{/if}}</a>
-        </li> --}}
         <li class="nav-item">
           <a class="nav-link ms-3 me-3" href="#"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart-fill" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>

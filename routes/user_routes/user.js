@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts,productListingPagination} = require('../../controller/userController')
+const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts,productListingPagination,searchProducts} = require('../../controller/userController')
 
 const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct} = require('../../controller/userAddressController');
 
@@ -61,6 +61,9 @@ router.get('/pagination',pagination,productListingPagination);
 
 // filter products
 router.get('/filter',filterSorting,pagination,filterProducts);
+
+//search products
+router.get('/search',userAuthentication,pagination,searchProducts);
 
 // product details
 router.get('/productDetails/:id',userAuthentication,getProductDetails);

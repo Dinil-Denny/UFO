@@ -7,6 +7,8 @@ const categoryCollection = require("../model/categorySchema");
 const cartCollection = require("../model/cartSchema");
 const sendOTPVerificationMail = require("../utils/otpVerificationMail");
 const transporter = require("../utils/mailTransporter");
+const brandSchema = require("../model/brandSchema");
+const { query } = require("express");
 require("dotenv").config();
 
 module.exports = {
@@ -475,13 +477,19 @@ module.exports = {
       .limit(limit)
       .lean();
       console.log("products:",products);
+      const categories = await categoryCollection.find().lean();
+      console.log("categories: ",categories);
+      const brands = await brandSchema.find().lean();
+      console.log("brands: ",brands);
       res.render("user/productList", {
         title: "Products",
         products,
         loginName: req.session.username,
         previousPage,
         currentPage,
-        nextPage
+        nextPage,
+        categories,
+        brands
       });
     } catch (error) {
       console.log("Error!! : ", error);
@@ -609,4 +617,74 @@ module.exports = {
       console.log("Error occured while sorting: ", error.message);
     }
   },
+
+  searchProducts:async(req,res)=>{
+    try {
+      console.log("search: ",req.query);
+      const {search} = req.query;
+
+      const paginationData = req.paginationData;
+      const previousPage = paginationData.previousPage;
+      const nextPage = paginationData.nextPage;
+      const currentPage = paginationData.currentPage;
+      const limit = paginationData.limit;
+
+      const categories = await categoryCollection.find().lean();
+      const brands = await brandSchema.find().lean();
+      const category = await categoryCollection.findOne({catagoryName:{$regex : search, $options:'i'}});
+      console.log("category:",category);
+      const brand = await brandSchema.findOne({brandName:{$regex: search,$options:'i'}});
+      console.log("brand:",brand);
+      let query = {}
+
+      if(category){
+        query = {
+            $or:[
+              {productName: {$regex: search,$options: 'i'}},
+              {description: {$regex: search,$options: 'i'}},
+              {category: category._id},
+              {gender: {$regex: search,$options: 'i'}},
+              {color: {$regex: search,$options: 'i'}}
+            ]
+        }
+        console.log("query:",query);
+      }else if(brand){
+        query = {
+          $or:[
+            {productName: {$regex: search,$options: 'i'}},
+            {description: {$regex: search,$options: 'i'}},
+            {gender: {$regex: search,$options: 'i'}},
+            {color: {$regex: search,$options: 'i'}},
+            {brandName: brand._id}
+          ]
+        }
+      }else{
+        query = {
+          $or:[
+            {productName: {$regex: search,$options: 'i'}},
+            {description: {$regex: search,$options: 'i'}},
+            {gender: {$regex: search,$options: 'i'}},
+            {color: {$regex: search,$options: 'i'}}
+          ]
+        }
+        console.log("query: ",query);
+      }
+      const products = await productCollection.find(query).populate('category').populate('brandName')
+      .skip((currentPage-1) * limit)
+      .limit(limit)
+      .lean();
+      console.log("prouduct: ",products);
+      console.log(products.length);
+      res.render('user/productList',{title:"Products",products,
+      loginName: req.session.username,
+      previousPage,
+      currentPage,
+      nextPage,
+      categories,
+      brands,
+      search});
+    } catch (error) {
+      console.log("Error while searching:",error);
+    }
+  }
 };

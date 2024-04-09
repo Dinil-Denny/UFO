@@ -21,6 +21,13 @@ module.exports = {
             query.brandName = filters.brand;
             }
             
+            //filter based on category
+            if(Array.isArray(filters.category)){
+                query.category = {$in:filters.category}
+            }else if(filters.category){
+                query.category = filters.category;
+            }
+
             // filter on price
             if(Array.isArray(filters.offerPrice)){
             const parsedPriceFilter = filters.offerPrice.map(value => parseInt(value));

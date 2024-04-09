@@ -21,6 +21,7 @@
                         {{!-- products --}}
                         <div class="productsContainer d-flex flex-column">  
                             <div class="products mb-3 d-flex justify-content-center flex-wrap">
+                                {{#if products}}
                                 {{#each products}}
                                 {{#if this.active}}
                                 <div class="card m-3" style="width: 18rem; border-top-right-radius: 25px; border-top-left-radius: 25px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
@@ -39,6 +40,11 @@
                                 </div>
                                 {{/if}}
                                 {{/each}}
+                                {{else}}
+                                <div class="m-3">
+                                    <h5 class="text-center fs-4">Sorry, no products found!...</h5>
+                                </div>
+                                {{/if}}
                             </div>
                         </div>
                         {{!-- products --}}
@@ -80,9 +86,18 @@
                                     </div>
                                     <div class="filterOptions">
                                         <h5>Brands</h5>
-                                        {{#each products}}
-                                        <label for="{{this.brandName._id}}" style="display:block;">
-                                            <input type="checkbox" id="{{this.brandName._id}}" name="brand" value="{{this.brandName._id}}" onchange="filterProducts()">{{this.brandName.brandName}}
+                                        {{#each brands}}
+                                        <label for="{{this._id}}" style="display:block;">
+                                            <input type="checkbox" id="{{this._id}}" name="brand" value="{{this._id}}" onchange="filterProducts()">{{this.brandName}}
+                                        </label>
+                                        {{/each}}
+                                        <div class="separator my-4"></div>
+                                    </div>
+                                    <div class="filterOptions">
+                                        <h5>Category</h5>
+                                        {{#each categories}}
+                                        <label for="{{this._id}}" style="display:block;">
+                                            <input type="checkbox" id="{{this._id}}" name="category" value="{{this._id}}" onchange="filterProducts()">{{this.catagoryName}}
                                         </label>
                                         {{/each}}
                                         <div class="separator my-4"></div>

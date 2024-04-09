@@ -19,12 +19,12 @@
             <h4>{{product.productName}}</h4>
             <h5>Price: Rs.{{product.offerPrice}} <del>RS.{{product.price}}</del></h5>
             <p>{{product.description}}</p>
-            
             <div class="sizes">
                 <p>Size:</p>
                 <select name="Size" id="size" class="size-option">
                     <option value="{{product.size}}">{{product.size}}</option>
                 </select>
+                <p>Color: <span>{{product.color}}</span><div style="border: 1px solid; border-radius: 50%; width: 30px; height: 30px; background-color: {{product.color}};"></div></p>
             </div>
 
             <div class="quantity">
