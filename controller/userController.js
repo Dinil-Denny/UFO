@@ -8,6 +8,7 @@ const cartCollection = require("../model/cartSchema");
 const sendOTPVerificationMail = require("../utils/otpVerificationMail");
 const transporter = require("../utils/mailTransporter");
 const brandSchema = require("../model/brandSchema");
+const wishlistCollection = require('../model/wishlistSchema');
 const { query } = require("express");
 require("dotenv").config();
 
@@ -476,11 +477,8 @@ module.exports = {
       .skip((currentPage-1) * limit)
       .limit(limit)
       .lean();
-      console.log("products:",products);
       const categories = await categoryCollection.find().lean();
-      console.log("categories: ",categories);
       const brands = await brandSchema.find().lean();
-      console.log("brands: ",brands);
       res.render("user/productList", {
         title: "Products",
         products,
@@ -520,12 +518,18 @@ module.exports = {
     try {
       // converting this string id into object id
       const objectId = new mongoose.Types.ObjectId(req.params.id);
+      console.log("objectId:",objectId)
       const product = await productCollection.findById(objectId).populate('brandName').lean();
       const user = await userCollection.findOne({email:req.session.userid});
       const userId = user._id;
       const cart = await cartCollection.findOne({userId});
-      //console.log("cart : ",cart);
-
+      const wishlist = await wishlistCollection.findOne({user:userId});
+      console.log("wishlist:",wishlist);
+      let productExistInWishlist = null;
+      if(wishlist){
+        productExistInWishlist = wishlist.products.find(product => product.productId.toString() === objectId.toString());
+      }
+      console.log("productExistInWishlist:",productExistInWishlist);
       if(cart){
         const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
         
@@ -537,7 +541,8 @@ module.exports = {
             title: "Product Details",
             product,
             loginName: req.session.username,
-            isInStock
+            isInStock,
+            productExistInWishlist
           });
         }
       }
@@ -546,12 +551,9 @@ module.exports = {
         title: "Product Details",
         product,
         loginName: req.session.username,
-        isInStock
+        isInStock,
+        productExistInWishlist
       });
-      // const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
-      // console.log("existingProduct: ",existingProduct);
-      // const quantity = existingProduct.quantity;
-      // console.log("quantity: ",quantity);
       
     } catch (error) {
       console.log("Error!!: ", error);

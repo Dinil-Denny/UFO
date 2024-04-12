@@ -18,12 +18,11 @@
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price</th>
                                     <th scope="col">Order Status</th>
-                                    <th scope="col">Order Cancellation</th>
+                                    {{!-- <th scope="col"></th> --}}
                                 </tr>
                             </thead>
                             <tbody>
-                                {{#each orderDetails}}  
-                                {{!-- <form action="/cancelProduct/{{this.productsData._id}}" method="post"></form> --}}
+                                {{#each orderDetails}}
                                 <tr>
                                     <td class="image"><img src="{{this.productImages.[0]}}" alt="productImage" style="width: 5rem;"></td>
                                     <td>{{this.productName}}, {{this.brandName}}, <br>Size: {{this.size}}, Color: {{this.color}}</td>
@@ -31,12 +30,12 @@
                                     <td>{{this.quantity}}</td>
                                     <td>{{this.productPrice}}</td>
                                     <td class=" text-center">{{this.productsData.orderStatus}}</td>
-                                    {{!-- {{#if eq this.productsData.orderStatus "placed"}} --}}
-                                    <td><a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" onclick="return confirm(`Do you want to cancel this order?`)">Cancel</a></td>
-                                    {{!-- {{/if}} --}}
-                                    
+                                    <td>
+                                        {{!-- {{#ifCond (eq this.productsData.orderStatus '') }} --}}
+                                        <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
+                                        <a href="/returnProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" onclick="return confirm(`Do you want to return this product?`)">Return product</a>
+                                    </td>
                                 </tr>
-                                {{!-- </form> --}}
                                 {{/each}}
                             </tbody>
                             
@@ -46,3 +45,7 @@
             </div>
         </section>
 </div>
+
+<script>
+    
+</script>

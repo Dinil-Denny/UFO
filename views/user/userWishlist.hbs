@@ -1,0 +1,39 @@
+<section class="mt-50 mb-50">
+    <div class="container">
+        <div class="row d-flex justify-content-center">
+            <div class="card col-lg-9" style="background-color: #72383d;">
+                <h4 class="m-4 text-white fs-3">Your Wishlist</h4>
+                {{!-- products --}}
+                <div class="productsContainer d-flex flex-column">  
+                    <div class="products mb-3 d-flex justify-content-center flex-wrap">
+                        {{#if products}}
+                        {{#each products}}
+                        {{#if this.productId.active}}
+                        <div class="card m-3" style="width: 18rem; border-top-right-radius: 25px; border-top-left-radius: 25px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                            <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this.productId._id}}">
+                            <img src="{{this.productId.images.[0]}}" class="card-img-top p-2" style="height:350px; border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
+                            <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                                        
+                                <h5 class="card-title">{{this.productId.brandName.brandName}}</h5>
+                                <p class="card-text">{{this.productId.productName}}</p>
+                                <div class="product-price">
+                                    <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. {{this.productId.offerPrice}} </span>
+                                    <span class="old-price text-decoration-line-through">Rs. {{this.productId.price}}</span>
+                                </div>
+                            </div>
+                            </a>
+                        </div>
+                        {{/if}}
+                        {{/each}}
+                        {{else}}
+                        <div class="m-3">
+                            <h5 class="text-center fs-4 text-white">Sorry, no products in wishlist!...</h5>
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                {{!-- products --}}
+            </div>
+        </div>
+    </div>
+</section>

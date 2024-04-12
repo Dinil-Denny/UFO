@@ -26,17 +26,28 @@
                 </select>
                 <p>Color: <span>{{product.color}}</span><div style="border: 1px solid; border-radius: 50%; width: 30px; height: 30px; background-color: {{product.color}};"></div></p>
             </div>
-
-            <div class="quantity">
-                {{#if isInStock }}
-                <form action="/addToCart/{{product._id}}" method="post">
-                    <button style="display: block;">Add to Cart</button>
-                </form>
-                {{else}}
-                <button style="display: block;" disabled>Out of stock</button>
-                {{/if}}
+            <div class="addProduct d-flex">
+                <div class="quantity me-3">
+                    {{#if isInStock }}
+                    <form action="/addToCart/{{product._id}}" method="post">
+                        <button style="display: block; border-radius: 25px;">Add to Cart</button>
+                    </form>
+                    {{else}}
+                    <button style="display: block;" disabled>Out of stock</button>
+                    {{/if}}
+                </div>
+                <div class="quantity">
+                    {{#if productExistInWishlist}}
+                    <form action="/wishlist/{{product._id}}" method="post">
+                        <button style="display: block; border-radius: 25px;">Remove from Wishlist</button>
+                    </form>
+                    {{else}}
+                    <form action="/wishlist/{{product._id}}" method="post">
+                        <button style="display: block; border-radius: 25px;">Add to Wishlist</button>
+                    </form>
+                    {{/if}}
+                </div>
             </div>
-
             <div>
                 <p>Delivery:</p>
                 <p>Free standard shipping on orders over Rs.500 before tax, plus free returns.</p>
@@ -68,15 +79,6 @@
         img.addEventListener('click', () => {
             // Replace the current image with the clicked image
             featuredImage.src = img.src;
-            {{!-- zoomImg.src = img.src; --}}
         });
     });
- 
 </script>
-{{!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="zoom.js"></script>
-
-<script>
-    var x = $('#target').zoom(5);
-    x.setZoom(5);
-</script> --}}

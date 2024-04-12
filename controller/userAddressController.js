@@ -66,7 +66,6 @@ module.exports = {
                     }
                 }
             ]);
-            console.log("orderDetails: ",orderDetails);
             res.render('user/orderDetails',{title:"Order Details",orderDetails,loginName:req.session.username});
         } catch (error) {
             console.log("error: ",error);
@@ -79,15 +78,29 @@ module.exports = {
             console.log("orderId: ",orderId);
             const productsDataId = req.params.productObjId;
             console.log("orderProductId: ",productsDataId);
-            const orderDetails = await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
+            await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":"cancelled"}},
                 {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]});
-            
             res.redirect(`/orderDetails/${orderId}`);
         }catch(err){
             console.log("Error while cancelling product-order: ",err.message);
         }
         
+    },
+    
+    returnProduct: async(req,res)=>{
+        try {
+            const orderId = req.params.orderId;
+            console.log("orderId: ",orderId);
+            const productsDataId = req.params.productObjId;
+            console.log("orderProductId: ",productsDataId);
+            await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
+                {$set:{"productsData.$[product].orderStatus":"returned"}},
+                {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]});
+            res.redirect(`/orderDetails/${orderId}`);
+        } catch (error) {
+            console.log("Error while returning the product: ",error.message);
+        }
     },
     
     getAddnewAddress: async(req,res,next)=>{

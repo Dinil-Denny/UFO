@@ -3,6 +3,8 @@ const Product = require('../model/productSchema');
 const User = require('../model/userSchema');
 const Address = require('../model/userAddressSchema');
 const Orders = require('../model/orderSchema');
+const Wishlist = require('../model/wishlistSchema');
+const wishlistSchema = require('../model/wishlistSchema');
 
 module.exports = {
     getCart : async(req,res)=>{
@@ -48,7 +50,6 @@ module.exports = {
         try {
             // cart exist 
             const cart = await Cart.findOne({userId : user._id});
-            // console.log("cart finding");
             if(!cart){
                 const newCart = new Cart({
                     userId,
@@ -89,9 +90,6 @@ module.exports = {
 
     updateCartQuantity : async(req,res)=>{
         const {productId,quantity} = req.body;
-        // console.log("req.body: ",req.body);
-        // console.log("productId: ",productId);
-        // console.log(req.session.userid);
         try {
             const user = await User.findOne({email : req.session.userid});
             const userId = user._id;
@@ -130,6 +128,56 @@ module.exports = {
             res.status(500).json({message:"Error in updating cart quantity"});
         }
     },
+    getWishlist : async(req,res)=>{
+        try {
+            const user = await User.findOne({email:req.session.userid});
+            const wishlist = await Wishlist.findOne({user:user._id},{products:1}).populate({path:'products.productId',populate:{path:'brandName'}}).lean();
+            console.log("wishlist:",wishlist);
+            let products = null 
+            if(wishlist){
+                products = wishlist.products.sort((a,b)=>{
+                    const dateA = new Date(a.dateCreated);
+                    const dateB = new Date(b.dateCreated);
+                    return dateB-dateA;
+                });
+            }
+            res.render('user/userWishlist',{title:"Wishlist",products,loginName: req.session.username});
+            
+        } catch (error) {
+            console.log("error while getting wishlist:",error.message);
+        }
+    },
+    //add and remve from wishlist 
+    wishlistControl : async(req,res)=>{
+        try{
+            const user = await User.findOne({email:req.session.userid});
+            //console.log("user:",user);
+            const productId = req.params.id;
+            //console.log("productId:",productId);
+            const existingWishlist = await Wishlist.findOne({user:user._id});
+            //console.log("existingWishlist:",existingWishlist);
+            if(!existingWishlist){
+                const newWishlist = new Wishlist({
+                    user,
+                    products : [{productId}]
+                })
+                await newWishlist.save();
+            }else{
+                const productExist = existingWishlist.products.findIndex(product => product.productId.toString() === productId.toString());
+                //console.log("productExist:",productExist);
+                if(productExist !== -1){
+                    existingWishlist.products.splice(productExist,1);
+                    await existingWishlist.save();
+                }else{
+                    existingWishlist.products.push({productId});
+                    await existingWishlist.save();
+                }
+            }
+            res.redirect('/productDetails/'+productId);
+        }catch(err){
+            console.log("Error while adding to wishlist: ",err.message);
+        }
+    }
     
 
 }

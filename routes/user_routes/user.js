@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts,productListingPagination,searchProducts} = require('../../controller/userController')
 
-const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct} = require('../../controller/userAddressController');
+const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userAddressController');
 
-const{getCart,addToCart,removeItemInCart,updateCartQuantity} = require('../../controller/cartControllers');
+const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/cartControllers');
 
 const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/orderController')
 
@@ -77,6 +77,9 @@ router.get('/orderDetails/:id',userAuthentication,getOrderDetails);
 //cancel ordered product
 router.get('/cancelProduct/:orderId/:productObjId',userAuthentication,cancelProduct);
 
+//return product 
+router.get('/returnProduct/:orderId/:productObjId',userAuthentication,returnProduct);
+
 // get add address
 router.get('/addAddress',userAuthentication,getAddnewAddress);
 router.post('/addAddress',userAuthentication,postAddnewAddress)
@@ -101,6 +104,12 @@ router.get('/cart',userAuthentication,getCart);
 
 // add to cart
 router.post('/addToCart/:id',userAuthentication,addToCart);
+
+//get wishlist
+router.get('/getWishlist',userAuthentication,getWishlist);
+
+//add to whishlist
+router.post('/wishlist/:id',userAuthentication,wishlistControl);
 
 //updating cart quantity
 router.post('/updateCartQuantity',userAuthentication,updateCartQuantity);
