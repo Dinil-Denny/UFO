@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,getProductListing,getProductDetails,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword,filterProducts,productListingPagination,searchProducts} = require('../../controller/userController')
-
-const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userAddressController');
-
+const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword} = require('../../controller/userController');
+const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/productsManagementControllers');
+const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userAccountOverviewControllers');
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/cartControllers');
-
-const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/orderController')
-
+const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/orderController');
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
-
 const{pagination} = require('../../middlewares/pagination');
-
 const {filterSorting} = require('../../middlewares/filteringSortingMiddleware');
 
 /* GET user home page. */
@@ -31,9 +26,6 @@ router.get('/register',getUserRegister);
 
 // post user registration details
 router.post('/register',postUserRegister);
-
-// get user login otp verification page
-// router.get('/otp',getOTP);
 
 // post otp for verification
 router.post('/otp',postVerifyOTP);
@@ -123,4 +115,5 @@ router.post('/checkout',userAuthentication,postCartCheckout);
 
 //order success
 router.get('/orderSuccess',userAuthentication,getOrderSuccessPage);
+
 module.exports = router;

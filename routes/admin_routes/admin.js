@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const {getDashboard,getUserList,getAdminLogin,postAdminLogin,adminLogout, blockUser,getAddCatagory,postAddCatagory,deleteCategory,productList,productListPagination,getEditCategory,postEditCategory,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers');
-
+const {getDashboard,getAdminLogin,postAdminLogin,adminLogout,} = require('../../controller/adminControllers');
+const {getUserList,blockUser} = require('../../controller/adminUserController');
+const {getAddCatagory,postAddCatagory,deleteCategory,getEditCategory,postEditCategory} = require('../../controller/adminCategoryController');
+const {productList,productListPagination,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminProductsController');
 const{getOrders,getOrderDetails,updateOrderStatus} = require('../../controller/adminOrderController');
 
 const { upload } = require('../../config/multerStorage');
@@ -10,12 +12,6 @@ const {pagination} = require('../../middlewares/pagination');
 
 // get admin dashboard
 router.get('/',adminAuthentication, getDashboard);
-
-// get admin registration
-// router.get('/register',getAdminRegister);
-
-// post admin registration details
-// router.post('/register',postAdminRegister);
 
 // get admin login page
 router.get('/login',getAdminLogin);
