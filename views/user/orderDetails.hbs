@@ -1,3 +1,4 @@
+
 <div class="orderDetails d-flex justify-content-center" style="">
         <section class="content-main" style="width: 90%;">
             <div class="content-header">
@@ -9,7 +10,6 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
-                            
                             <thead>
                                 <tr>
                                     <th scope="col">Image</th>
@@ -18,7 +18,7 @@
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Price</th>
                                     <th scope="col">Order Status</th>
-                                    {{!-- <th scope="col"></th> --}}
+                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -31,9 +31,21 @@
                                     <td>{{this.productPrice}}</td>
                                     <td class=" text-center">{{this.productsData.orderStatus}}</td>
                                     <td>
-                                        {{!-- {{#ifCond (eq this.productsData.orderStatus '') }} --}}
-                                        <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
-                                        <a href="/returnProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" onclick="return confirm(`Do you want to return this product?`)">Return product</a>
+                                        {{#ifEquals this.productsData.orderStatus "placed"}}
+                                            <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
+                                        {{/ifEquals}}
+                                        {{#ifEquals this.productsData.orderStatus "shipped"}}
+                                            <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
+                                        {{/ifEquals}}
+                                        {{#ifEquals this.productsData.orderStatus "cancelled"}}
+                                            <button class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" disabled>Cancel order</button>
+                                        {{/ifEquals}}
+                                        {{#ifEquals this.productsData.orderStatus "delivered"}}
+                                            <a href="/returnProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" onclick="return confirm(`Do you want to return this product?`)">Return product</a>
+                                        {{/ifEquals}}
+                                        {{#ifEquals this.productsData.orderStatus "returned"}}
+                                            <button class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" disabled>Return product</button>
+                                        {{/ifEquals}}
                                     </td>
                                 </tr>
                                 {{/each}}
@@ -46,6 +58,3 @@
         </section>
 </div>
 
-<script>
-    
-</script>

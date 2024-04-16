@@ -109,22 +109,28 @@
                     <table class="table">
                       <tbody>
                         <tr>
-                          <td class="cart_total_label">Cart Subtotal</td>
-                          <td class="cart_total_amount"><span
-                              class="font-lg fw-900 text-brand" id="subtotal"
-                            ><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></td>
+                          <th class="cart_total_label">Cart Total</th>
+                          <td class="cart_total_amount"><i class="bi bi-currency-rupee"></i><span
+                              class="font-lg fw-900 text-brand" id="total"
+                            > {{total}}</span></td>
                         </tr>
                         <tr>
-                          <td class="cart_total_label">Shipping</td>
+                          <th class="cart_total_label">Discount</th>
+                          <td class="cart_total_amount"><i class="bi bi-currency-rupee"></i><i class="bi bi-dash"></i><span
+                              class="font-lg fw-900 text-brand" id="discount"
+                            > {{discount}}</span></td>
+                        </tr>
+                        <tr>
+                          <th class="cart_total_label">Shipping</th>
                           <td class="cart_total_amount">
                             <i class="ti-gift mr-5"></i>
                             Free Shipping</td>
                         </tr>
                         <tr>
-                          <td class="cart_total_label">Total</td>
-                          <td class="cart_total_amount"><strong><span
-                                class="font-xl fw-900 text-brand" id="total"
-                              ><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></strong></td>
+                          <th class="cart_total_label">Total</th>
+                          <td class="cart_total_amount"><strong><i class="bi bi-currency-rupee"></i><span
+                                class="font-xl fw-900 text-brand" id="subTotal"
+                              > {{subTotal}}</span></strong></td>
                         </tr>
                       </tbody>
                     </table>
@@ -190,14 +196,17 @@
       return response.json();
       })
     .then(data => {
+      console.log(data)
       updatedQuantity = data.data.quantity;
       const prodId = data.data.productId;
       const quantityInput = document.getElementById(prodId); 
       quantityInput.value = updatedQuantity;
-      const subtotal = document.getElementById('subtotal');
+      const subtotal = document.getElementById('subTotal');
       const total = document.getElementById('total');
+      const discount = document.getElementById('discount');
       subtotal.innerText = data.data.subtotal;
-      total.innerText = data.data.subtotal;
+      total.innerText = data.data.total;
+      discount.innerText = data.data.discount;
     })
     .catch((err) => console.log("Error: ",err));
   }

@@ -15,12 +15,17 @@ module.exports = {
             console.log("userCart.products: ",userCart.products);
             //cart subtotal
             let cartProducts = userCart.products;
+            let total = 0;
             let subTotal = 0;
             cartProducts.forEach( item =>{
                 subTotal += (item.productId.offerPrice * item.quantity);
+                total += (item.productId.price * item.quantity);
             }); 
             subTotal = subTotal.toFixed(2);
-            res.render('user/checkout',{userAddress,subTotal,userId,userCartId,loginName: req.session.username,title:"Checkout"});
+            total = total.toFixed(2);
+            let discount = total - subTotal;
+            discount = discount.toFixed(2);
+            res.render('user/checkout',{userAddress,subTotal,total,discount,userId,userCartId,loginName: req.session.username,title:"Checkout"});
         } catch (error) {
             
         }
@@ -29,6 +34,7 @@ module.exports = {
     postCartCheckout : async(req,res)=>{
         try {
             const {userAddressId,cartTotal,userCartId,userId,paymentMethod} = req.body;
+            if(!userAddressId) return res.redirect('/checkout');
             console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
             await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
             const userCart = await Cart.findOne({_id: userCartId});

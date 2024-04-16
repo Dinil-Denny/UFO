@@ -5,21 +5,25 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 const hbs = require('express-handlebars');
+const hbsHelpers = require('./utils/hbsHelpers');
 const session = require('express-session');
 require('dotenv').config();
+
 // db connection
 const UFOdbdb = require('./config/connection');
 const {catchError,errorHandler} = require('./middlewares/errorHandling');
 
 const userRouter = require('./routes/user_routes/user');
 const adminRouter = require('./routes/admin_routes/admin');
+const { handlebars } = require('hbs');
 
 const app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/'}));
+app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout/',partialsDir:__dirname+'/views/partials/',helpers:hbsHelpers}));
 
 const oneDay = 1000*60*60*24;
 app.use(session({

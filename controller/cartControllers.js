@@ -19,22 +19,16 @@ module.exports = {
 
             let cartProducts = userCart.products;
             let subTotal = 0;
+            let total = 0;
             cartProducts.forEach( item =>{
-                console.log(item.productId.brandName)
-                console.log("item : ",item.productId.offerPrice);
                 subTotal += (item.productId.offerPrice * item.quantity);
+                total += (item.productId.price * item.quantity);
             }); 
             subTotal = subTotal.toFixed(2);
-            
-            res.render('user/cart',{title:"Cart",userCart,loginName: req.session.username,subTotal});
-
-            // ---------------------testing--------------------
-            // const cartItems = userCart.products;
-            // console.log("cartItems: ",cartItems);
-            // cartItems.forEach(val => {
-            //     console.log("img-val: ",val.productId.images[0]);
-            // });
-            //-------------------------------------------------
+            total = total.toFixed(2);
+            let discount = total - subTotal;
+            discount = discount.toFixed(2);
+            res.render('user/cart',{title:"Cart",userCart,loginName: req.session.username,subTotal,total,discount});
 
         } catch (error) {
             console.log("Error while fetching cart : ",error)
@@ -102,11 +96,16 @@ module.exports = {
             //cart subtotal
             let cartProducts = userCart.products;
             let subTotal = 0;
+            let total = 0;
             cartProducts.forEach( item =>{
                 console.log("item : ",item.productId.offerPrice);
                 subTotal += (item.productId.offerPrice * item.quantity);
+                total += (item.productId.price * item.quantity);
             }); 
             subTotal = subTotal.toFixed(2);
+            total = total.toFixed(2);
+            let discount = total - subTotal;
+            discount = discount.toFixed(2);
             // updated product quantity
             const quantityUpdated = await Cart.aggregate([
                 {
@@ -120,7 +119,7 @@ module.exports = {
                 },
             ])
             const productUpdated = quantityUpdated.find(object => object.products.productId == productId);
-            const data = {productId: productUpdated.products.productId,quantity:productUpdated.products.quantity,subtotal:subTotal}
+            const data = {productId: productUpdated.products.productId,quantity:productUpdated.products.quantity,subtotal:subTotal,total:total,discount:discount}
             res.json({message:"quantity updated successfully",data : data});
             
         } catch (error) {
