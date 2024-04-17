@@ -25,16 +25,9 @@
                                                 </div>
                                             </label>
                                         </div>
-                                    {{else}}
-                                    <div class="form-check">
-                                        <h5>No address found - add a new address to continue checkout</h5>
-                                        <a href="/addAddress" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Address</a>
-                                    </div>
                                     {{/if}}
-                                {{/each}}    
-                            {{else}}
-                                <div class="form-check">
-                                    <h5>No address found - add a new address to continue checkout</h5>
+                                {{/each}}
+                                <div class="form-check mt-5">
                                     <a href="/addAddress" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Address</a>
                                 </div>
                             {{/if}}

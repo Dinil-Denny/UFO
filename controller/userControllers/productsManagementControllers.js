@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const userCollection = require("../model/userSchema");
-const productCollection = require("../model/productSchema");
-const categoryCollection = require("../model/categorySchema");
-const cartCollection = require("../model/cartSchema");
-const brandSchema = require("../model/brandSchema");
-const wishlistCollection = require('../model/wishlistSchema');
+const userCollection = require("../../model/userSchema");
+const productCollection = require("../../model/productSchema");
+const categoryCollection = require("../../model/categorySchema");
+const cartCollection = require("../../model/cartSchema");
+const brandSchema = require("../../model/brandSchema");
+const wishlistCollection = require('../../model/wishlistSchema');
 require("dotenv").config();
 
 module.exports = {

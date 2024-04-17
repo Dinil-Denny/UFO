@@ -1,4 +1,4 @@
-const userCollection = require('../model/userSchema');
+const userCollection = require('../../model/userSchema');
 
 module.exports = {
     getUserList : async(req,res,next)=>{

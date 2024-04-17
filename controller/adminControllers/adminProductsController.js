@@ -1,6 +1,6 @@
-const categoryCollection = require('../model/categorySchema');
-const productCollection = require('../model/productSchema');
-const brandNameCollection = require('../model/brandSchema');
+const categoryCollection = require('../../model/categorySchema');
+const productCollection = require('../../model/productSchema');
+const brandNameCollection = require('../../model/brandSchema');
 const sharp = require('sharp');
 const fs = require('fs');
 
@@ -120,7 +120,7 @@ module.exports = {
 
     getEditPorducts:async(req,res)=>{
         try{
-            const product = await productCollection.findById(req.params.id).lean();
+            const product = await productCollection.findById(req.params.id).populate('brandName').lean();
             // fetching category information
             const categories = await categoryCollection.find().lean();
             const category = await categoryCollection.findById(product.category).lean();

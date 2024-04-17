@@ -1,6 +1,6 @@
-const addressCollection = require('../model/userAddressSchema');
-const userCollection = require('../model/userSchema');
-const orderCollection = require('../model/orderSchema');
+const addressCollection = require('../../model/userAddressSchema');
+const userCollection = require('../../model/userSchema');
+const orderCollection = require('../../model/orderSchema');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
@@ -11,7 +11,7 @@ module.exports = {
           const userid = req.session.userid;
           const user = await userCollection.findOne({email:userid}).lean();
         //   console.log("userId",userid);
-          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:1}).lean();
+          const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:-1}).lean();
           console.log("ordres: ",orders);
           const addresses = await addressCollection.find({userEmail:userid}).lean();
         //   console.log("addresses: ",addresses);

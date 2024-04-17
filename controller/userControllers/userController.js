@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
-const userCollection = require("../model/userSchema");
-const otpCollection = require("../model/otpSchema");
-const sendOTPVerificationMail = require("../utils/otpVerificationMail");
-const transporter = require("../utils/mailTransporter");
+const userCollection = require("../../model/userSchema");
+const otpCollection = require("../../model/otpSchema");
+const sendOTPVerificationMail = require("../../utils/otpVerificationMail");
+const transporter = require("../../utils/mailTransporter");
 require("dotenv").config();
 
 module.exports = {

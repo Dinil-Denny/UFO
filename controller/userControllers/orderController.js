@@ -1,8 +1,8 @@
-const Cart = require('../model/cartSchema');
-const Product = require('../model/productSchema');
-const User = require('../model/userSchema');
-const Address = require('../model/userAddressSchema');
-const Orders = require('../model/orderSchema');
+const Cart = require('../../model/cartSchema');
+const Product = require('../../model/productSchema');
+const User = require('../../model/userSchema');
+const Address = require('../../model/userAddressSchema');
+const Orders = require('../../model/orderSchema');
 
 module.exports = {
     getCartCheckout : async(req,res)=>{

@@ -23,7 +23,8 @@
                         ><img
                             src="{{this.productId.images.[0]}}"
                             alt="prodImg"
-                          /></a></td>
+                          /></a>
+                      </td>
                       <td class="product-des">
                         <h5 class="product-name"><a
                             href="/productDetails/{{this.productId._id}}"
@@ -33,7 +34,7 @@
                         </p>
                       </td>
                       <td class="price" data-title="Price"><span>
-                        Rs.{{this.productId.offerPrice}}  
+                        Rs.{{this.productId.offerPrice}} / <del>Rs. {{this.productId.price}}</del>
                         </span>
                       </td>
                       <td class="text-center" data-title="Stock">

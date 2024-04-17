@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword} = require('../../controller/userController');
-const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/productsManagementControllers');
-const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userAccountOverviewControllers');
-const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/cartControllers');
-const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/orderController');
+const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword} = require('../../controller/userControllers/userController');
+const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/userControllers/productsManagementControllers');
+const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
+const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
+const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/userControllers/orderController');
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
 const{pagination} = require('../../middlewares/pagination');
 const {filterSorting} = require('../../middlewares/filteringSortingMiddleware');

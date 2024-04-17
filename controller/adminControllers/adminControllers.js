@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const adminCollection = require('../model/adminSchema');
+const adminCollection = require('../../model/adminSchema');
 
 module.exports = {
     getDashboard : async(req,res,next)=>{
