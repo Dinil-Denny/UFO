@@ -1,6 +1,7 @@
 const categoryCollection = require('../../model/categorySchema');
 const productCollection = require('../../model/productSchema');
 const brandNameCollection = require('../../model/brandSchema');
+const mongoose = require('mongoose');
 const sharp = require('sharp');
 const fs = require('fs');
 
@@ -121,10 +122,13 @@ module.exports = {
     getEditPorducts:async(req,res)=>{
         try{
             const product = await productCollection.findById(req.params.id).populate('brandName').lean();
+            console.log("product:",product);
+            const brands = await brandNameCollection.find().lean();
+            console.log('brands:',brands);
             // fetching category information
             const categories = await categoryCollection.find().lean();
             const category = await categoryCollection.findById(product.category).lean();
-            res.render('admin/editProduct',{admin:true, adminName:req.session.admin,title:"Edit Product",product,category,categories});
+            res.render('admin/editProduct',{admin:true, adminName:req.session.admin,title:"Edit Product",product,category,categories,brands});
         }catch(err){
             console.log("Unexpected error occured: ",err);
         }
@@ -132,6 +136,7 @@ module.exports = {
     postEditProducts: async(req,res)=>{
         try {
             const productId = req.params.id;
+            console.log("productId:",productId);
             const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category,removeImages} = req.body;
             const product = await productCollection.findById(productId);
 
@@ -183,7 +188,7 @@ module.exports = {
             await product.save();
             res.redirect('/admin/products')
         } catch (error) {
-            console.log("An error occured: ",error);
+            console.log("An error occured: ",error.message);
         }
     },
 

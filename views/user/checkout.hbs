@@ -1,3 +1,136 @@
+{{!-- <section class="mt-50 mb-50">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="divider mb-50"></div>
+            </div>
+        </div>
+            <div class="row d-flex">
+                <div class="couponDiv">
+                    <div class="mb-3">
+                        <div class="heading_s1 mb-3">
+                            <h4>Apply Coupon</h4>
+                        </div>
+                        <div class="total-amount">
+                            <div class="left">
+                                <div class="coupon">
+                                <form action="" method="post">
+                                    <div class="form-row row justify-content-center">
+                                        <div class="form-group col-md-4">
+                                            <input id="couponCodeInput" class="font-medium" name="couponCode" placeholder="Enter Your Coupon Code"/>
+                                        </div>
+                                        <div class="form-group col-md-8">
+                                            <a class="btn btn-sm btn-primary mt-1" onclick="verifyCoupon(document.getElementById('couponCodeInput').value)">Apply</a>
+                                        </div>
+                                    </div>
+                                </form>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/coupons" style="text-decoration: none;" class="ms-2">Click to view available coupons</a>
+                    </div>
+                    <div class="text-danger" id="couponValidationError">
+                        {{#if message}}
+                            <p>{{message}}</p>
+                        {{/if}}
+                    </div>
+                </div>
+                <div>
+                <form action="/checkout" method="post">
+                    <div class="col-md-6 mb-5 mt-5">
+                        <div class="mb-25">
+                            <h4>Select Address</h4>
+                        </div>
+                        <div>
+                            {{#if userAddress}}
+                                {{#each userAddress}}
+                                    {{#if this.isActive}}
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="userAddressId" id="{{this._id}}" value="{{this._id}}" required>
+                                            <label class="form-check-label" for="{{this._id}}">
+                                                <div class="card" id="{{this._id}}">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">{{this.name}}</h5>
+                                                        <p class="card-text">{{this.address}}, {{this.city}}, {{this.state}} <br>Pincode: {{this.pinCode}}, Mobile number: {{this.mobileNumber}}</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    {{/if}}
+                                {{/each}}
+                                <div class="form-check mt-2">
+                                    <a href="/addAddress" class="btn btn-primary ms-auto mb-5" style="width: auto;">Add New Address</a>
+                                </div>
+                            {{/if}}
+                        </div>
+                        <div class="col-md-6">
+                            <div class="order_review">
+                                <div class="mb-20">
+                                    <h4>Price Details</h4>
+                                </div>
+                                <div class="table-responsive order_table">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <th>Price (Without offer)</th>
+                                                <td class="product-subtotal" colspan="2"><i class="bi bi-currency-rupee"></i> {{total}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Discount</th>
+                                                <td class="product-subtotal" colspan="2"><i class="bi bi-currency-rupee"></i> -{{discount}}</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Coupon Discount</th>
+                                                <td class="product-subtotal" colspan="2">
+                                                    <p id="couponReductionAmountColumn">No coupon applied</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Shipping</th>
+                                                <td colspan="2"><em>Free Shipping</em></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Total Amount</th>
+                                                <input id="hiddenSubTotal" type="text" hidden value="{{subTotal}}" name="cartTotal">
+                                                <input type="text" hidden value="{{userCartId}}" name="userCartId">
+                                                <input type="text" hidden value="{{userId}}" name="userId">
+                                                <input id="hiddenCouponDiscount" type="text" hidden value="" name="couponDiscount">
+                                                <input id="hiddenCouponApplied" type="text" hidden value="" name="couponApplied">
+                                                <td colspan="2" class="product-subtotal"><span id="totalAmount" class="font-xl text-brand fw-900"><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                        
+                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                <div class="payment_method">
+                                    <div class="mb-25">
+                                        <h5>Payment</h5>
+                                    </div>
+                                    <div class="payment_option">
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" checked value="COD">
+                                            <label class="form-check-label" for="paymentRadio1" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Cash on delivery</label>
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio2"  value="ONLINE">
+                                            <label class="form-check-label" for="paymentRadio2" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Online Payment</label> 
+                                        </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio3"  value="WALLET">
+                                            <label class="form-check-label" for="paymentRadio3" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Wallet</label> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success">Place Order</button> 
+                            </div>
+                        </div>
+                    </div>    
+                </form>
+                </div>
+            </div>
+</section> --}}
+
 <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
@@ -7,7 +140,34 @@
                 </div>
                 <form action="/checkout" method="post">
                     <div class="row">
-                        <div class="col-md-6 mb-5">
+                        <div class="couponDiv">
+                            <div class="mb-3">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Apply Coupon</h4>
+                                </div>
+                                <div class="total-amount">
+                                    <div class="left">
+                                        <div class="coupon">
+                                        <form action="" method="post">
+                                            <div class="form-row row justify-content-center">
+                                                <div class="form-group col-md-4">
+                                                    <input id="couponCodeInput" class="font-medium" name="couponCode" placeholder="Enter Your Coupon Code"/>
+                                                </div>
+                                                <div class="form-group col-md-8">
+                                                    <a class="btn btn-sm btn-primary mt-1" onclick="verifyCoupon(document.getElementById('couponCodeInput').value)">Apply</a>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="/coupons" style="text-decoration: none;" class="ms-2">Click to view available coupons</a>
+                            </div>
+                            <div class="text-center" id="couponValidationError">
+                                
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-5 mt-3">
                             <div class="mb-25">
                                 <h4>Select Address</h4>
                             </div>
@@ -49,15 +209,23 @@
                                                 <td class="product-subtotal" colspan="2"><i class="bi bi-currency-rupee"></i> -{{discount}}</td>
                                             </tr>
                                             <tr>
+                                                <th>Coupon Discount</th>
+                                                <td class="product-subtotal" colspan="2">
+                                                    <p id="couponReductionAmountColumn">No coupon applied</p>
+                                                </td>
+                                            </tr>
+                                            <tr>
                                                 <th>Shipping</th>
                                                 <td colspan="2"><em>Free Shipping</em></td>
                                             </tr>
                                             <tr>
                                                 <th>Total Amount</th>
-                                                <input type="text" hidden value="{{subTotal}}" name="cartTotal">
+                                                <input id="hiddenSubTotal" type="text" hidden value="{{subTotal}}" name="cartTotal">
                                                 <input type="text" hidden value="{{userCartId}}" name="userCartId">
                                                 <input type="text" hidden value="{{userId}}" name="userId">
-                                                <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900"><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></td>
+                                                <input id="hiddenCouponDiscount" type="text" hidden value="" name="couponDiscount">
+                                                <input id="hiddenCouponApplied" type="text" hidden value="" name="couponApplied">
+                                                <td colspan="2" class="product-subtotal"><span id="totalAmount" class="font-xl text-brand fw-900"><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></td> 
                                             </tr>
                                         </tbody>
                                     </table>
@@ -78,18 +246,63 @@
                                             <label class="form-check-label" for="paymentRadio2" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Online Payment</label>
                                             
                                         </div>
+                                        <div class="custome-radio">
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio3"  value="WALLET">
+                                            <label class="form-check-label" for="paymentRadio3" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Wallet</label> 
+                                        </div>
                                     </div>
                                 </div>
-                                {{!-- {{#if userAddress}}
-                                {{#if this.isActive}} --}}
                                 <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success">Place Order</button> 
-                                {{!-- {{else}}
-                                <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success" disabled>Place Order</button>
-                                {{/if}}
-                                {{/if}} --}}
                             </div>
                         </div>
                     </div>
                 </form>
             </div>
         </section>
+
+<script>
+    const verifyCoupon = async(value)=>{
+        console.log("verifyCoupon fn called");
+        console.log(value);
+        try{
+            const response = await fetch('/couponValidation',{
+                method:'POST',
+                headers : {
+                    'Content-Type':'application/json'
+                },
+                body: JSON.stringify({couponCode:value})
+            })
+            const data = await response.json();
+            console.log("data:",data);
+            if(data.message){
+                const errorBlock = document.getElementById("couponValidationError");
+                errorBlock.innerHTML = `<div class="alert alert-warning" role="alert">
+                                            ${data.message}
+                                        </div>`;
+            }
+            if(data.couponDiscountAmount){
+                const couponDiscountBlock = document.getElementById("couponReductionAmountColumn");
+                console.log(couponDiscountBlock);
+                couponDiscountBlock.innerHTML = `<i class="bi bi-currency-rupee"></i> -${data.couponDiscountAmount}`;
+            }
+            if(data.newTotal){
+                const totalAmountBlock = document.getElementById("totalAmount");
+                console.log(totalAmountBlock);
+                totalAmountBlock.innerHTML = `<i class="bi bi-currency-rupee"></i> ${data.newTotal}`;
+                const hiddenSubTotal = document.getElementById("hiddenSubTotal");
+                console.log("hiddenSubTotal:",hiddenSubTotal.value);
+                hiddenSubTotal.value = data.newTotal;
+            }
+            if(data.appliedCouponCode){
+                const hiddenCouponApplied = document.getElementById("hiddenCouponApplied");
+                hiddenCouponApplied.value = data.appliedCouponCode;
+            }
+            if(data.couponDiscountAmount){
+                const hiddenCouponDiscount = document.getElementById("hiddenCouponDiscount");
+                hiddenCouponDiscount.value = data.couponDiscountAmount;
+            }
+        }catch(err){
+            console.log("Error on verifyCoupon:",err);
+        }
+    }
+</script>

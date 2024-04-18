@@ -5,6 +5,8 @@ const{getProductListing,getProductDetails,filterProducts,productListingPaginatio
 const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
 const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/userControllers/orderController');
+const{getCoupons,couponCodeValidation} = require('../../controller/userControllers/couponControllers');
+
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
 const{pagination} = require('../../middlewares/pagination');
 const {filterSorting} = require('../../middlewares/filteringSortingMiddleware');
@@ -112,6 +114,10 @@ router.get('/removeCartItem/:id',userAuthentication,removeItemInCart);
 // cart checkout page
 router.get('/checkout',userAuthentication,getCartCheckout);
 router.post('/checkout',userAuthentication,postCartCheckout);
+
+//coupons page
+router.get('/coupons',userAuthentication,getCoupons);
+router.post('/couponValidation',userAuthentication,couponCodeValidation);
 
 //order success
 router.get('/orderSuccess',userAuthentication,getOrderSuccessPage);

@@ -94,9 +94,11 @@ module.exports = {
             console.log("orderId: ",orderId);
             const productsDataId = req.params.productObjId;
             console.log("orderProductId: ",productsDataId);
-            await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
+            await orderCollection.findOneAndUpdate(
+                {_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":"returned"}},
-                {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]});
+                {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]}
+            );
             res.redirect(`/orderDetails/${orderId}`);
         } catch (error) {
             console.log("Error while returning the product: ",error.message);

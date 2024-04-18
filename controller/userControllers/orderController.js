@@ -12,7 +12,7 @@ module.exports = {
             const userId = user._id;
             const userCart = await Cart.findOne({userId}).populate('products.productId');
             const userCartId = userCart._id;
-            console.log("userCart.products: ",userCart.products);
+            //console.log("userCart.products: ",userCart.products);
             //cart subtotal
             let cartProducts = userCart.products;
             let total = 0;
@@ -33,7 +33,8 @@ module.exports = {
 
     postCartCheckout : async(req,res)=>{
         try {
-            const {userAddressId,cartTotal,userCartId,userId,paymentMethod} = req.body;
+            console.log("req.body",req.body);
+            const {userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied} = req.body;
             if(!userAddressId) return res.redirect('/checkout');
             console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
             await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
@@ -56,6 +57,8 @@ module.exports = {
                 mobileNumber:userAddress.mobileNumber,
                 paymentMethod,
                 totalPrice : cartTotal,
+                couponDiscount,
+                couponApplied
             })
             await newOrder.save();
             //updating the product stock in product collecion

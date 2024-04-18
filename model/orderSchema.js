@@ -47,6 +47,14 @@ const orderSchema = new mongoose.Schema({
         required : true,
         default : ()=> new Date()
     },
+    couponApplied : {
+        type : String,
+        required : true
+    },
+    couponDiscount : {
+        type : Number,
+        required : true
+    }
 })
 
 module.exports = mongoose.model('orders',orderSchema);
