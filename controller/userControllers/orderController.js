@@ -4,6 +4,14 @@ const User = require('../../model/userSchema');
 const Address = require('../../model/userAddressSchema');
 const Orders = require('../../model/orderSchema');
 
+const Razorpay = require('razorpay');
+require('dotenv').config();
+
+var instance = new Razorpay({
+    key_id: process.env.RZP_KEY_ID,
+    key_secret: process.env.RZP_KEY_SECRET,
+});
+
 module.exports = {
     getCartCheckout : async(req,res)=>{
         try {
@@ -39,7 +47,7 @@ module.exports = {
             console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
             await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
             const userCart = await Cart.findOne({_id: userCartId});
-            console.log("updatedCartProducts:",userCart);
+            //console.log("updatedCartProducts:",userCart);
             const userAddress = await Address.findOne({_id:userAddressId});
             const cartProduts = userCart.products;//cartProducts is array of products and quantity
             console.log("cartProduts: ",cartProduts);
@@ -48,19 +56,22 @@ module.exports = {
             const newOrder = new Orders ({
                 userId,
                 productsData : cartProduts,
-                name:userAddress.name,
-                houseName:userAddress.address,
-                street:userAddress.street,
-                city:userAddress.city,
-                state:userAddress.state,
-                pinCode:userAddress.pinCode,
-                mobileNumber:userAddress.mobileNumber,
+                shippingAddress : {
+                    name:userAddress.name,
+                    houseName:userAddress.address,
+                    street:userAddress.street,
+                    city:userAddress.city,
+                    state:userAddress.state,
+                    pinCode:userAddress.pinCode,
+                    mobileNumber:userAddress.mobileNumber,
+                },
                 paymentMethod,
                 totalPrice : cartTotal,
                 couponDiscount,
                 couponApplied
             })
             await newOrder.save();
+
             //updating the product stock in product collecion
             for(const{productId,quantity} of cartProduts){
                 try {
@@ -72,11 +83,12 @@ module.exports = {
 
             //deleteing the cart after placing the order
             await Cart.findOneAndDelete({_id: userCartId});
+
             res.redirect('/orderSuccess');
         } catch (error) {
-            console.log("Error occured: ",error);
+            console.log("Error occured while checkout: ",error.message);
         }
-    },
+    },  
 
     getOrderSuccessPage: async(req,res)=>{
         try {

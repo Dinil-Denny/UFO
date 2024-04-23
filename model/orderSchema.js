@@ -6,29 +6,40 @@ const orderSchema = new mongoose.Schema({
         ref : 'users',
         required : true
     },
-    productsData : {
-        type: Array
-    },
-    name:{
-        type : String
-    },
-    houseName:{
-        type : String
-    },
-    street:{
-        type : String
-    },
-    city:{
-        type : String
-    },
-    state:{
-        type : String
-    },
-    pinCode:{
-        type : String
-    },
-    mobileNumber:{
-        type : Number
+    productsData : [{
+        productId : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : 'products'
+        },
+        quantity : {
+            type : Number 
+        },
+        orderStatus : {
+            type : String
+        }
+    }],
+    shippingAddress : {
+        name:{
+            type : String
+        },
+        houseName:{
+            type : String
+        },
+        street:{
+            type : String
+        },
+        city:{
+            type : String
+        },
+        state:{
+            type : String
+        },
+        pinCode:{
+            type : String
+        },
+        mobileNumber:{
+            type : Number
+        }
     },
     paymentMethod : {
         type : String,
@@ -49,11 +60,9 @@ const orderSchema = new mongoose.Schema({
     },
     couponApplied : {
         type : String,
-        required : true
     },
     couponDiscount : {
         type : Number,
-        required : true
     }
 })
 

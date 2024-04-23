@@ -17,7 +17,7 @@
             required : true
         },
         transactionType : {
-            type : String,
+            type : String, //deposit or withdrawal
             required : true
         },
         transactionDate : {

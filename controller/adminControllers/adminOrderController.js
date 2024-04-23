@@ -35,13 +35,24 @@ module.exports = {
                     }
                 },
                 {
+                    $unwind : "$orderedProducts"
+                },
+                {
+                    $lookup:{
+                        from:"brands",
+                        localField:"orderedProducts.brandName",
+                        foreignField:"_id",
+                        as:"brand"
+                    }
+                },
+                {
                     $project:{
-                        productsData:1,name:1,houseName:1,street:1,city:1,state:1,pinCode:1,mobileNumber:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,
+                        productsData:1,shippingAddress:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,
                         productName:"$orderedProducts.productName",
                         productImages:"$orderedProducts.images",
                         quantity:"$productsData.quantity",
                         productPrice:"$orderedProducts.offerPrice",
-                        brandName:"$orderedProducts.brandName",
+                        brandName:"$brand.brandName",
                         gender:"$orderedProducts.gender",
                         size:"$orderedProducts.size",
                         color:"$orderedProducts.color"

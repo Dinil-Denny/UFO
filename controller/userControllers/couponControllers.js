@@ -46,7 +46,7 @@ module.exports = {
             const couponDiscountAmount = (couponExist.discount*subTotal)/100;
             const newTotal = subTotal-couponDiscountAmount;
             console.log("couponDiscountAmount",couponDiscountAmount);
-            res.json({couponDiscountAmount:couponDiscountAmount,newTotal:newTotal.toFixed(2),appliedCouponCode:couponExist.couponCode});
+            res.json({couponDiscountAmount:couponDiscountAmount,newTotal:newTotal.toFixed(2),appliedCouponCode:couponExist.couponCode,message:"Coupon applied successfully"});
 
         } catch (err) {
             console.log("Error while validating coupon:",err.message);

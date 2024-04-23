@@ -12,12 +12,12 @@ module.exports = {
 
             const coupons = await couponCollection.find().sort({createdAt:-1}).skip((currentPage-1) * limit).limit(limit).lean();
             console.log("coupons:",coupons);
-            const dateModifiedCoupons = coupons.map((val)=>{
-                const expriyDate = val.expiryAt;
+            const dateModifiedCoupons = coupons.map((coupon)=>{
+                const expriyDate = coupon.expiryAt;
                 const formattedDate = expriyDate.toLocaleDateString();
                 const formattedTime = expriyDate.toLocaleTimeString();
                 const formattedDateAndTime = `${formattedDate} ${formattedTime}`;
-                return {...val, expiryAt:formattedDateAndTime};
+                return {...coupon, expiryAt:formattedDateAndTime};
             });
             console.log("dateModifiedCoupons:",dateModifiedCoupons);
             res.render('admin/couponListing',{dateModifiedCoupons,admin:true,adminName:req.session.admin,title:"Coupons",previousPage,currentPage,nextPage});
@@ -38,7 +38,7 @@ module.exports = {
         try{
             const couponExist = await couponCollection.findOne({couponCode:{$regex: new RegExp("^"+couponCode+"$","i")}});
             if(couponExist){
-                return res.render('admin/addCoupon',{title:"Add coupon",admin:true,adminName: req.session.admin,message:"Coupon already exist. Try adding another coupon"})
+                return res.render('admin/addCoupon',{title:"Add coupon",admin:true,adminName: req.session.admin,ErrMessage:"Coupon already exist. Try adding another coupon"})
             }
             const newCoupon = new couponCollection({
                 couponCode,

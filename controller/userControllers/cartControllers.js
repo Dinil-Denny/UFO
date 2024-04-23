@@ -63,8 +63,7 @@ module.exports = {
                 //     res.redirect('/productDetails/'+productId);
                 await cart.save();
             }
-            
-            res.redirect('/productDetails/'+productId);
+            res.json({succesMessage:"Item added to cart"});
         } catch (error) {
             console.log("Error while adding product to cart: ",error);
         }

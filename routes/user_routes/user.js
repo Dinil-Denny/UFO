@@ -6,6 +6,7 @@ const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getE
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
 const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/userControllers/orderController');
 const{getCoupons,couponCodeValidation} = require('../../controller/userControllers/couponControllers');
+const{getWallet} = require('../../controller/userControllers/walletController');
 
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
 const{pagination} = require('../../middlewares/pagination');
@@ -121,5 +122,8 @@ router.post('/couponValidation',userAuthentication,couponCodeValidation);
 
 //order success
 router.get('/orderSuccess',userAuthentication,getOrderSuccessPage);
+
+//wallet 
+router.get('/wallet',userAuthentication,getWallet);
 
 module.exports = router;

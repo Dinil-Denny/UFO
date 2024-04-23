@@ -13,7 +13,7 @@
         <a href="/admin/coupons"><button type="button" class="btn btn-light sideMenuButton"><i
                     class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen
                     Management</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i
+        <a href="/admin/salesReport"><button type="button" class="btn btn-light sideMenuButton"><i
                     class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
         <a href="/admin/category"><button type="button" class="btn btn-light sideMenuButton"><i
                     class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
@@ -47,11 +47,11 @@
                             <tbody>
                                 {{#each orders}}
                                 <tr>
-                                    <td class="image"><img src="{{this.productImages.[0].[0]}}" alt="productImage" style="width: 5rem;"></td>
-                                    <td>{{this.productName}}</td>
+                                    <td class="image"><img src="{{this.productImages.[0]}}" alt="productImage" style="width: 5rem;"></td>
+                                    <td>{{this.productName}}<br><span class="fw-medium">Brand name:{{this.brandName}}</span></td>
                                     <td>{{this.quantity}}</td>
-                                    <td>{{this.mobileNumber}}</td>
-                                    <td>{{this.name}}, {{this.houseName}}, {{this.street}}, {{this.city}}, {{this.state}} <br>Pin-Code: {{this.pinCode}}</td>
+                                    <td>{{this.shippingAddress.mobileNumber}}</td>
+                                    <td>{{this.shippingAddress.name}}, {{this.shippingAddress.houseName}}, {{this.shippingAddress.street}}, {{this.shippingAddress.city}}, {{this.shippingAddress.state}} <br>Pin-Code: {{this.shippingAddress.pinCode}}</td>
                                     <td><select class="form-select" style="width: fit-content;" name="orderStatus" id="{{this.productsData._id}}" onchange="updateOrderStatus(event,'{{this._id}}','{{this.productsData._id}}')">
                                             <option value="{{this.productsData.orderStatus}}" selected >{{this.productsData.orderStatus}}</option>
                                             <option value="placed" >placed</option>

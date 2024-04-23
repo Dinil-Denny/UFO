@@ -26,7 +26,7 @@
                                 <tr>
                                     <td class="image"><img src="{{this.productImages.[0]}}" alt="productImage" style="width: 5rem;"></td>
                                     <td>{{this.productName}}, {{this.brandName}}, <br>Size: {{this.size}}, Color: {{this.color}}</td>
-                                    <td>{{this.name}}, {{this.houseName}}, {{this.street}} <br>{{this.city}}, {{this.state}}</td>
+                                    <td>{{this.shippingAddress.name}}, {{this.shippingAddress.houseName}}, {{this.shippingAddress.street}} <br>{{this.shippingAddress.city}}, {{this.shippingAddress.state}}</td>
                                     <td>{{this.quantity}}</td>
                                     <td>{{this.productPrice}}</td>
                                     <td class=" text-center">{{this.productsData.orderStatus}}</td>

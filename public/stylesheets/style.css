@@ -10592,3 +10592,21 @@ span.fi-rs-apps {
     z-index:1;
 }
 /* coupon styling */
+
+/*--------- wallet-------- */
+.balance-card {
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+}
+
+.transactions-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.transactions-table td:first-child {
+  width: 60%;
+}
+/*--------- wallet-------- */

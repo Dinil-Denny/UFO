@@ -6,6 +6,7 @@ const {getAddCatagory,postAddCatagory,deleteCategory,getEditCategory,postEditCat
 const {productList,productListPagination,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers/adminProductsController');
 const {getOrders,getOrderDetails,updateOrderStatus} = require('../../controller/adminControllers/adminOrderController');
 const {getCouponList,getAddCoupon,postAddCoupon,couponStatusUpdate,getEditCoupon,postEditCoupon,deleteCoupon} = require('../../controller/adminControllers/couponController');
+const {getSalesData} = require('../../controller/adminControllers/salesReportControllers');
 
 const { upload } = require('../../config/multerStorage');
 const {adminAuthentication} = require('../../middlewares/adminAuthMiddleware');
@@ -77,7 +78,10 @@ router.post('/addCoupon',adminAuthentication,postAddCoupon);
 router.post('/updateCouponStatus',adminAuthentication,couponStatusUpdate);
 router.get('/editCoupon/:id',adminAuthentication,getEditCoupon);
 router.post('/editCoupon/:id',adminAuthentication,postEditCoupon);
-router.get('/deleteCoupon/:id',adminAuthentication,deleteCoupon)
+router.get('/deleteCoupon/:id',adminAuthentication,deleteCoupon);
+
+//sales report
+router.get('/salesReport',adminAuthentication,getSalesData);
 
 // router.get('/banner',async(req,res,next)=>{
 //     res.render('admin/adminBanner',{admin:true});

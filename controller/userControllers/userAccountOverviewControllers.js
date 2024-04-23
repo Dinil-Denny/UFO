@@ -1,6 +1,8 @@
 const addressCollection = require('../../model/userAddressSchema');
 const userCollection = require('../../model/userSchema');
 const orderCollection = require('../../model/orderSchema');
+const productCollection = require('../../model/productSchema');
+const walletCollection = require('../../model/walletSchema');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
@@ -53,7 +55,7 @@ module.exports = {
                 },  
                 {
                     $project:{
-                        productsData:1,name:1,houseName:1,street:1,city:1,state:1,pinCode:1,mobileNumber:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,
+                        productsData:1,shippingAddress:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,
                         productName:"$orderedProducts.productName",
                         productImages:"$orderedProducts.images",
                         quantity:"$productsData.quantity",
@@ -61,11 +63,13 @@ module.exports = {
                         brandName:"$brand.brandName",
                         gender:"$orderedProducts.gender",
                         size:"$orderedProducts.size",
-                        color:"$orderedProducts.color"
+                        color:"$orderedProducts.color",
+
                         
                     }
                 }
             ]);
+            console.log("orderDetails:",orderDetails);
             res.render('user/orderDetails',{title:"Order Details",orderDetails,loginName:req.session.username});
         } catch (error) {
             console.log("error: ",error);
@@ -99,6 +103,40 @@ module.exports = {
                 {$set:{"productsData.$[product].orderStatus":"returned"}},
                 {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]}
             );
+            const orderDetails = await orderCollection.findOne({_id:new mongoose.Types.ObjectId(orderId)});
+            const totalProductsInOrder = orderDetails.productsData.length;
+            const couponDiscount = orderDetails.couponDiscount;
+            const couponDiscountForEachProduct = (couponDiscount/totalProductsInOrder);
+            console.log("couponDiscountForEachProduct:",couponDiscountForEachProduct);
+            const orderedProduct = orderDetails.productsData.find(val => {
+                return val._id.equals(new mongoose.Types.ObjectId(productsDataId))
+            });
+            console.log("orderedProduct",orderedProduct);
+            const orderedProductDetails = await productCollection.findOne({_id:orderedProduct.productId});
+            console.log("orderedProductDetails",orderedProductDetails);
+            const refundAmount = ((orderedProductDetails.offerPrice * orderedProduct.quantity) - couponDiscountForEachProduct).toFixed(2);
+            console.log("refundAmt:",refundAmount);
+
+            //depositing the refund amount to the user's wallet, if no wallet create one and deposit the amount
+            const user = await userCollection.findOne({email:req.session.userid}).lean();
+            const walletExist = await walletCollection.findOne({userId:user._id});
+            //const walletBalance = 
+            if(!walletExist){
+                const newWallet = new walletCollection({
+                    userId : user._id,
+                    walletBalance : refundAmount,
+                    transactionHistory : [{
+                        transactionAmount : refundAmount,
+                        transactionType : "credit"
+                    }]
+                })
+                await newWallet.save();
+            }
+            if(walletExist){
+                await walletCollection.findOneAndUpdate({userId:user._id},{$inc:{walletBalance:refundAmount}});
+                walletExist.transactionHistory.push({transactionAmount:refundAmount,transactionType:"credit"});
+                walletExist.save();
+            }
             res.redirect(`/orderDetails/${orderId}`);
         } catch (error) {
             console.log("Error while returning the product: ",error.message);

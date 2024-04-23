@@ -86,7 +86,8 @@ module.exports = {
                 product,
                 loginName: req.session.username,
                 isInStock,
-                productExistInWishlist
+                productExistInWishlist,
+                itemInCart:true
               });
             }
           }
@@ -96,7 +97,8 @@ module.exports = {
             product,
             loginName: req.session.username,
             isInStock,
-            productExistInWishlist
+            productExistInWishlist,
+            itemInCart:false
           });
           
         } catch (error) {
