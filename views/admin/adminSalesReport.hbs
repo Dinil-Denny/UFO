@@ -8,18 +8,19 @@
         <a href="/admin/coupons"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
         <a href="/admin/salesReport"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
         <a href="/admin/category"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
-        <dir class="separator mt-5 pt-5"></dir>
+        <a href="/admin/offers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-graph-down-arrow"></i><span class="menuLabel"> Offers</span></button></a>
+        <dir class="separator mt-3 pt-5"></dir>
         <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span class="menuLabel"> Settings</span></button></a>
         <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
     </div>
-    <section class="content-main ms-2">
+    <section class="content-main ms-2" style="width: 80%;">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title my-3">Sales Report</h2>
                     <p>Whole data about your business here</p>
                 </div>
                 <div>
-                    <a href="#" class="btn btn-primary my-3"><i class="bi bi-journal-bookmark-fill"></i> Create report</a>
+                    <a class="btn btn-primary my-3" onclick="return window.print()"><i class="bi bi-journal-bookmark-fill"></i> Download report</a>
                 </div>
             </div>
             <div class="row">
@@ -66,104 +67,69 @@
                     </div>
                 </div>
             </div>
+            <div class="row align-items-center my-3">
+                <h5 class="card-title">Cutom Date Filter:</h5>
+                <div class="col-md-2 col-4">
+                    <label for="fromDate">From:</label>
+                    <input type="date" class="form-control" name="fromDate" id="fromDate">
+                </div>
+                <div class="col-md-2 col-4">
+                    <label for="toDate">To:</label>
+                    <input type="date" class="form-control" name="toDate" id="toDate">
+                </div>
+                <div class="col-md-2 col-4 pt-1">
+                    <a class="btn btn-primary mt-4 btn-small" onclick="customDateFilter()"><i class="bi bi-search"></i> Get</a>
+                </div>
+            </div>
             <div class="card mb-4">
                 <header class="card-header">
-                    <h4 class="card-title">Latest orders</h4>
+                    <h4 class="card-title">Sales Data</h4>
                     <div class="row align-items-center">
                         <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
                             <div class="custom_select">
-                                <select class="form-select select-nice">
-                                    <option selected>All Categories</option>
-                                    <option>Women's Clothing</option>
-                                    <option>Men's Clothing</option>
-                                    <option>Cellphones</option>
-                                    <option>Computer & Office</option>
-                                    <option>Consumer Electronics</option>
-                                    <option>Jewelry & Accessories</option>
-                                    <option>Home & Garden</option>
-                                    <option>Luggage & Bags</option>
-                                    <option>Shoes</option>
-                                    <option>Mother & Kids</option>
+                                <select class="form-select select-nice" name="groupBy" onchange="periodicSalesData(this)">
+                                   
+                                    <option selected value="daily">Daily</option>
+                                    <option value="weekly">Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                    <option value="yearly">Yearly</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-2 col-6">
-                            <input type="date" value="02.05.2021" class="form-control">
+                            <input type="date" class="form-control" name="date" onchange="dayWiseSalesReport(this)">
                         </div>
                     </div>
                 </header>
                 <div class="card-body">
                     <div class="table-responsive">
                         <div class="table-responsive">
-                            <table class="table align-middle table-nowrap mb-0">
-                                <thead class="table-light">
+                            <table class="table align-middle table-nowrap mb-0" id="salesReportTable">
+                                <thead class="table-light" id="salesReportTableHead">
                                     <tr>
-                                        <th scope="col" class="text-center">
-                                            <div class="form-check align-middle">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck01">
-                                                <label class="form-check-label" for="transactionCheck01"></label>
-                                            </div>
-                                        </th>
-                                        <th class="align-middle" scope="col">Order ID</th>
-                                        <th class="align-middle" scope="col">Billing Name</th>
                                         <th class="align-middle" scope="col">Date</th>
-                                        <th class="align-middle" scope="col">Total</th>
-                                        <th class="align-middle" scope="col">Payment Status</th>
-                                        <th class="align-middle" scope="col">Payment Method</th>
-                                        <th class="align-middle" scope="col">View Details</th>
+                                        <th class="align-middle" scope="col">Total orders</th>
+                                        <th class="align-middle" scope="col">Discount in MRP</th>
+                                        <th class="align-middle" scope="col">Coupon Discount</th>
+                                        <th class="align-middle" scope="col">Total Revenue</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="salesReportTableBody">
+                                    {{#if dailySalesData}}
+                                    {{#each dailySalesData}}
                                     <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck02">
-                                                <label class="form-check-label" for="transactionCheck02"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2540</a> </td>
-                                        <td>Neal Matthews</td>
-                                        <td>
-                                            07 Oct, 2021
-                                        </td>
-                                        <td>
-                                            $400
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-success">Paid</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Mastercard
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
+                                        <td>{{this._id.day}}/{{this._id.month}}/{{this._id.year}}</td>
+                                        <td>{{this.totalOrders}}</td>
+                                        <td>{{this.totalMRPDiscount}}</td>
+                                        {{#if this.totalCouponDiscount}}
+                                        <td>{{this.totalCouponDiscount}}</td>
+                                        {{else}}
+                                        <td>No coupon applied</td>
+                                        {{/if}}
+                                        <td>{{this.totalSales}}</td>
                                     </tr>
-                                    <tr>
-                                        <td class="text-center">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="transactionCheck03">
-                                                <label class="form-check-label" for="transactionCheck03"></label>
-                                            </div>
-                                        </td>
-                                        <td><a href="#" class="fw-bold">#SK2541</a> </td>
-                                        <td>Jamal Burnett</td>
-                                        <td>
-                                            07 Oct, 2021
-                                        </td>
-                                        <td>
-                                            $380
-                                        </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-soft-danger">Chargeback</span>
-                                        </td>
-                                        <td>
-                                            <i class="material-icons md-payment font-xxl text-muted mr-5"></i> Visa
-                                        </td>
-                                        <td>
-                                            <a href="#" class="btn btn-xs"> View details</a>
-                                        </td>
-                                    </tr>
+                                    {{/each}}
+                                    {{/if}}
                                 </tbody>
                             </table>
                         </div>
@@ -183,4 +149,150 @@
                 </nav>
             </div> --}}
         </section> <!-- content-main end// -->
+        
 </div>
+
+
+<script>
+
+    async function customDateFilter(){
+        const fromDate = document.getElementById("fromDate");
+        console.log("fromDate:",fromDate);
+        const toDate = document.getElementById("toDate");
+        console.log("toDate:",toDate);
+        let query = '';
+        query = `${fromDate.name}=${fromDate.value}&${toDate.name}=${toDate.value}`
+        try{
+            const response = await fetch(`/admin/customDateSalesData?${query}`,{ 
+                method : 'GET',
+            })
+            const data = await response.json();
+            console.log("data:",data);
+            const newSalesReportTableBody = document.getElementById("salesReportTableBody");
+            newSalesReportTableBody.innerHTML = '';
+            if(data.length>0){
+                data.forEach(value=>{
+                    console.log("value:",value);
+                    const tableRow = document.createElement('tr')
+                    tableRow.innerHTML = `<td>${value._id.day}/${value._id.month}/${value._id.year}</td>
+                                            <td>${value.totalOrders}</td>
+                                            <td>${value.totalMRPDiscount}</td>
+                                            <td>${value.totalCouponDiscount}</td>
+                                            <td>${value.totalSales}</td>`
+                    newSalesReportTableBody.appendChild(tableRow);                        
+                })
+            }
+            
+        }catch(err){
+            console.log("Error in customDateFilter:",err.message);
+        }
+    }
+
+    async function dayWiseSalesReport(dateValue){
+        console.log("value:",dateValue.value);
+        try{
+            let queryString = '';
+            queryString = `${dateValue.name}=${dateValue.value}`;
+            const response = await fetch(`/admin/singleDaySalesReport?${queryString}`,{
+                method : 'GET',
+                headers : {
+                    'Content-Type':'application/json'
+                },
+            })
+            const data = await response.json();
+            console.log("data:",data);
+            const newSalesReportTable = document.getElementById("salesReportTableBody");
+            newSalesReportTable.innerHTML = '';
+            if(data.length>0){
+                newSalesReportTable.innerHTML = `
+                                        <tbody>
+                                            <tr>
+                                                <td>${data[0]._id}</td>
+                                                <td>${data[0].totalOrders}</td>
+                                                <td>${data[0].totalMRPDiscount}</td>
+                                                <td>${data[0].totalCouponDiscount}</td>
+                                                <td>${data[0].totalSales}</td>
+                                            </tr>
+                                        </tbody>`
+            }else{
+                newSalesReportTable.innerHTML = `<span class="text-center fs-4">No data available</span>`
+            }
+        }catch(err){
+            console.log("Error:",err.message);
+        }
+    }
+
+    async function periodicSalesData(periodValue){
+        try{
+            console.log("period:",periodValue.value,periodValue.name);
+            const query = `${periodValue.name}=${periodValue.value}`
+            const response = await fetch(`/admin/periodicSalesData?${query}`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+            const data = await response.json();
+            console.log("data:",data);
+            const salesDataArray = data.periodwiseSalesData;
+            console.log("salesDataArray:",salesDataArray);
+            const newSalesReportTableBody = document.getElementById("salesReportTableBody");
+            newSalesReportTableBody.innerHTML = '';
+            if(salesDataArray.length>0){
+                if(data.period === 'daily'){
+                    salesDataArray.forEach(value=>{
+                    console.log("value:",value);
+                    const tableRow = document.createElement('tr')
+                    tableRow.innerHTML = `<td>${value._id.day}/${value._id.month}/${value._id.year}</td>
+                                            <td>${value.totalOrders}</td>
+                                            <td>${value.totalMRPDiscount}</td>
+                                            <td>${value.totalCouponDiscount}</td>
+                                            <td>${value.totalSales}</td>`
+                    newSalesReportTableBody.appendChild(tableRow);                        
+                    })
+                }else if(data.period === 'weekly'){
+                    salesDataArray.forEach(value=>{
+                    console.log("value:",value);
+                    const tableRow = document.createElement('tr')
+                    tableRow.innerHTML = `<td>Week:${value._id.week}/Month:${value._id.month}/Year:${value._id.year}</td>
+                                            <td>${value.totalOrders}</td>
+                                            <td>${value.totalMRPDiscount}</td>
+                                            <td>${value.totalCouponDiscount}</td>
+                                            <td>${value.totalSales}</td>`
+                    newSalesReportTableBody.appendChild(tableRow);                        
+                    })
+                }else if(data.period === 'monthly'){
+                    salesDataArray.forEach(value=>{
+                    console.log("value:",value);
+                    const tableRow = document.createElement('tr')
+                    tableRow.innerHTML = `<td>Month:${value._id.month}/Year:${value._id.year}</td>
+                                            <td>${value.totalOrders}</td>
+                                            <td>${value.totalMRPDiscount}</td>
+                                            <td>${value.totalCouponDiscount}</td>
+                                            <td>${value.totalSales}</td>`
+                    newSalesReportTableBody.appendChild(tableRow);                        
+                    })
+                }else if(data.period === 'yearly'){
+                    salesDataArray.forEach(value=>{
+                    console.log("value:",value);
+                    const tableRow = document.createElement('tr')
+                    tableRow.innerHTML = `<td>Year:${value._id.year}</td>
+                                            <td>${value.totalOrders}</td>
+                                            <td>${value.totalMRPDiscount}</td>
+                                            <td>${value.totalCouponDiscount}</td>
+                                            <td>${value.totalSales}</td>`
+                    newSalesReportTableBody.appendChild(tableRow);                        
+                    })
+                }
+                
+
+            }else{
+                newSalesReportTableBody.innerHTML = `<span class="text-center fs-4">No data available</span>`
+            }
+
+        }catch(err){
+            console.log("Error!:",err.message);
+        }
+    }
+
+</script>

@@ -1,3 +1,90 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    const placeOrder = async() => {
+        console.log("place order is called");
+        try{
+            const userAddressId = document.querySelector('input[name="userAddressId"]:checked').value;
+            console.log("userAddressId:",userAddressId);
+            const cartTotal = document.querySelector('input[name="cartTotal"]').value;
+            //console.log("cartTotal:",cartTotal);
+            const userCartId = document.querySelector('input[name="userCartId"]').value;
+            const userId = document.querySelector('input[name="userId"]').value;
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+            //console.log("paymentMethod",paymentMethod);
+            const couponDiscount = document.querySelector('input[name="couponDiscount"]').value;
+            //console.log("couponDiscount",couponDiscount);
+            const couponApplied = document.querySelector('input[name="couponApplied"]').value;
+            //console.log("couponApplied",couponApplied);
+            const productPriceDiscount = document.querySelector('input[name="productPriceDiscount"]').value;
+
+            const response = await fetch('/checkout',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied,productPriceDiscount})
+            })
+            const data = await response.json();
+            console.log("Order data",data);
+            if(data.redirect){
+                window.location.href = data.redirect;
+            }else{
+                const options = {
+                    "key" : data.razorpayKey,
+                    "amount" : cartTotal*100,
+                    "currency" : 'INR',
+                    "name" : "UFO",
+                    "order_id" : data.order.id,
+                    "handler" : function (response){
+                        console.log("response:",response);
+
+                        {{!-- alert(response.razorpay_payment_id);
+                        alert(response.razorpay_order_id);
+                        alert(response.razorpay_signature); --}}
+
+                        if(response.razorpay_payment_id){
+                            console.log("response.razorpay_payment_id",response.razorpay_payment_id);
+                            {{!-- const responseJson = await fetch('/verifyPayment',{
+                                method:'POST',
+                                headers: {
+                                    'Contet-Type':'application/json'
+                                },
+                                body : JSON.stringify(response)
+                            })
+                            const data = await responseJson.json();
+                            if(data.success){
+                                window.location.href = '/orderSuccess';
+                            }else{
+                                console.log("not success");
+                            } --}}
+                            fetch('/verifyPayment',{
+                                method:'POST',
+                                headers:{
+                                    'Content-Type':'application/json'
+                                },
+                                body:JSON.stringify(response)
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if(data.success){
+                                    window.location.href = '/orderSuccess';
+                                }
+                            })
+                        }
+                    }
+                }
+                const rzp1 = new Razorpay(options);
+                rzp1.open();
+            }
+
+            
+        }catch(err){
+            console.log("err:",err.message);
+        }
+    }
+</script>
+
 <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
@@ -5,7 +92,7 @@
                         <div class="divider mt-50 mb-50"></div>
                     </div>
                 </div>
-                <form action="/checkout" method="post">
+                {{!-- <form action="/checkout" method="post"> --}}
                     <div class="row">
                         <div class="couponDiv">
                             <div class="mb-3">
@@ -92,6 +179,7 @@
                                                 <input id="hiddenSubTotal" type="text" hidden value="{{subTotal}}" name="cartTotal">
                                                 <input type="text" hidden value="{{userCartId}}" name="userCartId">
                                                 <input type="text" hidden value="{{userId}}" name="userId">
+                                                <input type="text" hidden value="{{discount}}" name="productPriceDiscount">
                                                 <input id="hiddenCouponDiscount" type="text" hidden value="" name="couponDiscount">
                                                 <input id="hiddenCouponApplied" type="text" hidden value="" name="couponApplied">
                                                 <td colspan="2" class="product-subtotal"><span id="totalAmount" class="font-xl text-brand fw-900"><i class="bi bi-currency-rupee"></i> {{subTotal}}</span></td> 
@@ -121,16 +209,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success">Place Order</button> 
+                                <button type="submit" class="btn btn-fill-out btn-block mt-30 btn-success" onclick="placeOrder()">Place Order</button> 
                             </div>
                         </div>
                     </div>
-                </form>
+                {{!-- </form> --}}
             </div>
         </section>
 
-        
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
+
 <script>
 
     const verifyCoupon = async(value)=>{
@@ -177,4 +265,5 @@
             console.log("Error on verifyCoupon:",err);
         }
     }
+
 </script>

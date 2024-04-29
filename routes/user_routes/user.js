@@ -4,7 +4,7 @@ const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,ge
 const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/userControllers/productsManagementControllers');
 const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
-const{getCartCheckout,postCartCheckout,getOrderSuccessPage} = require('../../controller/userControllers/orderController');
+const{getCartCheckout,postCartCheckout,verifyRazorpayPayment,getOrderSuccessPage} = require('../../controller/userControllers/orderController');
 const{getCoupons,couponCodeValidation} = require('../../controller/userControllers/couponControllers');
 const{getWallet} = require('../../controller/userControllers/walletController');
 
@@ -119,6 +119,9 @@ router.post('/checkout',userAuthentication,postCartCheckout);
 //coupons page
 router.get('/coupons',userAuthentication,getCoupons);
 router.post('/couponValidation',userAuthentication,couponCodeValidation);
+
+//verify payment
+router.post('/verifyPayment',verifyRazorpayPayment);
 
 //order success
 router.get('/orderSuccess',userAuthentication,getOrderSuccessPage);

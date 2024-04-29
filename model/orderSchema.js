@@ -54,12 +54,15 @@ const orderSchema = new mongoose.Schema({
         required : true
     },
     date : {
-        type : String,
+        type : Date,
         required : true,
-        default : ()=> new Date()
+        default : new Date().toISOString().slice(0, 10)
     },
     couponApplied : {
         type : String,
+    },
+    productPriceDiscount:{
+        type: Number
     },
     couponDiscount : {
         type : Number,

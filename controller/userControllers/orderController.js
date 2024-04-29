@@ -4,7 +4,9 @@ const User = require('../../model/userSchema');
 const Address = require('../../model/userAddressSchema');
 const Orders = require('../../model/orderSchema');
 
+//razorpay
 const Razorpay = require('razorpay');
+const crypto = require('crypto');
 require('dotenv').config();
 
 var instance = new Razorpay({
@@ -42,35 +44,73 @@ module.exports = {
     postCartCheckout : async(req,res)=>{
         try {
             console.log("req.body",req.body);
-            const {userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied} = req.body;
+            const {userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied,productPriceDiscount} = req.body;
             if(!userAddressId) return res.redirect('/checkout');
-            console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
+            //console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
             await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
             const userCart = await Cart.findOne({_id: userCartId});
-            //console.log("updatedCartProducts:",userCart);
+            console.log("updatedCartProducts:",userCart);
             const userAddress = await Address.findOne({_id:userAddressId});
             const cartProduts = userCart.products;//cartProducts is array of products and quantity
             console.log("cartProduts: ",cartProduts);
 
-            //creating order collection
-            const newOrder = new Orders ({
-                userId,
-                productsData : cartProduts,
-                shippingAddress : {
-                    name:userAddress.name,
-                    houseName:userAddress.address,
-                    street:userAddress.street,
-                    city:userAddress.city,
-                    state:userAddress.state,
-                    pinCode:userAddress.pinCode,
-                    mobileNumber:userAddress.mobileNumber,
-                },
-                paymentMethod,
-                totalPrice : cartTotal,
-                couponDiscount,
-                couponApplied
-            })
-            await newOrder.save();
+            if(paymentMethod === "COD"){
+                //creating order collection
+                const newOrder = new Orders ({
+                    userId,
+                    productsData : cartProduts,
+                    shippingAddress : {
+                        name:userAddress.name,
+                        houseName:userAddress.address,
+                        street:userAddress.street,
+                        city:userAddress.city,
+                        state:userAddress.state,
+                        pinCode:userAddress.pinCode,
+                        mobileNumber:userAddress.mobileNumber,
+                    },
+                    paymentMethod,
+                    totalPrice : cartTotal,
+                    couponApplied,
+                    productPriceDiscount,
+                    couponDiscount,
+                    
+                })
+                await newOrder.save();
+            }
+
+            if(paymentMethod === "ONLINE"){
+                const options = {
+                    amount: cartTotal*100,
+                    currency:"INR",
+                    receipt: crypto.randomBytes(10).toString("hex")
+                }
+                const order = await instance.orders.create(options);
+                console.log("razorpay order:",order);
+
+                const newOrder = new Orders ({
+                    userId,
+                    productsData : cartProduts,
+                    shippingAddress : {
+                        name:userAddress.name,
+                        houseName:userAddress.address,
+                        street:userAddress.street,
+                        city:userAddress.city,
+                        state:userAddress.state,
+                        pinCode:userAddress.pinCode,
+                        mobileNumber:userAddress.mobileNumber,
+                    },
+                    paymentMethod,
+                    paymentStatus:"Payed",
+                    totalPrice : cartTotal,
+                    couponApplied,
+                    productPriceDiscount,
+                    couponDiscount,
+                    
+                })
+                await newOrder.save();
+
+                return res.json({order,razorpayKey:process.env.RZP_KEY_ID});
+            }
 
             //updating the product stock in product collecion
             for(const{productId,quantity} of cartProduts){
@@ -84,11 +124,32 @@ module.exports = {
             //deleteing the cart after placing the order
             await Cart.findOneAndDelete({_id: userCartId});
 
-            res.redirect('/orderSuccess');
+            
+
+            res.json({redirect:'/orderSuccess'});
         } catch (error) {
             console.log("Error occured while checkout: ",error.message);
         }
     },  
+
+    verifyRazorpayPayment : async(req,res)=>{
+        try {
+            const {razorpay_order_id,razorpay_payment_id,razorpay_signature} =req.body;
+            console.log("verifyRazorpayPayment req.body:",req.body);
+            const secret = process.env.RZP_KEY_SECRET;
+            const sign = razorpay_order_id + "|" + razorpay_payment_id;
+            const expectedSignature = crypto.createHmac('sha256',secret)
+            .update(sign.toString())
+            .digest('hex');
+            console.log("expectedSignature:",expectedSignature);
+            if(expectedSignature === razorpay_signature){
+                // await Orders.findOneAndUpdate({})
+                return res.status(200).json({success:true});
+            }
+        } catch (err) {
+            console.log("Error in verify payment:",err.message);
+        }
+    },
 
     getOrderSuccessPage: async(req,res)=>{
         try {

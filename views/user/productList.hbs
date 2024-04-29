@@ -237,7 +237,7 @@
         //update the product list with filtered data
         const data = await response.json();
         console.log(data);
-
+        console.log("data:",data);
         updateProductList(data.filteredProducts);
 
         if(data.previousPage){

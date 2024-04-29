@@ -6,7 +6,8 @@ const {getAddCatagory,postAddCatagory,deleteCategory,getEditCategory,postEditCat
 const {productList,productListPagination,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers/adminProductsController');
 const {getOrders,getOrderDetails,updateOrderStatus} = require('../../controller/adminControllers/adminOrderController');
 const {getCouponList,getAddCoupon,postAddCoupon,couponStatusUpdate,getEditCoupon,postEditCoupon,deleteCoupon} = require('../../controller/adminControllers/couponController');
-const {getSalesData} = require('../../controller/adminControllers/salesReportControllers');
+const {getSalesData,getCustomDateSalesData,getDayWiseData,getPeriodicSalesData} = require('../../controller/adminControllers/salesReportControllers');
+const {getOfferList,getAddOffer,postAddOffer,getEditOffer,postEditOffer,deleteOffer,offerStatusUpdate} = require('../../controller/adminControllers/offerControllers');
 
 const { upload } = require('../../config/multerStorage');
 const {adminAuthentication} = require('../../middlewares/adminAuthMiddleware');
@@ -82,10 +83,21 @@ router.get('/deleteCoupon/:id',adminAuthentication,deleteCoupon);
 
 //sales report
 router.get('/salesReport',adminAuthentication,getSalesData);
-
+router.get('/customDateSalesData',adminAuthentication,getCustomDateSalesData)
+router.get('/singleDaySalesReport',adminAuthentication,getDayWiseData);
+router.get('/periodicSalesData',adminAuthentication,getPeriodicSalesData);
 // router.get('/banner',async(req,res,next)=>{
 //     res.render('admin/adminBanner',{admin:true});
 // })
+
+//offer module - category offers
+router.get('/offers',adminAuthentication,getOfferList);
+router.get('/addOffer',adminAuthentication,getAddOffer);
+router.post('/addOffer',adminAuthentication,postAddOffer);
+router.get('/editOffer/:id',adminAuthentication,getEditOffer);
+router.post('/editOffer/:id',adminAuthentication,postEditOffer);
+router.get('/deleteOffer/:id',adminAuthentication,deleteOffer);
+router.post('/updateStatus',adminAuthentication,offerStatusUpdate);
 
 
 module.exports = router;
