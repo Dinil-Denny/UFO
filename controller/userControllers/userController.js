@@ -3,6 +3,9 @@ const userCollection = require("../../model/userSchema");
 const otpCollection = require("../../model/otpSchema");
 const sendOTPVerificationMail = require("../../utils/otpVerificationMail");
 const transporter = require("../../utils/mailTransporter");
+const {generateReferralCode} = require('../../helpers/referralCodeGeneration');
+const referralCodeCollection = require('../../model/referralCodeSchema');
+const walletCollection = require('../../model/walletSchema');
 require("dotenv").config();
 
 module.exports = {
@@ -95,8 +98,8 @@ module.exports = {
   // user registration with otp sending to email
   postUserRegister: async (req, res) => {
     try {
-      const { name, email, mobilenumber, password, confirmPassword } = req.body;
-
+      const { name, email, mobilenumber, password, confirmPassword, referralCode } = req.body;
+      console.log("req.body:",req.body);
       if (!email && !mobilenumber && !password && !confirmPassword && !name) {
         return res.render("user/userRegister", {
           message: "Enter full details",
@@ -159,6 +162,12 @@ module.exports = {
       req.session.userName = req.body.name;
       req.session.mobileNumber = req.body.mobilenumber;
       req.session.password = hashedPassword;
+      if(referralCode){
+        req.session.referralCode = referralCode;
+      }else{
+        req.session.referralCode = null;
+      }
+      
       // await userCollection.insertMany([userData]);
       res.render("user/userOTPVerification", { title: "OTP verification" });
     } catch (err) {
@@ -208,14 +217,31 @@ module.exports = {
             email: req.session.useremail,
             mobilenumber: req.session.mobileNumber,
             password: req.session.password,
+            referralCode : req.session.referralCode,
             createdAt: Date.now(),
           };
           console.log(userData);
           await userCollection.insertMany([userData]);
-          res.render("user/userLogin", { title: "Login" });
-          console.log("user registered redirecting to login");
+          
+          //user's referral code generation
+          const userReferralCode = await generateReferralCode(8);
+          console.log("code:",userReferralCode);
+          const user = await userCollection.findOne({email:req.session.useremail})
+          const newReferralCode = new referralCodeCollection({
+            userId : user._id,
+            referralCode : userReferralCode
+          })
+          await newReferralCode.save();
+
+          //creating new wallet for user
+          const newWallet = new walletCollection({
+            userId : user._id
+          })
+          await newWallet.save();
+
           await otpCollection.deleteOne({ otp: otp });
           console.log("OTP deleted");
+          res.render("user/userLogin", { title: "Login" });
         } else {
           return res.render("user/userOTPVerification", {
             message: "Invalid OTP! Try again",
@@ -289,11 +315,29 @@ module.exports = {
             email: req.session.useremail,
             mobilenumber: req.session.mobileNumber,
             password: req.session.password,
+            referralCode : req.session.referralCode,
             createdAt: Date.now(),
           };
           console.log(userData);
           await userCollection.insertMany([userData]);
           await otpCollection.deleteOne({ otp: otp });
+          const userReferralCode = await generateReferralCode(8);
+          console.log("code:",userReferralCode);
+          const userId = await userCollection.findOne({email:req.session.useremail})
+          const newReferralCode = new referralCodeCollection({
+            userId : userId._id,
+            referralCode : userReferralCode
+          })
+          await newReferralCode.save();
+          //creating new wallet for user
+          const newWallet = new walletCollection({
+            userId : user._id
+          })
+          await newWallet.save();
+
+          await otpCollection.deleteOne({ otp: otp });
+          console.log("OTP deleted");
+
           res.render("user/userLogin");
           console.log("user registered redirecting to login page");
         } else {

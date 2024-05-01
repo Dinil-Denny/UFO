@@ -81,6 +81,9 @@
                     <a class="btn btn-primary mt-4 btn-small" onclick="customDateFilter()"><i class="bi bi-search"></i> Get</a>
                 </div>
             </div>
+            <div class="text-danger" id="dateError" style="font-size: medium;">
+                <p id="errorMessage"></p>
+            </div>
             <div class="card mb-4">
                 <header class="card-header">
                     <h4 class="card-title">Sales Data</h4>
@@ -181,6 +184,12 @@
                                             <td>${value.totalSales}</td>`
                     newSalesReportTableBody.appendChild(tableRow);                        
                 })
+            }
+            const errorMessage = document.getElementById("errorMessage");
+            errorMessage.innerText = '';
+            if(data.errorMessage){
+                const errorMessage = document.getElementById("errorMessage");
+                errorMessage.innerText = data.errorMessage;
             }
             
         }catch(err){

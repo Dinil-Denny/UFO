@@ -6,15 +6,25 @@ module.exports = {
         try {
             const user = await userCollection.findOne({email:req.session.userid});
             const wallet = await walletCollection.findOne({userId:user._id}).lean();
-            console.log("wallet:",wallet);
-            const transactionHistory = wallet.transactionHistory;
-            const formattedDateWalletData = transactionHistory.map(transaction=>{
-                const transactionDate = transaction.transactionDate;
-                const formattedTransactionDate = transactionDate.toLocaleDateString();
-                return {...transaction,transactionDate:formattedTransactionDate};
-            })
-            console.log("formattedDateWalletData:",formattedDateWalletData);
-            res.render('user/wallet',{title:"Wallet",loginName:req.session.username,wallet,formattedDateWalletData});
+            //console.log("wallet:",wallet);
+            if(wallet){
+                const transactionHistory = wallet.transactionHistory;
+                const formattedDateWalletData = transactionHistory.map(transaction=>{
+                    const transactionDate = transaction.transactionDate;
+                    const formattedTransactionDate = transactionDate.toLocaleDateString();
+                    return {...transaction,transactionDate:formattedTransactionDate};
+                });
+                //console.log("formattedDateWalletData:",formattedDateWalletData);
+                return res.render('user/wallet',{title:"Wallet",loginName:req.session.username,wallet,formattedDateWalletData});
+            }
+            else{
+                const newWallet = new walletCollection({
+                    userId : user._id
+                })
+                await newWallet.save();
+                return res.render('user/wallet',{title:"Wallet",loginName:req.session.username});
+            }
+            
         } catch (err) {
             console.log("Error while getting wallet:",err.message);
         }

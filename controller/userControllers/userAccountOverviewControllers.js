@@ -3,6 +3,7 @@ const userCollection = require('../../model/userSchema');
 const orderCollection = require('../../model/orderSchema');
 const productCollection = require('../../model/productSchema');
 const walletCollection = require('../../model/walletSchema');
+const referralCodeCollection = require('../../model/referralCodeSchema');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
@@ -12,13 +13,14 @@ module.exports = {
         try {
           const userid = req.session.userid;
           const user = await userCollection.findOne({email:userid}).lean();
-        //   console.log("userId",userid);
+          //console.log("userId",userid);
           const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:-1}).lean();
-          console.log("ordres: ",orders);
+          //console.log("ordres: ",orders);
           const addresses = await addressCollection.find({userEmail:userid}).lean();
-        //   console.log("addresses: ",addresses);
-        //   console.log(`user in account overview: ${user}`);
-          res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,orders});
+          const referralCode = await referralCodeCollection.findOne({userId:user._id}).lean();
+          console.log("referralCode: ",referralCode);
+          //console.log(`user in account overview: ${user}`);
+          res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,orders,referralCode:referralCode.referralCode});
         } catch (error) {
           console.log(`An error occured on loading account overview : ${error}`);
         }
@@ -120,7 +122,6 @@ module.exports = {
             //depositing the refund amount to the user's wallet, if no wallet create one and deposit the amount
             const user = await userCollection.findOne({email:req.session.userid}).lean();
             const walletExist = await walletCollection.findOne({userId:user._id});
-            //const walletBalance = 
             if(!walletExist){
                 const newWallet = new walletCollection({
                     userId : user._id,

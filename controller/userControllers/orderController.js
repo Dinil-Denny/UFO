@@ -3,6 +3,8 @@ const Product = require('../../model/productSchema');
 const User = require('../../model/userSchema');
 const Address = require('../../model/userAddressSchema');
 const Orders = require('../../model/orderSchema');
+const Wallet = require('../../model/walletSchema');
+const RefferalCode = require('../../model/referralCodeSchema');
 
 //razorpay
 const Razorpay = require('razorpay');
@@ -43,16 +45,16 @@ module.exports = {
 
     postCartCheckout : async(req,res)=>{
         try {
-            console.log("req.body",req.body);
+            //console.log("req.body",req.body);
             const {userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied,productPriceDiscount} = req.body;
             if(!userAddressId) return res.redirect('/checkout');
             //console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
             await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
             const userCart = await Cart.findOne({_id: userCartId});
-            console.log("updatedCartProducts:",userCart);
+            //console.log("updatedCartProducts:",userCart);
             const userAddress = await Address.findOne({_id:userAddressId});
             const cartProduts = userCart.products;//cartProducts is array of products and quantity
-            console.log("cartProduts: ",cartProduts);
+            //console.log("cartProduts: ",cartProduts);
 
             if(paymentMethod === "COD"){
                 //creating order collection
@@ -76,6 +78,8 @@ module.exports = {
                     
                 })
                 await newOrder.save();
+
+                res.json({redirect:'/orderSuccess'});
             }
 
             if(paymentMethod === "ONLINE"){
@@ -85,7 +89,7 @@ module.exports = {
                     receipt: crypto.randomBytes(10).toString("hex")
                 }
                 const order = await instance.orders.create(options);
-                console.log("razorpay order:",order);
+                //console.log("razorpay order:",order);
 
                 const newOrder = new Orders ({
                     userId,
@@ -108,10 +112,31 @@ module.exports = {
                     
                 })
                 await newOrder.save();
-
-                return res.json({order,razorpayKey:process.env.RZP_KEY_ID});
+                res.json({order,razorpayKey:process.env.RZP_KEY_ID});
             }
 
+            //updating the wallet balace for referral cash back
+            const user = await User.findOne({email : req.session.userid});
+            const userOrders = await Orders.find({userId:user._id});
+            console.log("userOrders:",userOrders);
+            if(user.referralCode){
+                if(userOrders.length <= 1){
+                    const userSharedRefCode = await RefferalCode.findOne({referralCode:user.referralCode});
+                    const walletOfuserSharedRefCode = await Wallet.findOne({userId:userSharedRefCode.userId});
+                    if(walletOfuserSharedRefCode){
+                        await Wallet.findOneAndUpdate({userId:userSharedRefCode.userId},{$inc:{walletBalance:100}});
+                        walletOfuserSharedRefCode.transactionHistory.push({transactionAmount:100,transactionType:"credit"});
+                        walletOfuserSharedRefCode.save();
+                    }
+                    const walletExist = await Wallet.findOne({userId:user._id});
+                    if(walletExist){
+                        await Wallet.findOneAndUpdate({userId:user._id},{$inc:{walletBalance:100}});
+                        walletExist.transactionHistory.push({transactionAmount:100,transactionType:"credit"});
+                        walletExist.save();
+                    }
+                }
+            }
+            
             //updating the product stock in product collecion
             for(const{productId,quantity} of cartProduts){
                 try {
@@ -123,10 +148,7 @@ module.exports = {
 
             //deleteing the cart after placing the order
             await Cart.findOneAndDelete({_id: userCartId});
-
             
-
-            res.json({redirect:'/orderSuccess'});
         } catch (error) {
             console.log("Error occured while checkout: ",error.message);
         }

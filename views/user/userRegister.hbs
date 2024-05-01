@@ -1,5 +1,5 @@
 <div class="container-fluid user_register_container d-flex justify-content-center align-items-center">
-    <div class="user_register d-flex justify-content-end">
+    <div class="user_register d-flex justify-content-end" style="height: fit-content;">
         <div class="userSignBrownBox ms-4">
             <h4 class="userSignSideBox  mt-5">Looks like you are new <br>here!</h4>
             <p class="mt-3">Sign up with your mobile <br>number to get started</p>
@@ -9,15 +9,17 @@
         </div>
         <div class="userRegisterForm">
             <form class="ms-4 mt-3" action="/register" method="post" enctype="application/x-www-form-urlencoded">
-                <input class="formDetails" type="text" name="name" placeholder="Enter full name">
+                <input class="formDetails" type="text" name="name" placeholder="Enter full name*">
                 <div class="separator"></div>
-                <input class="formDetails" type="email" name="email" placeholder="Enter your email">
+                <input class="formDetails" type="email" name="email" placeholder="Enter your email*">
                 <div class="separator"></div>
-                <input class="formDetails" type="tel" name="mobilenumber" placeholder="Mobile number(0-9 & 10 digits only)" pattern="[0-9]{10}">
+                <input class="formDetails" type="tel" name="mobilenumber" placeholder="Mobile number(0-9 & 10 digits only)*" pattern="[0-9]{10}">
                 <div class="separator"></div>
-                <input class="formDetails" type="password" name="password" placeholder="Enter password">
+                <input class="formDetails" type="password" name="password" placeholder="Enter password*">
                 <div class="separator"></div>
-                <input class="formDetails" type="password" name="confirmPassword" placeholder="Confirm password">
+                <input class="formDetails" type="password" name="confirmPassword" placeholder="Confirm password*">
+                <div class="separator"></div>
+                <input class="formDetails" type="text" name="referralCode" placeholder="Enter refferal code(If any)">
                 <div class="separator"></div>
                 <label class="mt-2" for="termsNconditions">
                     <span class="terms" style="font-size: smaller;">By continuing, you agree to team UFOs of Use and <br>Privacy Policy.</span>

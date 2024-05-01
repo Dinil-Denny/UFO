@@ -10,7 +10,7 @@ module.exports = {
         try {
             const orders = await Orders.find().sort({date:1}).lean();
             console.log("orders: ",orders);
-            res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,orders});
+            res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,orders,title:"Orders"});
         } catch (error) {
             console.log("Error: ",error);
         }

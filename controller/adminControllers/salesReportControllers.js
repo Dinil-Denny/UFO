@@ -48,22 +48,27 @@ module.exports = {
         console.log(fromDate,toDate);
         const isoFromDate = new Date(fromDate);
         const isoToDate = new Date(toDate);
-        const customDateSalesReport = await orderCollection.aggregate([
-          {$match:{date:{$gte:isoFromDate,$lte:isoToDate}}},
-          {$group:{
-            _id:{
-              day: { $dayOfMonth: '$date' },
-              month: { $month: '$date' }, 
-              year: { $year: '$date' },
-            },
-            totalSales: { $sum: '$totalPrice' },
-            totalOrders: { $sum: 1 },
-            totalCouponDiscount: { $sum: { $cond: [{ $eq: ['$couponDiscount', null] }, 0, '$couponDiscount'] } }, // Assuming all orders have couponDiscount
-            totalMRPDiscount:{$sum: '$productPriceDiscount'}
-          }}
-        ]);
-        console.log("customDateSalesReport:",customDateSalesReport);
-        res.json(customDateSalesReport);
+        if(isoFromDate<Date.now() && isoToDate<=Date.now() && isoFromDate<isoToDate){
+          const customDateSalesReport = await orderCollection.aggregate([
+            {$match:{date:{$gte:isoFromDate,$lte:isoToDate}}},
+            {$group:{
+              _id:{
+                day: { $dayOfMonth: '$date' },
+                month: { $month: '$date' }, 
+                year: { $year: '$date' },
+              },
+              totalSales: { $sum: '$totalPrice' },
+              totalOrders: { $sum: 1 },
+              totalCouponDiscount: { $sum: { $cond: [{ $eq: ['$couponDiscount', null] }, 0, '$couponDiscount'] } }, // Assuming all orders have couponDiscount
+              totalMRPDiscount:{$sum: '$productPriceDiscount'}
+            }}
+          ]);
+          console.log("customDateSalesReport:",customDateSalesReport);
+          return res.json(customDateSalesReport);
+        }else{
+          return res.json({errorMessage:"Select correct date values"});
+        }
+        
       } catch (err) {
         console.log("Error while getting CutomDateSalesData:",err.message);
       }

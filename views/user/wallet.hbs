@@ -9,7 +9,7 @@
     <main class="container my-5">
         <div class="row">
             
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="card balance-card" style="background-color: #0AB3EF; color: white;">
                     <h5 class="card-title mb-4">Available Balance</h5>
                     {{#if wallet}}
@@ -19,15 +19,16 @@
                     {{/if}}
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header fs-5 text-center fw-semibold">
+            <div class="col-md-8">
+                <div class="table-responsive ">
+                    <div class="card-header fs-5 text-center fw-semibold mb-3">
                         Recent Transactions
                     </div>
-                    <table class="card-body transactions-table table table-striped">
+                    <table class="card-body transactions-table table table-striped table-hover">
                         <thead>
                             <tr>
                                 <th>Transaction date</th>
+                                <th>Transaction ID</th>
                                 <th>Transaction type</th>
                                 <th>Amount</th>
                             </tr>
@@ -37,13 +38,14 @@
                             {{#each formattedDateWalletData}}
                             <tr>
                                 <td>{{this.transactionDate}}</td>
+                                <td>{{this._id}}</td>
                                 <td>{{this.transactionType}}</td>
                                 <td>{{this.transactionAmount}}</td>
                             </tr>
                             {{/each}}
                             {{else}}
                             <tr>
-                                <td colspan="3" class="text-center text-primary">No transaction history found</td>
+                                <td colspan="4" class="text-center text-primary fs-5">No transaction history found</td>
                             </tr>
                             {{/if}}
                         </tbody>
