@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const {getDashboard,getAdminLogin,postAdminLogin,adminLogout,} = require('../../controller/adminControllers/adminControllers');
+const {getAdminLogin,postAdminLogin,adminLogout,} = require('../../controller/adminControllers/adminControllers');
 const {getUserList,blockUser} = require('../../controller/adminControllers/adminUserController');
+const {getDashboard,topSellingProducts,topSellingCategorys,topSellingBrands,getPeriodicChartData,getDailySalesData} = require('../../controller/adminControllers/dashBoardControllers');
 const {getAddCatagory,postAddCatagory,deleteCategory,getEditCategory,postEditCategory} = require('../../controller/adminControllers/adminCategoryController');
 const {productList,productListPagination,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers/adminProductsController');
 const {getOrders,getOrderDetails,updateOrderStatus} = require('../../controller/adminControllers/adminOrderController');
@@ -15,6 +16,11 @@ const {pagination} = require('../../middlewares/pagination');
 
 // get admin dashboard
 router.get('/',adminAuthentication, getDashboard);
+router.get('/topSellingProducts',adminAuthentication,topSellingProducts);
+router.get('/topSellingCategorys',adminAuthentication,topSellingCategorys);
+router.get('/topSellingBrands',adminAuthentication,topSellingBrands);
+router.get('/chartFilter',adminAuthentication,getPeriodicChartData);
+router.get('/dailySalesData',adminAuthentication,getDailySalesData)
 
 // get admin login page
 router.get('/login',getAdminLogin);
@@ -83,12 +89,9 @@ router.get('/deleteCoupon/:id',adminAuthentication,deleteCoupon);
 
 //sales report
 router.get('/salesReport',adminAuthentication,getSalesData);
-router.get('/customDateSalesData',adminAuthentication,getCustomDateSalesData)
+router.get('/customDateSalesData',adminAuthentication,getCustomDateSalesData);
 router.get('/singleDaySalesReport',adminAuthentication,getDayWiseData);
 router.get('/periodicSalesData',adminAuthentication,getPeriodicSalesData);
-// router.get('/banner',async(req,res,next)=>{
-//     res.render('admin/adminBanner',{admin:true});
-// })
 
 //offer module - category offers
 router.get('/offers',adminAuthentication,getOfferList);

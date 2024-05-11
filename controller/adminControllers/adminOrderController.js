@@ -8,9 +8,14 @@ const mongoose = require('mongoose');
 module.exports = {
     getOrders : async(req,res)=>{
         try {
-            const orders = await Orders.find().sort({date:1}).lean();
+            const orders = await Orders.find().sort({date:-1}).lean();
             console.log("orders: ",orders);
-            res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,orders,title:"Orders"});
+            const dateFormattedOrders = orders.map(order=>{
+                const formattedDate = order.date.toLocaleDateString();
+                console.log("formattedDate",formattedDate);
+                return {...order,date:formattedDate};
+            })
+            res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,dateFormattedOrders,title:"Orders"});
         } catch (error) {
             console.log("Error: ",error);
         }

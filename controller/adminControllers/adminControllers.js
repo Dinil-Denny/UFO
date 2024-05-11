@@ -1,19 +1,9 @@
 const bcrypt = require('bcrypt');
+const userCollection = require('../../model/userSchema');
 const adminCollection = require('../../model/adminSchema');
+const orderCollection = require('../../model/orderSchema');
 
 module.exports = {
-    getDashboard : async(req,res,next)=>{
-        let session = req.session;
-        try{
-            if(session.adminid){
-                res.render('admin/adminDashboard',{admin:true, adminName:req.session.admin,title:"Admin_Dashboard"});
-            }else{
-                res.render('admin/adminLogin',{admin:true,title:"Admin_Login"});
-            }
-        }catch(err){
-            console.log("Error !! "+err);
-        } 
-    },
     getAdminLogin : (req,res,next)=>{
         try{
             res.render('admin/adminLogin',{admin:true,title:"Admin_Login"});

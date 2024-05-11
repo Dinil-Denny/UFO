@@ -37,44 +37,32 @@
                     "name" : "UFO",
                     "order_id" : data.order.id,
                     "handler" : function (response){
-                        console.log("response:",response);
-
-                        {{!-- alert(response.razorpay_payment_id);
-                        alert(response.razorpay_order_id);
-                        alert(response.razorpay_signature); --}}
-
+                        
                         if(response.razorpay_payment_id){
                             console.log("response.razorpay_payment_id",response.razorpay_payment_id);
-                            {{!-- const responseJson = await fetch('/verifyPayment',{
-                                method:'POST',
-                                headers: {
-                                    'Contet-Type':'application/json'
-                                },
-                                body : JSON.stringify(response)
-                            })
-                            const data = await responseJson.json();
-                            if(data.success){
-                                window.location.href = '/orderSuccess';
-                            }else{
-                                console.log("not success");
-                            } --}}
+                            console.log("response:",response);
                             fetch('/verifyPayment',{
                                 method:'POST',
                                 headers:{
                                     'Content-Type':'application/json'
                                 },
-                                body:JSON.stringify(response)
+                                body:JSON.stringify({response,orderId:data.orderId})
                             })
                             .then(response => response.json())
                             .then(data => {
                                 if(data.success){
                                     window.location.href = '/orderSuccess';
+                                }else if(!data.success){
+                                    window.location.href = '/orderFailed';
                                 }
                             })
                         }
                     }
                 }
                 const rzp1 = new Razorpay(options);
+                rzp1.on('payment.failed',function(response){
+                    window.location.href = '/orderFailed';
+                })
                 rzp1.open();
             }
 
@@ -197,10 +185,14 @@
                                         <h5>Payment</h5>
                                     </div>
                                     <div class="payment_option">
-                                        <div class="custome-radio">
-                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" checked value="COD">
-                                            <label class="form-check-label" for="paymentRadio1" data-bs-toggle="collapse">Cash on delivery</label>
-                                            
+                                        <div class="custome-radio" id="codRadioBtn">
+                                            {{#if codDisabled}}
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" value="COD" disabled>
+                                            <label class="form-check-label" for="paymentRadio1" data-bs-toggle="collapse">COD(not available for orders greater than 1000)</label>
+                                            {{else}}
+                                            <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" value="COD">
+                                            <label class="form-check-label" for="paymentRadio1" data-bs-toggle="collapse">COD</label>
+                                            {{/if}}
                                         </div>
                                         <div class="custome-radio">
                                             <input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio2"  value="ONLINE">
@@ -264,6 +256,13 @@
             if(data.couponDiscountAmount){
                 const hiddenCouponDiscount = document.getElementById("hiddenCouponDiscount");
                 hiddenCouponDiscount.value = data.couponDiscountAmount;
+            }
+            if(!data.codDisabled){
+                console.log("hi")
+                const codRadioBtn = document.getElementById("codRadioBtn");
+                codRadioBtn.innerHTML = '';
+                codRadioBtn.innerHTML = `<input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" value="COD">
+                                            <label class="form-check-label" for="paymentRadio1" data-bs-toggle="collapse">COD</label>`
             }
         }catch(err){
             console.log("Error on verifyCoupon:",err);

@@ -25,16 +25,6 @@
                             </div>
                             <div class="col-md-8">
                                 <div class="tab-content dashboard-content">
-                                    {{!-- <div class="tab-pane fade active show" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h5 class="mb-0">Hello Rosie! </h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <p>From your account dashboard. you can easily check &amp; view your <a href="#">recent orders</a>, manage your <a href="#">shipping and billing addresses</a> and <a href="#">edit your password and account details.</a></p>
-                                            </div>
-                                        </div>
-                                    </div> --}}
 
                                     {{!-- orders list page --}}
                                     <div class="tab-pane fade active show" id="orders" role="tabpanel" aria-labelledby="orders-tab">
@@ -48,20 +38,30 @@
                                                         <thead>
                                                             <tr>
                                                                 {{!-- <th>Product</th> --}}
-                                                                <th>Date and Time</th>
+                                                                <th>Date</th>
                                                                 <th>Total</th>
-                                                                <th>Payment</th>
+                                                                <th>Payment method</th>
+                                                                <th>Payment status</th>
                                                                 <th>Details</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {{#each orders}}
+                                                            {{#each dateFormattedOrders}}
                                                             <tr>
                                                                 {{!-- <td>#1357</td> --}}
                                                                 <td>{{this.date}}</td>
                                                                 <td>Rs. {{this.totalPrice}}</td>
                                                                 <td>{{this.paymentMethod}}</td>
-                                                                <td><a href="/orderDetails/{{this._id}}" class="btn-small d-block">View</a></td>
+                                                                {{#ifEquals this.paymentStatus "payed"}}
+                                                                <td><span class="badge rounded-pill text-bg-success">{{this.paymentStatus}}</span></td>
+                                                                {{/ifEquals}}
+                                                                {{#ifEquals this.paymentStatus "COD"}}
+                                                                <td><span class="badge rounded-pill text-bg-warning">{{this.paymentStatus}}</span></td>
+                                                                {{/ifEquals}}
+                                                                {{#ifEquals this.paymentStatus "pending"}}
+                                                                <td><span class="btn badge text-bg-danger">Payment failed, Try again</span></td>
+                                                                {{/ifEquals}}
+                                                                <td><a href="/orderDetails/{{this._id}}" class="btn-small d-block badge text-bg-primary" style="text-decoration: none;">View</a></td>
                                                             </tr>
                                                             {{/each}}
                                                         </tbody>

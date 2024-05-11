@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 module.exports = {
-    // accoutn overview
+    // accoutn overview - here ordered products list is shown
     getAccountOverview : async(req,res)=>{
         try {
           const userid = req.session.userid;
@@ -16,11 +16,17 @@ module.exports = {
           //console.log("userId",userid);
           const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:-1}).lean();
           //console.log("ordres: ",orders);
+          const dateFormattedOrders = orders.map((order)=>{
+            const orderedDate = order.date;
+            const formattedDate = orderedDate.toDateString();
+            return {...order,date:formattedDate}
+          })
+          console.log("dateFormattedOrders:",dateFormattedOrders);
           const addresses = await addressCollection.find({userEmail:userid}).lean();
           const referralCode = await referralCodeCollection.findOne({userId:user._id}).lean();
           console.log("referralCode: ",referralCode);
           //console.log(`user in account overview: ${user}`);
-          res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,orders,referralCode:referralCode.referralCode});
+          res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,dateFormattedOrders,referralCode:referralCode.referralCode});
         } catch (error) {
           console.log(`An error occured on loading account overview : ${error}`);
         }
@@ -66,8 +72,6 @@ module.exports = {
                         gender:"$orderedProducts.gender",
                         size:"$orderedProducts.size",
                         color:"$orderedProducts.color",
-
-                        
                     }
                 }
             ]);

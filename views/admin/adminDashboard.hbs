@@ -16,26 +16,178 @@
     <div class="dashboardDetails">
         <div class="salesSummery d-flex justify-content-evenly">
             <div class="total">
-                <h6>Total Sales</h6>
-                <p class="m-0 text-center">Rs.12355</p>
+                <h6>Total Revenue</h6>
+                <p class="m-0 text-center text-success fw-bold fs-4"><i class="bi bi-currency-rupee"></i> {{totalRevenue}}</p>
             </div>
             <div class="total">
                 <h6>Total Orders</h6>
-                <p class="m-0 text-center">55</p>
+                <p class="m-0 text-center text-success fw-bold fs-4">{{totalOrders}}</p>
             </div>
             <div class="total">
                 <h6>Total Customers</h6>
-                <p class="m-0 text-center">123</p>
+                <p class="m-0 text-center text-success fw-bold fs-4">{{totalCustomers}}</p>
             </div>
         </div>
-        <div class="salesDetails">
-            <div class="graph">
-                
+        <div class="d-flex mt-5 ms-5 d-flex justify-content-between">
+            <div class="col-md-4">
+                <a href="/admin/topSellingProducts" class="btn btn-warning fw-medium">View best selling products (top 10)</a>
             </div>
-            <div class="recentSales">
-
+            <div class="col-md-4">
+                <a href="/admin/topSellingCategorys" class="btn btn-warning fw-medium">View best selling catagories (top 10)</a>
+            </div>
+            <div class="col-md-4">
+                <a href="/admin/topSellingBrands" class="btn btn-warning fw-medium">View best selling brands (top 10)</a>
+            </div>
+        </div>
+        <div class="col-md-3 col-12 me-auto mb-3 mt-5 ms-5">
+            <h5>
+                Chart Filter
+            </h5>
+            <div class="custom_select">
+                <select class="form-select select-nice col-sm-4" name="groupBy" id="filterSelect">         {{!onchange="periodicSalesData(this)"}}
+                    <option selected value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="yearly">Yearly</option>
+                </select>
+            </div>
+        </div>
+        <div class="salesDetails"  onload="dailySalesData()">
+            <div class="graph" id="dailySalesData">
+                <canvas id="myChart"></canvas>
             </div>
         </div>
     </div>
-    
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+    async function dailySalesData(){
+        console.log("called");
+        try{
+            const response = await fetch('/admin/dailySalesData',{
+                method:'GET'
+            });
+            const data = await response.json();
+            console.log("data:",data);
+
+            const ctx = document.getElementById('myChart');
+
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(row => row._id),
+                    datasets: [{
+                        label: 'daily revenue',
+                        data: data.map(row => row.totalSales),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            });
+
+            async function periodicSalesData(){
+                try{
+                    console.log("hey");
+                    const filterValue = document.getElementById("filterSelect").value;
+                    const filterName = document.getElementById("filterSelect").name;
+                    const query = `${filterName}=${filterValue}`;
+                    console.log("q:",query);
+                    const response = await fetch(`/admin/chartFilter?${query}`,{
+                        method:'GET',
+                        headers:{
+                            'Content-Type':'application/json'
+                        }
+                    })
+                    const data = await response.json();
+                    console.log("data:",data);
+                    const salesDataArray = data.periodwiseSalesData;
+                    console.log("salesDataArray:",salesDataArray);
+                    chart.data.labels = salesDataArray.map(value=>{
+                        if(data.period === 'daily'){
+                            return value._id;
+                        }else if(data.period === 'weekly'){
+                            return value._id.week;
+                        }else if(data.period === 'monthly'){
+                            return `${value._id.month}/${value._id.year}`;
+                        }else if(data.period === 'yearly'){
+                            return value._id.year;
+                        }
+                    });
+                    chart.data.datasets[0].data = salesDataArray.map(value => value.totalSales);
+                    chart.data.datasets[0].label = `${data.period} revenue`
+                chart.update();
+                }catch(err){
+                    console.log("err:",err.message);
+                }
+            }
+
+            const filterSelect = document.getElementById("filterSelect");
+            const value = filterSelect.value;
+            console.log("value:",value);
+            filterSelect.addEventListener('change',periodicSalesData);
+            
+        }catch(err){
+            console.log("Error:",err.message);
+        }
+    }
+
+  window.onload = dailySalesData;
+</script>
+
+{{!-- <script>
+    async function periodicSalesData(periodValue){
+        try{
+            console.log("period:",periodValue.value,periodValue.name);
+            const query = `${periodValue.name}=${periodValue.value}`
+            console.log("query:",query);
+            const response = await fetch(`/admin/chartFilter?${query}`,{
+                method:'GET',
+                headers:{
+                    'Content-Type':'application/json'
+                }
+            })
+            const data = await response.json();
+            console.log("data:",data);
+            const salesDataArray = data.periodwiseSalesData;
+            console.log("salesDataArray:",salesDataArray);
+            
+
+            const ctx = document.getElementById('myChart');
+
+            let barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                labels: salesDataArray.map(row => {
+                    if(data.period === 'daily')
+                    row._id
+                }),
+                datasets: [{
+                    label: 'Total Revenue',
+                    data: salesDataArray.map(row => row.totalSales),
+                    borderWidth: 1
+                }]
+                },
+                options: {
+                scales: {
+                    y: {
+                    beginAtZero: true
+                    }
+                }
+                }
+            });
+            barChart.update(); 
+        }catch(err){
+            console.log("Error!:",err.message);
+        }
+    }
+    window.onload = periodicSalesData;
+</script> --}}

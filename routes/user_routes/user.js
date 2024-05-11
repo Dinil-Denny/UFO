@@ -4,7 +4,7 @@ const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,ge
 const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/userControllers/productsManagementControllers');
 const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
-const{getCartCheckout,postCartCheckout,verifyRazorpayPayment,getOrderSuccessPage} = require('../../controller/userControllers/orderController');
+const{getCartCheckout,postCartCheckout,verifyRazorpayPayment,getOrderSuccessPage,getOrderFailurePage} = require('../../controller/userControllers/orderController');
 const{getCoupons,couponCodeValidation} = require('../../controller/userControllers/couponControllers');
 const{getWallet} = require('../../controller/userControllers/walletController');
 
@@ -125,6 +125,8 @@ router.post('/verifyPayment',verifyRazorpayPayment);
 
 //order success
 router.get('/orderSuccess',userAuthentication,getOrderSuccessPage);
+//order failure
+router.get('/orderFailed',userAuthentication,getOrderFailurePage)
 
 //wallet 
 router.get('/wallet',userAuthentication,getWallet);
