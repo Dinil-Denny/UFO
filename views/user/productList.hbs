@@ -2,75 +2,18 @@
 
 <section class="mt-50 mb-50">
             <div class="container">
-                <div class="row flex-row-reverse">
-                    <div class="col-lg-9">
-                        <div class="shop-product-fillter">
-                            <div class="sort-by-product-area">
-                                <div class="sort-by-cover">
-                                    <div class="sort-by-product-wrap">
-                                        <select name="sort" id="sortProducts" style="border: none; background:none;" onchange="filterProducts()">
-                                            <option value="" selected disabled>Sort</option>   
-                                            <option value="1">Price: Low to High</option>
-                                            <option value="-1">Price: High to Low</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {{!-- products --}}
-                        <div class="productsContainer d-flex flex-column">  
-                            <div class="products mb-3 d-flex justify-content-center flex-wrap">
-                                {{#if products}}
-                                {{#each products}}
-                                {{#if this.active}}
-                                <div class="card m-3" style="width: 18rem; border-top-right-radius: 25px; border-top-left-radius: 25px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
-                                    <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
-                                    <img src="{{this.images.[0]}}" class="card-img-top p-2" style="height:350px; border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
-                                    <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
-                                        
-                                        <h5 class="card-title">{{this.brandName.brandName}}</h5>
-                                        <p class="card-text">{{this.productName}}</p>
-                                        <div class="product-price">
-                                            <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. {{this.offerPrice}} </span>
-                                            <span class="old-price text-decoration-line-through">Rs. {{this.price}}</span>
-                                        </div>
-                                    </div>
-                                    </a>
-                                </div>
-                                {{/if}}
-                                {{/each}}
-                                {{else}}
-                                <div class="m-3">
-                                    <h5 class="text-center fs-4">Sorry, no products found!...</h5>
-                                </div>
-                                {{/if}}
-                            </div>
-                        </div>
-                        {{!-- products --}}
-
-                    {{!---------------- pagination --------------------}}
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination d-flex justify-content-center mt-5">
-                                {{!-- {{#if previousPage}} --}}
-                                <li class="page-item" id="previousPage" value="{{previousPage}}" onclick="pagination(this)"><a class="page-link">Previous</a></li>
-                                {{!-- {{/if}} --}}
-                                <li class="page-item" id="currentPageValue" value="{{currentPage}}" onclick="pagination(this)"><a class="page-link" id="currentPage">{{currentPage}}</a></li>
-                                {{!-- {{#if nextPage}} --}}
-                                <li class="page-item" id="nextPage" value="{{nextPage}}" onclick="pagination(this)"><a class="page-link">Next</a></li> 
-                                {{!-- {{/if}} --}}
-                            </ul>
-                        </nav>
-                    {{!---------------- pagination --------------------}}
-
-                    </div>
-                    <div class="col-lg-3 primary-sidebar sticky-sidebar">
-                        
+                <div class="row flex-row">
+                    <div class="col-lg-3 primary-sidebar sticky-sidebar"> 
                         <!-- Fillter -->
                         <div class="sidebar-widget price_range range mb-30">
-                            
                             <div class="list-group">
                                 <div class="list-group-item mb-10 mt-10">
+                                    {{!-- <form class="d-flex mb-4" action="/filter" method="get"> --}} 
+                                    <div class="d-flex mb-4">
+                                        <input class="form-control ms-2" type="search" id="searchBox" placeholder="search" aria-label="Search" name="search" value="{{#if search}}{{search}}{{/if}}" required>
+                                        <button class="btn btn-outline-secondary ms-3" type="submit" onclick="filterProducts()"><i class="bi bi-search"></i></button>
+                                    </div>
+                                    {{!-- </form> --}}
                                     <div class="filterOptions">
                                         <h5>Gender</h5>
                                         <label for="male" style="display:block;">
@@ -131,6 +74,68 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-9">
+                        <div class="shop-product-fillter">
+                            <div class="sort-by-product-area">
+                                <div class="sort-by-cover">
+                                    <div class="sort-by-product-wrap">
+                                        <select name="sort" id="sortProducts" style="border: none; background:none;" onchange="filterProducts()">
+                                            <option value="" selected disabled>Sort</option>   
+                                            <option value="1">Price: Low to High</option>
+                                            <option value="-1">Price: High to Low</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{!-- products --}}
+                        <div class="productsContainer d-flex flex-column">  
+                            <div class="products mb-3 d-flex justify-content-center flex-wrap">
+                                {{#if products}}
+                                {{#each products}}
+                                {{#if this.active}}
+                                <div class="card m-3" style="width: 18rem; border-top-right-radius: 25px; border-top-left-radius: 25px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                                    <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this._id}}">
+                                    <img src="{{this.images.[0]}}" class="card-img-top p-2" style="height:350px; border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
+                                    <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                                        
+                                        <h5 class="card-title">{{this.brandName.brandName}}</h5>
+                                        <p class="card-text">{{this.productName}}</p>
+                                        <div class="product-price">
+                                            <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. {{this.offerPrice}} </span>
+                                            <span class="old-price text-decoration-line-through">Rs. {{this.price}}</span>
+                                        </div>
+                                    </div>
+                                    </a>
+                                </div>
+                                {{/if}}
+                                {{/each}}
+                                {{else}}
+                                <div class="m-3">
+                                    <h5 class="text-center fs-4">Sorry, no products found!...</h5>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </div>
+                        {{!-- products --}}
+
+                    {{!---------------- pagination --------------------}}
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination d-flex justify-content-center mt-5">
+                                {{!-- {{#if previousPage}} --}}
+                                <li class="page-item" id="previousPage" value="{{previousPage}}" onclick="filterProducts(this)"><a class="page-link">Previous</a></li>
+                                {{!-- {{/if}} --}}
+                                <li class="page-item" id="currentPageValue" value="{{currentPage}}" onclick="filterProducts(this)"><a class="page-link" id="currentPage">{{currentPage}}</a></li>
+                                {{!-- {{#if nextPage}} --}}
+                                <li class="page-item" id="nextPage" value="{{nextPage}}" onclick="filterProducts(this)"><a class="page-link">Next</a></li> 
+                                {{!-- {{/if}} --}}
+                            </ul>
+                        </nav>
+                    {{!---------------- pagination --------------------}}
+
+                    </div>
+                    
                 </div>
             </div>
         </section>
@@ -203,57 +208,73 @@
         });
     };
 
-    async function filterProducts(){
-        console.log("filterProducts function called")
-        const selectedFilters = {};
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-        const sortValues = document.getElementById('sortProducts');
-        console.log(sortValues.name);
-        console.log("sortValues:",sortValues.value);
-        console.log("checkboxes: ",checkboxes);
+    async function filterProducts(pageValue){
+        console.log("filterProducts function called");
+        try{
+            const search = document.getElementById("searchBox");
+            console.log("ser:",search.value);
+            const selectedFilters = {};
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const sortValues = document.getElementById('sortProducts');
+            //console.log(sortValues.name);
+            //console.log("sortValues:",sortValues);
+            //console.log("checkboxes: ",checkboxes);
 
-        //constructing query string with url parameters
-        let queryString = '';
-        queryString += `${sortValues.name}=${sortValues.value}&`
-        for(const checkbox of checkboxes){
-            const filterName = checkbox.name;
-            const filterValue = checkbox.value;
-            selectedFilters[filterName] = filterValue;
-            queryString += `${filterName}=${filterValue}&`;
-            console.log("queryString: ",queryString);
-        }
-        console.log("Selected filters: ",selectedFilters);
-        
-        //removing the trailing & if any
-        queryString = queryString.slice(0,-1);
-        const url = `/filter?${queryString}`;
-        console.log("queryString: ",queryString);
+            //constructing query string with url parameters
+            let queryString = '';
+            if(search.value){
+                queryString+=`search=${search.value}&`
+            }
+            if(pageValue){
+                console.log("1")
+                queryString += `page=${pageValue.value}&`;
+            }
+            if(sortValues.value){
+                console.log("2")
+                queryString += `${sortValues.name}=${sortValues.value}&`;
+            }
+            for(const checkbox of checkboxes){
+                const filterName = checkbox.name;
+                const filterValue = checkbox.value;
+                selectedFilters[filterName] = filterValue;
+                queryString += `${filterName}=${filterValue}&`;
+                console.log("queryString: ",queryString);
+            }
+            console.log("Selected filters: ",selectedFilters);
+            
+            //removing the trailing '&' if any
+            queryString = queryString.slice(0,-1);
+            const url = `/filter?${queryString}`;
+            //console.log("queryString: ",queryString);
 
-        const response = await fetch(url,{
-            method:'GET',
-            headers:{'Content-Type':'application/json'}
-        });
+            const response = await fetch(url,{
+                method:'GET',
+                headers:{'Content-Type':'application/json'}
+            });
 
-        //update the product list with filtered data
-        const data = await response.json();
-        console.log(data);
-        console.log("data:",data);
-        updateProductList(data.filteredProducts);
+            //update the product list with filtered data
+            const data = await response.json();
+            console.log(data);
+            console.log("data:",data);
+            updateProductList(data.filteredProducts);
 
-        if(data.previousPage){
-            const previousPage = document.getElementById('previousPage');
-            previousPage.value = data.previousPage;
-            console.log("previousPage:",previousPage)
-        }
-        const currentPageValue = document.getElementById('currentPageValue');
-        currentPageValue.value = data.currentPage;
-        const currentPage = document.getElementById('currentPage');
-        currentPage.textContent = data.currentPage;
-        console.log("currentPage:",currentPage.innerHTML);
-        if(data.nextPage){
-            const nextPage = document.getElementById('nextPage');
-            nextPage.value = data.nextPage;
-            console.log("nextPage:",nextPage)
+            if(data.previousPage){
+                const previousPage = document.getElementById('previousPage');
+                previousPage.value = data.previousPage;
+                console.log("previousPage:",previousPage)
+            }
+            const currentPageValue = document.getElementById('currentPageValue');
+            currentPageValue.value = data.currentPage;
+            const currentPage = document.getElementById('currentPage');
+            currentPage.textContent = data.currentPage;
+            console.log("currentPage:",currentPage.innerHTML);
+            if(data.nextPage){
+                const nextPage = document.getElementById('nextPage');
+                nextPage.value = data.nextPage;
+                console.log("nextPage:",nextPage)
+            }
+        }catch(err){
+            console.log("err:",err);
         }
     }
 

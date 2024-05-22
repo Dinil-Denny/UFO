@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {getAdminLogin,postAdminLogin,adminLogout,} = require('../../controller/adminControllers/adminControllers');
 const {getUserList,blockUser} = require('../../controller/adminControllers/adminUserController');
-const {getDashboard,topSellingProducts,topSellingCategorys,topSellingBrands,getPeriodicChartData,getDailySalesData} = require('../../controller/adminControllers/dashBoardControllers');
+const {getDashboard,topSellingProducts,topSellingCategorys,topSellingBrands,getPeriodicChartData,getDailySalesData,getDaywiseSalesData} = require('../../controller/adminControllers/dashBoardControllers');
 const {getAddCatagory,postAddCatagory,deleteCategory,getEditCategory,postEditCategory} = require('../../controller/adminControllers/adminCategoryController');
 const {productList,productListPagination,getAddProduct,postAddProducts,postAddBrand,blockProducts,getEditPorducts,postEditProducts,deleteProducts} = require('../../controller/adminControllers/adminProductsController');
 const {getOrders,getOrderDetails,updateOrderStatus} = require('../../controller/adminControllers/adminOrderController');
@@ -20,7 +20,8 @@ router.get('/topSellingProducts',adminAuthentication,topSellingProducts);
 router.get('/topSellingCategorys',adminAuthentication,topSellingCategorys);
 router.get('/topSellingBrands',adminAuthentication,topSellingBrands);
 router.get('/chartFilter',adminAuthentication,getPeriodicChartData);
-router.get('/dailySalesData',adminAuthentication,getDailySalesData)
+router.get('/dailySalesData',adminAuthentication,getDailySalesData);
+router.get('/dayWiseData',adminAuthentication,getDaywiseSalesData);
 
 // get admin login page
 router.get('/login',getAdminLogin);
@@ -50,8 +51,8 @@ router.post('/editCategory/:id',adminAuthentication,postEditCategory);
 
 // getting products
 router.get('/products',adminAuthentication,pagination,productList);
-
-router.get('/pagination',adminAuthentication,pagination,productListPagination);
+//products list table pagination
+router.get('/productListPagination',adminAuthentication,pagination,productListPagination);
 
 // get the add new product form
 router.get('/addProduct',adminAuthentication,getAddProduct);
@@ -70,14 +71,14 @@ router.post('/editProduct/:id',upload.array('images',5),postEditProducts);
 router.get('/deleteProduct/:id',adminAuthentication,deleteProducts);
 
 //admin order controller
-router.get('/orders',adminAuthentication,getOrders);
+router.get('/orders',adminAuthentication,getOrders);    
 //admin order details
 router.get('/orderDetails/:id',adminAuthentication,getOrderDetails);
 //updating order status
 router.post('/updateOrderStatus',adminAuthentication,updateOrderStatus);
 
 // get all coupons
-router.get('/coupons',adminAuthentication,pagination,getCouponList);
+router.get('/coupons',adminAuthentication,getCouponList);
 //get add coupon
 router.get('/addCoupon',adminAuthentication,getAddCoupon);
 //post add coupon

@@ -4,10 +4,10 @@ const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,ge
 const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/userControllers/productsManagementControllers');
 const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
-const{getCartCheckout,postCartCheckout,verifyRazorpayPayment,getOrderSuccessPage,getOrderFailurePage} = require('../../controller/userControllers/orderController');
+const{getCartCheckout,postCartCheckout,retryPayment,verifyRazorpayPayment,getOrderSuccessPage,getOrderFailurePage} = require('../../controller/userControllers/orderController');
 const{getCoupons,couponCodeValidation} = require('../../controller/userControllers/couponControllers');
 const{getWallet} = require('../../controller/userControllers/walletController');
-
+//middlewares
 const {userAuthentication,preventUserBackToLogin} = require('../../middlewares/userAuthMiddleware');
 const{pagination} = require('../../middlewares/pagination');
 const {filterSorting} = require('../../middlewares/filteringSortingMiddleware');
@@ -43,11 +43,8 @@ router.get('/forgetPassword',getForgetPasswordEmail);
 
 // post forget password sending email
 router.post('/forgetPassword',postForgetPasswordEmail);
-
 router.post('/resetPassword',postForgetPasswordOtp);
-
 router.get('/resend-resetOTP',getResetResendOTP);
-
 router.post('/resetAccountPassword',resetPassword);
 
 // get products list
@@ -55,10 +52,10 @@ router.get('/products',userAuthentication,pagination,getProductListing);
 router.get('/pagination',pagination,productListingPagination);
 
 // filter products
-router.get('/filter',filterSorting,pagination,filterProducts);
+router.get('/filter',filterSorting,filterProducts);
 
 //search products
-router.get('/search',userAuthentication,pagination,searchProducts);
+// router.get('/search',userAuthentication,searchProducts);
 
 // product details
 router.get('/productDetails/:id',userAuthentication,getProductDetails);
@@ -120,6 +117,8 @@ router.post('/checkout',userAuthentication,postCartCheckout);
 router.get('/coupons',userAuthentication,getCoupons);
 router.post('/couponValidation',userAuthentication,couponCodeValidation);
 
+//retry failde payment
+router.post('/retryPayment',userAuthentication,retryPayment);
 //verify payment
 router.post('/verifyPayment',verifyRazorpayPayment);
 

@@ -227,6 +227,26 @@ module.exports = {
             console.log("Error while getting chart data:",err.message);
         }
     },
+    getDaywiseSalesData : async(req,res)=>{
+        try{
+            const date = req.query.date;
+            console.log("date:",date);
+            const isoDate = new Date(date);
+            const salesData = await orderCollection.aggregate([
+                { $match: { date: { $eq: isoDate } } }, // Match by date
+                {
+                  $group: {
+                    _id: isoDate.toLocaleDateString(),
+                    totalSales: { $sum: '$totalPrice'}
+                  },
+                },
+            ]);
+            console.log("salesData:",salesData);
+            res.json(salesData);
+        }catch(err){
+            console.log("Error while getting day wise data:",err.message);
+        }
+    },
     getDailySalesData: async(req,res)=>{
         try {
             let pipeline = [

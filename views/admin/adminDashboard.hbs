@@ -39,20 +39,28 @@
                 <a href="/admin/topSellingBrands" class="btn btn-warning fw-medium">View best selling brands (top 10)</a>
             </div>
         </div>
-        <div class="col-md-3 col-12 me-auto mb-3 mt-5 ms-5">
-            <h5>
-                Chart Filter
-            </h5>
-            <div class="custom_select">
-                <select class="form-select select-nice col-sm-4" name="groupBy" id="filterSelect">         {{!onchange="periodicSalesData(this)"}}
+        <h5 class="ms-5 mt-5">
+            Chart Filter
+        </h5>
+        <div class="d-flex justify-content-between mb-3 ms-5">
+            <div class="custom_select col-md-2 col-6">
+                <select class="form-select select-nice" name="groupBy" id="filterSelect">         {{!onchange="periodicSalesData(this)"}}
                     <option selected value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
                     <option value="monthly">Monthly</option>
                     <option value="yearly">Yearly</option>
                 </select>
             </div>
+            <div class="col-md-2 col-6 me-5">
+                <input type="date" class="form-control" id="customDate" name="date" >
+                <div class="text-danger" id="formError" style="font-size: small;">
+                    {{#if ErrMessage}}
+                        <p>{{ErrMessage}}</p>
+                    {{/if}}
+                </div>
+            </div>
         </div>
-        <div class="salesDetails"  onload="dailySalesData()">
+        <div class="salesDetails mb-5"  onload="dailySalesData()">
             <div class="graph" id="dailySalesData">
                 <canvas id="myChart"></canvas>
             </div>
@@ -124,17 +132,46 @@
                     });
                     chart.data.datasets[0].data = salesDataArray.map(value => value.totalSales);
                     chart.data.datasets[0].label = `${data.period} revenue`
-                chart.update();
+                    chart.update();
                 }catch(err){
                     console.log("err:",err.message);
                 }
             }
 
+            async function dayWiseSalesReport(){
+                try{
+                    const date = document.getElementById("customDate").value;
+                    console.log("date:",date);
+                    const errorBlock = document.getElementById("formError");
+                    if(new Date(date)>Date.now()){
+                        errorBlock.innerText = "Select a valid date";
+                        return false;
+                    }else{
+                        errorBlock.innerText = '';
+                    }
+                    const response = await fetch(`/admin/dayWiseData?date=${date}`,{
+                        method:'GET'
+                    });
+                    const data = await response.json();
+                    console.log("day wise data:",data);
+                    chart.data.labels = data.map(value => value._id);
+                    chart.data.datasets[0].data = data.map(value => value.totalSales);
+                    chart.data.datasets[0].label = 'Day wise data';
+                    chart.update();
+                }catch(err){
+                    console.log("err:",err);
+                }
+            }
+
+            //adding onchange event listner for daily/weekly/monthly dropdown filters
             const filterSelect = document.getElementById("filterSelect");
             const value = filterSelect.value;
             console.log("value:",value);
             filterSelect.addEventListener('change',periodicSalesData);
-            
+            //adding onchange event listner for custom date selector
+            const customDateSelect = document.getElementById("customDate");
+            customDateSelect.addEventListener('change',dayWiseSalesReport);
+
         }catch(err){
             console.log("Error:",err.message);
         }
@@ -142,52 +179,6 @@
 
   window.onload = dailySalesData;
 </script>
-
-{{!-- <script>
-    async function periodicSalesData(periodValue){
-        try{
-            console.log("period:",periodValue.value,periodValue.name);
-            const query = `${periodValue.name}=${periodValue.value}`
-            console.log("query:",query);
-            const response = await fetch(`/admin/chartFilter?${query}`,{
-                method:'GET',
-                headers:{
-                    'Content-Type':'application/json'
-                }
-            })
-            const data = await response.json();
-            console.log("data:",data);
-            const salesDataArray = data.periodwiseSalesData;
-            console.log("salesDataArray:",salesDataArray);
-            
-
-            const ctx = document.getElementById('myChart');
-
-            let barChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                labels: salesDataArray.map(row => {
-                    if(data.period === 'daily')
-                    row._id
-                }),
-                datasets: [{
-                    label: 'Total Revenue',
-                    data: salesDataArray.map(row => row.totalSales),
-                    borderWidth: 1
-                }]
-                },
-                options: {
-                scales: {
-                    y: {
-                    beginAtZero: true
-                    }
-                }
-                }
-            });
-            barChart.update(); 
-        }catch(err){
-            console.log("Error!:",err.message);
-        }
-    }
-    window.onload = periodicSalesData;
-</script> --}}
+<script>
+    
+</script>

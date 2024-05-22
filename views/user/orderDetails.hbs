@@ -24,15 +24,6 @@
                             </thead>
                             <tbody>
                                 {{#each orderDetails}}
-                                {{!-- <input type="text" hidden id="productName" value="{{this.productName}}">
-                                <input type="text" hidden id="brandName" value="{{this.brandName}}">
-                                <input type="text" hidden id="size" value="{{this.size}}">
-                                <input type="text" hidden id="color" value="{{this.color}}">
-                                <input type="text" hidden id="userName" value="{{this.shippingAddress.name}}">
-                                <input type="text" hidden id="houseName" value="{{this.shippingAddress.houseName}}">
-                                <input type="text" hidden id="street" value="{{this.shippingAddress.street}}">
-                                <input type="text" hidden id="quantity" value="{{this.quantity}}">
-                                <input type="text" hidden id="totalPrice" value="{{this.productPrice}}"> --}}
                                 <tr>
                                     <td class="image"><img src="{{this.productImages.[0]}}" alt="productImage" style="width: 5rem;"></td>
                                     <td>{{this.productName}}, {{this.brandName}}, <br>Size: {{this.size}}, Color: {{this.color}}</td>
@@ -119,7 +110,6 @@
             //Create your invoice! Easy!
             easyinvoice.createInvoice(data, function (result) {
                 //The response will contain a base64 encoded PDF file
-                //console.log('PDF base64 string: ', result.pdf);
                 easyinvoice.download("myInvoice.pdf");
             });
         }catch(err){

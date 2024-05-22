@@ -73,7 +73,7 @@
     const pagination= async(value)=>{
         try{
             {{!-- console.log("value: ",value); --}}
-        const response = await fetch(`/admin/pagination/?page=${value.value}`,{
+        const response = await fetch(`/admin/productListPagination/?page=${value.value}`,{
             method:'GET',
             headers:{'Content-Type':'application/json'}
         });

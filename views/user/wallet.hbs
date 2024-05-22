@@ -28,7 +28,7 @@
                         <thead>
                             <tr>
                                 <th>Transaction date</th>
-                                <th>Transaction ID</th>
+                                {{!-- <th>Transaction ID</th> --}}
                                 <th>Transaction type</th>
                                 <th>Amount</th>
                             </tr>
@@ -38,7 +38,7 @@
                             {{#each formattedDateWalletData}}
                             <tr>
                                 <td>{{this.transactionDate}}</td>
-                                <td>{{this._id}}</td>
+                                {{!-- <td>{{this._id}}</td> --}}
                                 <td>{{this.transactionType}}</td>
                                 <td>{{this.transactionAmount}}</td>
                             </tr>

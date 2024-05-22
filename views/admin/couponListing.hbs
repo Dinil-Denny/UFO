@@ -58,13 +58,13 @@
         </table>
         <nav aria-label="Page navigation example">
             <ul class="pagination d-flex justify-content-center mt-5">
-                {{!-- {{#if previousPage}} --}}
-                <li class="page-item" id="previousPage" value="{{previousPage}}" onclick="pagination(this)"><a class="page-link">Previous</a></li>
-                {{!-- {{/if}} --}}
-                <li class="page-item" id="currentPageValue" value="{{currentPage}}" onclick="pagination(this)"><a class="page-link" id="currentPage">{{currentPage}}</a></li>
-                {{!-- {{#if nextPage}} --}}
-                <li class="page-item" id="nextPage" value="{{nextPage}}" onclick="pagination(this)"><a class="page-link">Next</a></li> 
-                {{!-- {{/if}} --}}
+                {{#if previousPage}}
+                <li class="page-item" id="previousPage" value="{{previousPage}}"><a class="page-link" href="/admin/coupons?page={{previousPage}}">Previous</a></li>
+                {{/if}}
+                <li class="page-item" id="currentPageValue" value="{{currentPage}}"><a class="page-link" id="currentPage" href="/admin/coupons?page={{currentPage}}">{{currentPage}}</a></li>
+                {{#if nextPage}}
+                <li class="page-item" id="nextPage" value="{{nextPage}}"><a class="page-link" href="/admin/coupons?page={{nextPage}}">Next</a></li> 
+                {{/if}}
             </ul>
         </nav>
     </div>

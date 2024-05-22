@@ -18,7 +18,7 @@ module.exports = {
           //console.log("ordres: ",orders);
           const dateFormattedOrders = orders.map((order)=>{
             const orderedDate = order.date;
-            const formattedDate = orderedDate.toDateString();
+            const formattedDate = orderedDate.toLocaleDateString();
             return {...order,date:formattedDate}
           })
           console.log("dateFormattedOrders:",dateFormattedOrders);

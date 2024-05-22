@@ -5,7 +5,7 @@ module.exports = {
         try {
             const currentPage = parseInt(req.query.page) || 1;
             console.log("currentPage: ",currentPage);
-            const limit = 6 ; //items per page
+            const limit = 6; //items per page
             let totalProductsCount = 0;
             if(res.locals.filteredProducts){
                 console.log("filteredProducts:",res.locals.filteredProducts);

@@ -5,17 +5,12 @@
         console.log("place order is called");
         try{
             const userAddressId = document.querySelector('input[name="userAddressId"]:checked').value;
-            console.log("userAddressId:",userAddressId);
             const cartTotal = document.querySelector('input[name="cartTotal"]').value;
-            //console.log("cartTotal:",cartTotal);
             const userCartId = document.querySelector('input[name="userCartId"]').value;
             const userId = document.querySelector('input[name="userId"]').value;
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-            //console.log("paymentMethod",paymentMethod);
             const couponDiscount = document.querySelector('input[name="couponDiscount"]').value;
-            //console.log("couponDiscount",couponDiscount);
             const couponApplied = document.querySelector('input[name="couponApplied"]').value;
-            //console.log("couponApplied",couponApplied);
             const productPriceDiscount = document.querySelector('input[name="productPriceDiscount"]').value;
 
             const response = await fetch('/checkout',{

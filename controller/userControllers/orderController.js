@@ -141,6 +141,24 @@ module.exports = {
         }
     },  
 
+    retryPayment : async(req,res)=>{
+        try {
+            console.log(req.body);
+            const totalPrice = req.body.totalPrice;
+            const orderId = req.body.orderId;
+            const options = {
+                amount: totalPrice*100,
+                currency:"INR",
+                receipt: crypto.randomBytes(10).toString("hex")
+            }
+            const order = await instance.orders.create(options);
+                //console.log("razorpay order:",order);
+            res.json({order,razorpayKey:process.env.RZP_KEY_ID,orderId});
+        } catch (error) {
+            console.log("Error in retry payment:",error.message);
+        }
+    },
+
     verifyRazorpayPayment : async(req,res)=>{
         try {
             const razorpay_order_id = req.body.response.razorpay_order_id;
@@ -155,7 +173,7 @@ module.exports = {
             .digest('hex');
             console.log("expectedSignature:",expectedSignature);
             if(expectedSignature === razorpay_signature){
-                await Orders.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{$set:{paymentStatus:"payed"}});
+                await Orders.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{$set:{paymentStatus:"payed",date: Date.now()}});
                 return res.status(200).json({success:true});
             }else{
                 return res.status(400).json({success:false});

@@ -7,15 +7,26 @@ const mongoose = require('mongoose');
 
 module.exports = {
     getOrders : async(req,res)=>{
+        if(req.query)console.log(req.query);
         try {
-            const orders = await Orders.find().sort({date:-1}).lean();
-            console.log("orders: ",orders);
+            const limit = 5;
+            const totalOrders = await Orders.countDocuments();
+            const totalPages = Math.ceil(totalOrders/limit);
+            const currentPage = req.query.page || 1;
+            const nextPage = currentPage<totalPages? parseInt(currentPage)+1 : null;
+            const previousPage = currentPage>1? parseInt(currentPage)-1 : null;
+            
+            const orders = await Orders.find().sort({date:-1})
+            .skip((currentPage-1) * limit)
+            .limit(limit)
+            .lean();
+            //console.log("orders: ",orders);
             const dateFormattedOrders = orders.map(order=>{
                 const formattedDate = order.date.toLocaleDateString();
-                console.log("formattedDate",formattedDate);
+                //console.log("formattedDate",formattedDate);
                 return {...order,date:formattedDate};
             })
-            res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,dateFormattedOrders,title:"Orders"});
+            res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,dateFormattedOrders,title:"Orders",currentPage,nextPage,previousPage});
         } catch (error) {
             console.log("Error: ",error);
         }

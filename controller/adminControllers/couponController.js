@@ -3,12 +3,14 @@ const mongoose = require('mongoose');
 
 module.exports = {
     getCouponList : async(req,res)=>{
+        console.log("page:",req.query);
         try{
-            const paginationData = req.paginationData;
-            const previousPage = paginationData.previousPage;
-            const nextPage = paginationData.nextPage;
-            const currentPage = paginationData.currentPage;
-            const limit = paginationData.limit;
+            const limit = 4;
+            const totalCoupons = await couponCollection.countDocuments();
+            const totalPages = Math.ceil(totalCoupons/limit);
+            const currentPage = req.query.page || 1;
+            const previousPage = currentPage>1 ? parseInt(currentPage)-1 : null;
+            const nextPage = currentPage<totalPages ? parseInt(currentPage)+1 : null;
 
             const coupons = await couponCollection.find().sort({createdAt:-1}).skip((currentPage-1) * limit).limit(limit).lean();
             console.log("coupons:",coupons);
