@@ -109,7 +109,6 @@
     function validateDate(){
         const alertBox = document.getElementById("expiryDateError");
         const expiryDate = document.getElementById("expiryAt").value;
-        console.log(expiryDate);
         const currentDate = new Date();
         const enteredDate = new Date(expiryDate);
         if(enteredDate<currentDate){

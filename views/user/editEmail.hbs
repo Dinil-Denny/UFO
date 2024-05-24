@@ -1,0 +1,153 @@
+<div class="tab-pane container mb-5 d-flex justify-content-center" id="editEmail"  role="tabpanel"  aria-labelledby="account-detail-tab">
+  <div class="card" style="width: 70%;">
+    <div class="card-header">
+      <h5>Edit Email</h5>
+    </div>
+    <div class="card-body">
+      {{!-- <form action="/editEmail/{{user._id}}" method="post" name="enq"> --}}
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label>Edit Email <span class="required">*</span></label>
+            <input required class="form-control square" id="email"  name="email"  type="email" onchange="validateEmail()"  value="{{user.email}}"/>
+            <div class="text-danger" id="emailValidationError" style="font-size: small;">     
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-center col-md-6">
+            <a class="btn btn-dark mt-4 col-md-6" id="getOTP" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .9rem; height: 2.5rem;">Get OTP</a>
+          </div>
+          <div class="form-group col-md-6">
+            <label>Enter OTP <span class="required">*</span></label>
+            <input  required  class="form-control square" onchange="validateOTP()"  name="otp" id="otp"  type="text"/>
+            <div class="text-danger" id="otpValidationError" style="font-size: small;">     
+            </div>
+          </div>
+          <div class="form-group d-flex justify-content-center col-md-6">
+            <input type="text" hidden id="userId" value="{{user._id}}">
+            <a class="btn btn-dark mt-4 col-md-6" id="verifyOTP" style="--bs-btn-padding-y: .5rem; --bs-btn-padding-x: .9rem; height: 2.5rem;">Verify OTP and save</a>
+          </div>
+          <div class="d-flex justify-content-center" id="otpVerificationError">
+          </div>
+        </div>
+      {{!-- </form> --}}
+    </div>
+  </div>
+</div>
+
+{{!-- sweetaltert cdn --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    //validating email
+    async function validateEmail(){
+        const emailEntered = document.getElementById("email").value;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailValidationError = document.getElementById("emailValidationError");
+        if(!emailRegex.test(emailEntered)){
+            emailValidationError.innerText = "Enter a valid email id";
+            return false;
+        }
+        emailValidationError.innerText = "";
+        return true;
+    }
+    //validating entered otp
+    async function validateOTP(){
+        const otp = document.getElementById("otp").value;
+        const otpRegex = /^\d{4}$/;
+        const otpError = document.getElementById("otpValidationError");
+        if(!otpRegex.test(otp)){
+            otpError.innerText = "OTP is 4 digit number";
+            return false;
+        }
+        otpError.innerText = "";
+        return true;
+    }
+
+    //getting otp
+    const getOTP = document.getElementById("getOTP");
+    getOTP.addEventListener('click',async function getEditOTP(){
+        const response = await fetch('/emailEditOtp',{
+            method:'GET'
+        });
+        const data = await response.json();
+        if(data.success){
+            getOTP.innerText = "Resend OTP";
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'center',
+                iconColor: 'white',
+                customClass: {
+                    popup: 'colored-toast',
+                },
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true,
+            });
+            (async()=>{
+                await Toast.fire({
+                    icon: 'success',
+                    title: 'OTP send successfully',
+                })
+            })();
+        }else{
+            Swal.fire({
+                title:"Error while sending OTP.Try again!",
+                showConfirmButton:false,
+                icon:"error",
+                timer:1500
+            })
+        }
+    })
+    //verifying otp
+    const verifyOTP = document.getElementById("verifyOTP");
+    const email = document.getElementById("email").value;
+    const userId = document.getElementById("userId").value;
+    verifyOTP.addEventListener('click',async function verifyEditOTP(){
+        const otp = document.getElementById("otp").value;
+        if(!await validateEmail()||!await validateOTP()){
+            return;
+        }
+        try{
+            const response = await fetch('/verifyEmailEditOTP',{
+                 method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({email,otp,userId})
+            });
+            const data = await response.json();
+            if(!data.success){
+                const errorBox = document.getElementById("otpVerificationError");
+                errorBox.innerHTML = `<div class="alert alert-danger col-md-10 text-center" role="alert">
+                                            ${data.message} 
+                                        </div>`
+            }
+            if(data.otpExpiry){
+                const errorBox = document.getElementById("otpVerificationError");
+                errorBox.innerHTML = `<div class="alert alert-danger col-md-10 text-center" role="alert">
+                                            ${data.message} 
+                                        </div>`
+            }
+            if(data.success){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'center',
+                    iconColor: 'white',
+                    customClass: {
+                        popup: 'colored-toast',
+                    },
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                });
+                (async()=>{
+                    await Toast.fire({
+                        icon: 'success',
+                        title: 'Email updated successfully',
+                    })
+                })();
+                window.location.href = data.redirect;
+            }
+        }catch(err){
+            console.log("err:",err.message);
+        }
+    })
+</script>

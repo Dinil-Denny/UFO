@@ -91,10 +91,7 @@
                     company: `${userName}`,
                     address: `${houseName}`,
                     city: `${street}`,
-                    //country: "Clientcountry"
                 },
-                // The products you would like to see on your invoice
-                // Total values are being calculated automatically
                 products: [
                     {
                         quantity: quantity,
@@ -104,9 +101,7 @@
                 ],
                 // The message you would like to display on the bottom of your invoice
                 bottomNotice: "Thankyou for shopping with UFO",
-                
             };
-
             //Create your invoice! Easy!
             easyinvoice.createInvoice(data, function (result) {
                 //The response will contain a base64 encoded PDF file

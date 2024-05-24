@@ -11,9 +11,7 @@ require("dotenv").config();
 module.exports = {
   getHomePage: async (req, res, next) => {
     try {
-      console.log(req.session.userid);
       const userName = req.session.username;
-      console.log(userName);
       res.render("user/index", { title: "UFO", loginName: userName });
     } catch (error) {
       console.log("Error!!: ", error);
@@ -89,7 +87,12 @@ module.exports = {
 
   getUserRegister: (req, res, next) => {
     try {
-      res.render("user/userRegister", { title: "Register" });
+      if(req.query){
+        const referralCode = req.query.referralCode;
+        res.render("user/userRegister", { title: "Register",referralCode});
+      }else{
+        res.render("user/userRegister", { title: "Register"});
+      }
     } catch (error) {
       console.log("Error!!: ", error);
     }
@@ -334,12 +337,9 @@ module.exports = {
             userId : user._id
           })
           await newWallet.save();
-
+          //deleting the otp
           await otpCollection.deleteOne({ otp: otp });
-          console.log("OTP deleted");
-
           res.render("user/userLogin");
-          console.log("user registered redirecting to login page");
         } else {
           return res.render("user/userResendOTP", {
             message: "Invalid OTP! Try again",

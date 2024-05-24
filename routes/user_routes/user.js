@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const{getHomePage,getUserLogin,postUserLogin,getUserRegister,postUserRegister,getForgetPasswordEmail,postForgetPasswordEmail,postVerifyOTP,userLogout,getResendOTP,postResendOTP,postForgetPasswordOtp,getResetResendOTP,resetPassword} = require('../../controller/userControllers/userController');
-const{getProductListing,getProductDetails,filterProducts,productListingPagination,searchProducts} = require('../../controller/userControllers/productsManagementControllers');
-const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
+const{getProductListing,getProductDetails,filterProducts,productListingPagination} = require('../../controller/userControllers/productsManagementControllers');
+const{getAddnewAddress,postAddnewAddress,getAccountOverview,getOrderDetails,getEditAddress,postEditAddress,getEditDetails,postEditDetails,getEditEmail,getEditEmailOTP,verigyEditEmail,getChangePassword,postChangePassword,deleteAddress,cancelProduct,returnProduct} = require('../../controller/userControllers/userAccountOverviewControllers');
 const{getCart,addToCart,removeItemInCart,updateCartQuantity,getWishlist,wishlistControl} = require('../../controller/userControllers/cartControllers');
 const{getCartCheckout,postCartCheckout,retryPayment,verifyRazorpayPayment,getOrderSuccessPage,getOrderFailurePage} = require('../../controller/userControllers/orderController');
 const{getCoupons,couponCodeValidation} = require('../../controller/userControllers/couponControllers');
@@ -14,28 +14,22 @@ const {filterSorting} = require('../../middlewares/filteringSortingMiddleware');
 
 /* GET user home page. */
 router.get('/',userAuthentication,getHomePage);
-
 // get user login form
 router.get('/login',preventUserBackToLogin,getUserLogin);
-
 // post user login details
 router.post('/login',postUserLogin);
-
 // user logout
 router.get('/logout',userLogout);
 
 // get user registration form
 router.get('/register',getUserRegister);
-
 // post user registration details
 router.post('/register',postUserRegister);
 
 // post otp for verification
 router.post('/otp',postVerifyOTP);
-
 // resend otp
 router.get('/resendOTP',getResendOTP);
-
 router.post('/resendOTP',postResendOTP);
 
 // get forget password sending email
@@ -62,13 +56,10 @@ router.get('/productDetails/:id',userAuthentication,getProductDetails);
 
 // account overview - order history
 router.get('/account_overview',userAuthentication,getAccountOverview);
-
 //order details 
 router.get('/orderDetails/:id',userAuthentication,getOrderDetails);
-
 //cancel ordered product
 router.get('/cancelProduct/:orderId/:productObjId',userAuthentication,cancelProduct);
-
 //return product 
 router.get('/returnProduct/:orderId/:productObjId',userAuthentication,returnProduct);
 
@@ -86,6 +77,10 @@ router.get('/deleteAddress/:id',userAuthentication,deleteAddress);
 // get edit details
 router.get('/editDetails/:id',userAuthentication,getEditDetails);
 router.post('/editDetails/:id',userAuthentication,postEditDetails);
+//get edit email
+router.get('/editEmail/:id',userAuthentication,getEditEmail);
+router.get('/emailEditOtp',userAuthentication,getEditEmailOTP);
+router.post('/verifyEmailEditOTP',userAuthentication,verigyEditEmail);
 
 //change password
 router.get('/changePassword/:id',userAuthentication,getChangePassword);

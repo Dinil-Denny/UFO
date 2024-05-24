@@ -6,6 +6,9 @@ const walletCollection = require('../../model/walletSchema');
 const referralCodeCollection = require('../../model/referralCodeSchema');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const otpCollection = require("../../model/otpSchema");
+const sendOTPVerificationMail = require("../../utils/otpVerificationMail");
+const transporter = require("../../utils/mailTransporter");
 
 module.exports = {
     // accoutn overview - here ordered products list is shown
@@ -220,13 +223,71 @@ module.exports = {
     },
     postEditDetails: async(req,res,next)=>{
         try {
-            const {name,email,mobileNumber} = req.body;
+            const {name,mobileNumber} = req.body;
             console.log("req.body: ",req.body);
-            await userCollection.findByIdAndUpdate(req.params.id,{name,email,mobileNumber});
+            await userCollection.findByIdAndUpdate(req.params.id,{name,mobileNumber});
             console.log("user details saved");
             res.redirect('/account_overview');
         } catch (error) {
             console.log(`Error : ${error.message}`);
+        }
+    },
+    getEditEmail : async(req,res)=>{
+        try {
+            const user = await userCollection.findOne({_id:req.params.id}).lean();
+            console.log("user:",user);
+            res.render('user/editEmail',{title:"Edit email",user});
+        } catch (error) {
+            console.log("Error while getting edit email:",error.message);
+        }
+    },
+    getEditEmailOTP : async(req,res)=>{
+        try{
+            const email = req.session.userid;
+            const userOtpExist = await otpCollection.findOne({userId:email});
+            if(userOtpExist){
+                await otpCollection.deleteOne({ userId: email });
+            }
+            // generate otp
+            const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
+            // mail options
+            const oneMinute = 1 * 60 * 1000;
+            const mailOptions = {
+                from: process.env.AUTH_MAIL,
+                to: email,
+                subject: "Verify your Email",
+                html: `<p>Enter ${otp} to verify your account(OTP expires in 1 mins)</p>`,
+            };
+            const userOTP = {
+                userId: email,
+                otp: otp,
+                createdAt: Date.now(),
+                expiresAt: Date.now() + oneMinute,
+            };
+            await otpCollection.insertMany([userOTP]);
+            // sending email using transporter
+            await transporter.sendMail(mailOptions);
+            res.json({success:true});
+        }catch(error){
+            console.log("Error while getting otp: ",error.message);
+            res.json({success:false});
+        }
+    },
+    verigyEditEmail : async(req,res)=>{
+        try{
+            const otpExist = await otpCollection.findOne({userId:req.session.userid,otp:req.body.otp});
+            console.log(otpExist);
+            if(!otpExist){
+                return res.json({success:false,message:"Invalid OTP! Try again"});
+            }
+            if(otpExist.expiresAt<Date.now()){
+                return res.json({otpExpiry:true,message:"OTP expired"});
+            }
+            await userCollection.findOneAndUpdate(new mongoose.Types.ObjectId(req.body.userId),{email:req.body.email});
+            await otpCollection.deleteOne({otp:req.body.otp});
+            res.json({success:true,redirect:'/account_overview'});
+        }catch(error){
+            console.log("Error:",error.message);
         }
     },
     getChangePassword : async(req,res)=>{
@@ -250,5 +311,6 @@ module.exports = {
         } catch (error) {
             console.log("Error while changing password: ",error.message);
         }
-    }
+    },
+    
 }

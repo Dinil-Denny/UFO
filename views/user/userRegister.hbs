@@ -19,7 +19,11 @@
                 <div class="separator"></div>
                 <input class="formDetails" type="password" name="confirmPassword" placeholder="Confirm password*">
                 <div class="separator"></div>
-                <input class="formDetails" type="text" name="referralCode" placeholder="Enter refferal code(If any)">
+                {{#if referralCode}}
+                    <input class="formDetails" type="text" name="referralCode" value="{{referralCode}}">
+                {{else}}
+                    <input class="formDetails" type="text" name="referralCode" placeholder="Enter refferal code(If any)">
+                {{/if}}
                 <div class="separator"></div>
                 <label class="mt-2" for="termsNconditions">
                     <span class="terms" style="font-size: smaller;">By continuing, you agree to team UFOs of Use and <br>Privacy Policy.</span>
