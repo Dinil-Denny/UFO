@@ -4,13 +4,12 @@
         <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
         <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
         <a href="/admin/orders"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span class="menuLabel"> Banner Management</span></button></a>
         <a href="/admin/coupons"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
         <a href="/admin/salesReport"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
         <a href="/admin/category"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
         <a href="/admin/offers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-graph-down-arrow"></i><span class="menuLabel"> Offers</span></button></a>
         <dir class="separator mt-3 pt-5"></dir>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span class="menuLabel"> Settings</span></button></a>
+   
         <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
     </div>
     <div class="dashboardDetails">
@@ -73,14 +72,11 @@
 <script>
 
     async function dailySalesData(){
-        console.log("called");
         try{
             const response = await fetch('/admin/dailySalesData',{
                 method:'GET'
             });
             const data = await response.json();
-            console.log("data:",data);
-
             const ctx = document.getElementById('myChart');
 
             const chart = new Chart(ctx, {
@@ -108,7 +104,6 @@
                     const filterValue = document.getElementById("filterSelect").value;
                     const filterName = document.getElementById("filterSelect").name;
                     const query = `${filterName}=${filterValue}`;
-                    console.log("q:",query);
                     const response = await fetch(`/admin/chartFilter?${query}`,{
                         method:'GET',
                         headers:{
@@ -116,9 +111,7 @@
                         }
                     })
                     const data = await response.json();
-                    console.log("data:",data);
                     const salesDataArray = data.periodwiseSalesData;
-                    console.log("salesDataArray:",salesDataArray);
                     chart.data.labels = salesDataArray.map(value=>{
                         if(data.period === 'daily'){
                             return value._id;
@@ -141,7 +134,6 @@
             async function dayWiseSalesReport(){
                 try{
                     const date = document.getElementById("customDate").value;
-                    console.log("date:",date);
                     const errorBlock = document.getElementById("formError");
                     if(new Date(date)>Date.now()){
                         errorBlock.innerText = "Select a valid date";
@@ -153,7 +145,6 @@
                         method:'GET'
                     });
                     const data = await response.json();
-                    console.log("day wise data:",data);
                     chart.data.labels = data.map(value => value._id);
                     chart.data.datasets[0].data = data.map(value => value.totalSales);
                     chart.data.datasets[0].label = 'Day wise data';
@@ -166,7 +157,6 @@
             //adding onchange event listner for daily/weekly/monthly dropdown filters
             const filterSelect = document.getElementById("filterSelect");
             const value = filterSelect.value;
-            console.log("value:",value);
             filterSelect.addEventListener('change',periodicSalesData);
             //adding onchange event listner for custom date selector
             const customDateSelect = document.getElementById("customDate");
@@ -176,9 +166,5 @@
             console.log("Error:",err.message);
         }
     }
-
   window.onload = dailySalesData;
-</script>
-<script>
-    
 </script>

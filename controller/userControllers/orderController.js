@@ -25,7 +25,6 @@ module.exports = {
             const userId = user._id;
             const userCart = await Cart.findOne({userId}).populate('products.productId');
             const userCartId = userCart._id;
-            //console.log("userCart.products: ",userCart.products);
             //cart subtotal
             let cartProducts = userCart.products;
             let total = 0;
@@ -50,17 +49,12 @@ module.exports = {
 
     postCartCheckout : async(req,res)=>{
         try {
-            //console.log("req.body",req.body);
             const {userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied,productPriceDiscount} = req.body;
             if(!userAddressId) return res.redirect('/checkout');
-            //console.log(userAddressId,cartTotal,userCartId,userId,paymentMethod);
             //updating the ordered product status to 'placed' from 'pending'.
-            //await Cart.updateMany({_id:userCartId},{$set:{"products.$[].orderStatus":"placed"}});
             const userCart = await Cart.findOne({_id: userCartId});
-            //console.log("updatedCartProducts:",userCart);
             const userAddress = await Address.findOne({_id:userAddressId});
             const cartProduts = userCart.products;//cartProducts is array of products and quantity
-            //console.log("cartProduts: ",cartProduts);
 
             //creating order collection
             const newOrder = new Orders ({
@@ -81,8 +75,7 @@ module.exports = {
                 productPriceDiscount,
                 couponDiscount,
                 
-            })
-            console.log("newOrder:",newOrder);
+            });
             await newOrder.save();
 
             if(paymentMethod === "COD"){
@@ -98,14 +91,12 @@ module.exports = {
                     receipt: crypto.randomBytes(10).toString("hex")
                 }
                 const order = await instance.orders.create(options);
-                //console.log("razorpay order:",order);
                 res.json({order,razorpayKey:process.env.RZP_KEY_ID,orderId:newOrder._id});
             }
 
             //updating the wallet balace for referral cash back
             const user = await User.findOne({email : req.session.userid});
             const userOrders = await Orders.find({userId:user._id});
-            //console.log("userOrders:",userOrders);
             if(user.referralCode){
                 if(userOrders.length <= 1){
                     const userSharedRefCode = await RefferalCode.findOne({referralCode:user.referralCode});
@@ -132,10 +123,8 @@ module.exports = {
                     console.log("error while updating stock: ",error);
                 }
             }
-
             //deleteing the cart after placing the order
             await Cart.findOneAndDelete({_id: userCartId});
-            
         } catch (error) {
             console.log("Error occured while checkout: ",error.message);
         }
@@ -143,7 +132,6 @@ module.exports = {
 
     retryPayment : async(req,res)=>{
         try {
-            console.log(req.body);
             const totalPrice = req.body.totalPrice;
             const orderId = req.body.orderId;
             const options = {
@@ -152,7 +140,6 @@ module.exports = {
                 receipt: crypto.randomBytes(10).toString("hex")
             }
             const order = await instance.orders.create(options);
-                //console.log("razorpay order:",order);
             res.json({order,razorpayKey:process.env.RZP_KEY_ID,orderId});
         } catch (error) {
             console.log("Error in retry payment:",error.message);
@@ -165,13 +152,11 @@ module.exports = {
             const razorpay_payment_id = req.body.response.razorpay_payment_id;
             const razorpay_signature = req.body.response.razorpay_signature;
             const orderId = req.body.orderId;
-            console.log("verifyRazorpayPayment req.body:",req.body);
             const secret = process.env.RZP_KEY_SECRET;
             const sign = razorpay_order_id + "|" + razorpay_payment_id;
             const expectedSignature = crypto.createHmac('sha256',secret)
             .update(sign.toString())
             .digest('hex');
-            console.log("expectedSignature:",expectedSignature);
             if(expectedSignature === razorpay_signature){
                 await Orders.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{$set:{paymentStatus:"payed",date: Date.now()}});
                 return res.status(200).json({success:true});

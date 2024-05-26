@@ -7,13 +7,12 @@
         <a href="/admin/customers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-people-fill"></i><span class="menuLabel"> Customers</span></button></a>
         <a href="/admin/products"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-seam-fill"></i><span class="menuLabel"> Products</span></button></a>
         <a href="/admin/orders"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-receipt"></i><span class="menuLabel"> Orders</span></button></a>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-card-image"></i><span class="menuLabel"> Banner Management</span></button></a>
         <a href="/admin/coupons"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-ticket-perforated-fill"></i><span class="menuLabel"> Coupen Management</span></button></a>
         <a href="/admin/salesReport"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-journal-bookmark"></i><span class="menuLabel"> Sales Report</span></button></a>
         <a href="/admin/category"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-collection-fill"></i><span class="menuLabel"> Catagory</span></button></a>
         <a href="/admin/offers"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-graph-down-arrow"></i><span class="menuLabel"> Offers</span></button></a>
         <dir class="separator mt-3 pt-5"></dir>
-        <a href=""><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-gear"></i><span class="menuLabel"> Settings</span></button></a>
+       
         <a href="/admin/logout"><button type="button" class="btn btn-light sideMenuButton"><i class="bi bi-box-arrow-right"></i><span class="menuLabel"> Logout</span></button></a>
     </div>
     <section class="content-main ms-2" style="width: 80%;">
@@ -145,7 +144,6 @@
 <script>
     function downloadPdf() {
         const element = document.getElementById('salesReportTable')
-        console.log(element);
         html2pdf().from(element).save("sales_report");
     }
 </script>
@@ -153,7 +151,6 @@
 <script>
     async function downloadExcel(){
         try{
-
             const table2excel = new Table2Excel();
             table2excel.export(document.getElementById("salesReportTable"));
 
@@ -167,9 +164,7 @@
     let salesData = null;
     async function customDateFilter(){
         const fromDate = document.getElementById("fromDate");
-        console.log("fromDate:",fromDate);
         const toDate = document.getElementById("toDate");
-        console.log("toDate:",toDate);
         let query = '';
         query = `${fromDate.name}=${fromDate.value}&${toDate.name}=${toDate.value}`
         try{
@@ -177,7 +172,6 @@
                 method : 'GET',
             })
             const data = await response.json();
-            console.log("data:",data);
             const newSalesReportTableBody = document.getElementById("salesReportTableBody");
             newSalesReportTableBody.innerHTML = '';
             if(data.length>0){
@@ -199,7 +193,6 @@
                 const errorMessage = document.getElementById("errorMessage");
                 errorMessage.innerText = data.errorMessage;
             }
-            
         }catch(err){
             console.log("Error in customDateFilter:",err.message);
         }
@@ -216,7 +209,6 @@
                 },
             })
             const data = await response.json();
-            console.log("data:",data);
             const newSalesReportTable = document.getElementById("salesReportTableBody");
             newSalesReportTable.innerHTML = '';
             if(data.length>0){
@@ -241,7 +233,6 @@
 
     async function periodicSalesData(periodValue){
         try{
-            console.log("period:",periodValue.value,periodValue.name);
             const query = `${periodValue.name}=${periodValue.value}`
             const response = await fetch(`/admin/periodicSalesData?${query}`,{
                 method:'GET',
@@ -250,16 +241,13 @@
                 }
             })
             const data = await response.json();
-            console.log("data:",data);
             const salesDataArray = data.periodwiseSalesData;
-            console.log("salesDataArray:",salesDataArray);
             const newSalesReportTableBody = document.getElementById("salesReportTableBody");
             newSalesReportTableBody.innerHTML = '';
             if(salesDataArray.length>0){
                 salesData = salesDataArray;
                 if(data.period === 'daily'){
                     salesDataArray.forEach(value=>{
-                    console.log("value:",value);
                     const tableRow = document.createElement('tr')
                     tableRow.innerHTML = `<td>${value.date}</td>
                                             <td>${value.totalOrders}</td>
@@ -270,7 +258,6 @@
                     })
                 }else if(data.period === 'weekly'){
                     salesDataArray.forEach(value=>{
-                    console.log("value:",value);
                     const tableRow = document.createElement('tr')
                     tableRow.innerHTML = `<td>Week:${value._id.week}/Month:${value._id.month}/Year:${value._id.year}</td>
                                             <td>${value.totalOrders}</td>
@@ -281,7 +268,6 @@
                     })
                 }else if(data.period === 'monthly'){
                     salesDataArray.forEach(value=>{
-                    console.log("value:",value);
                     const tableRow = document.createElement('tr')
                     tableRow.innerHTML = `<td>Month:${value._id.month}/Year:${value._id.year}</td>
                                             <td>${value.totalOrders}</td>
@@ -292,7 +278,6 @@
                     })
                 }else if(data.period === 'yearly'){
                     salesDataArray.forEach(value=>{
-                    console.log("value:",value);
                     const tableRow = document.createElement('tr')
                     tableRow.innerHTML = `<td>Year:${value._id.year}</td>
                                             <td>${value.totalOrders}</td>
@@ -305,11 +290,8 @@
             }else{
                 newSalesReportTableBody.innerHTML = `<span class="text-center fs-4">No data available</span>`
             }
-
         }catch(err){
             console.log("Error!:",err.message);
         }
     }
-
-
 </script>

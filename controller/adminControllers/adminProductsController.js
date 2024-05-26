@@ -18,13 +18,11 @@ module.exports = {
             .skip((currentPage-1) * limit)
             .limit(limit)
             .lean();
-            // console.log(products);
             res.render('admin/productList',{admin:true, adminName:req.session.admin, title:"Products",products,previousPage,currentPage,nextPage});
                 
         } catch (error) {
             console.log(`An error occured : ${error}`);
         }
-            
     },
 
     productListPagination: async(req,res)=>{
@@ -39,9 +37,7 @@ module.exports = {
             .skip((currentPage-1) * limit)
             .limit(limit)
             .lean();
-            // console.log(products);
             const data = {products:products,previousPage:previousPage,nextPage:nextPage,currentPage:currentPage};
-            console.log("data:",data);
             res.json(data);
         } catch (error) {
             console.log("Error while paginatin: ",error.message);
@@ -51,7 +47,6 @@ module.exports = {
         try {
             const categories = await categoryCollection.find({}).lean();
             const brands = await brandNameCollection.find().lean();
-            console.log("brands:",brands);
             res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories,brands});
         } catch (err) {
             if(err)
@@ -80,7 +75,6 @@ module.exports = {
 
             // resizing and save uploaded images
             if(req.files){
-                // console.log("got req.files: ",req.files);
                 for(const file of req.files){
                     const resizeImg = await sharp(file.path)
                     .resize({width:450, height: 550, fit: sharp.fit.fill})
@@ -89,7 +83,6 @@ module.exports = {
                     const imgURL = `/images/imgUploads/${uniqueFilename}`;
                     await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
                     product.images.push(imgURL);
-                    // console.log("imgs pushed to array");
                 }
             }
             await product.save();
@@ -101,11 +94,9 @@ module.exports = {
     postAddBrand : async(req,res,next)=>{
         try {
             const {brandName} = req.body;
-            console.log("brandName:",brandName);
             const categories = await categoryCollection.find().lean();
             const brands = await brandNameCollection.find().lean();
             const brandExist = await brandNameCollection.findOne({brandName:{$regex:new RegExp("^"+brandName+"$","i")}});  
-            console.log("brandExists:",brandExist);
             if(!brandExist){
                 const brand = new brandNameCollection({
                     brandName
@@ -122,9 +113,7 @@ module.exports = {
     getEditPorducts:async(req,res)=>{
         try{
             const product = await productCollection.findById(req.params.id).populate('brandName').lean();
-            console.log("product:",product);
             const brands = await brandNameCollection.find().lean();
-            console.log('brands:',brands);
             // fetching category information
             const categories = await categoryCollection.find().lean();
             const category = await categoryCollection.findById(product.category).lean();
@@ -136,7 +125,6 @@ module.exports = {
     postEditProducts: async(req,res)=>{
         try {
             const productId = req.params.id;
-            console.log("productId:",productId);
             const {productName, brandName, description, gender, price, offerPrice, size, color, stock, category,removeImages} = req.body;
             const product = await productCollection.findById(productId);
 
@@ -157,15 +145,12 @@ module.exports = {
             // removing images
             if(removeImages && removeImages.length){
                 for(const image of removeImages){
-                    console.log("image: ",image);
-                    ;
-                    //deleting the image file from the server folder
+                    //deleting the image file from the server folder using the fs.unlik method
                     fs.unlink('public/'+image,(err)=>{
                         if(err) console.log (err);
                         else console.log("image removed from server folder");
                     })
                     const imgIndex = product.images.indexOf(image);
-                    console.log("imgIndex: ",imgIndex);
                     if(imgIndex !== -1){
                         product.images.splice(imgIndex,1);
                     }
@@ -182,7 +167,6 @@ module.exports = {
                     const imgURL = `/images/imgUploads/${uniqueFilename}`;
                     await sharp(resizeImg).toFile(`public/images/imgUploads/${uniqueFilename}`);
                     product.images.push(imgURL);
-                    console.log("imgs pushed to array");
                 }
             }
             await product.save();

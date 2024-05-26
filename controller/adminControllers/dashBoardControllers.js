@@ -7,13 +7,10 @@ module.exports = {
         try{
             if(session.adminid){
                 const orders = await orderCollection.find();
-                //console.log("Ordres:",orders);
                 const totalOrders = orders.length;
                 const customers = await userCollection.find();
                 const totalCustomers = customers.length;
-                //console.log("customers:",totalCustomers);
                 const totalRevenue = orders.reduce((acc,curr)=>acc+curr.totalPrice,0).toFixed(2);
-                //console.log("totalRevenue",totalRevenue);
                 res.render('admin/adminDashboard',{admin:true, adminName:req.session.admin,title:"Admin_Dashboard",totalOrders,totalCustomers,totalRevenue});
             }else{
                 res.render('admin/adminLogin',{admin:true,title:"Admin_Login"});
@@ -50,7 +47,6 @@ module.exports = {
                 }
 
             ]);
-            console.log("topSellingProducts:",topSellingProducts);
             res.render('admin/topTenProducts',{title:"Top selling 10 products",admin:true,adminName:req.session.admin,topSellingProducts})
         } catch (err) {
             console.log("Error while getting top selling products:",err.message);
@@ -91,7 +87,6 @@ module.exports = {
                     $limit:10
                 }
             ])
-            console.log("topSellingCategory:",topSellingCategory);
             res.render('admin/topTenCategory',{title:"Top selling 10 category",admin:true,adminName:req.session.admin,topSellingCategory})
         } catch (err) {
             console.log("Error while getting topSellingCategory:",err.message);
@@ -132,7 +127,6 @@ module.exports = {
                     $limit:10
                 }
             ]);
-            console.log("topSellingBrands:",topSellingBrands);
             res.render('admin/topTenBrands',{admin:true,title:"Top selling 10 bramds",adminName:req.session.admin,topSellingBrands})
         } catch (err) {
             console.log("Error while getting topSellingBrands:",err.message);
@@ -141,7 +135,6 @@ module.exports = {
     getPeriodicChartData : async(req,res)=>{
         try {
             const {groupBy} = req.query;
-            //console.log("groupBy:",groupBy);
             let pipeline = null;
             if(groupBy === 'weekly'){
                 pipeline = [
@@ -160,7 +153,6 @@ module.exports = {
                     },
                 ];
                 const periodwiseSalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-                console.log("periodwiseSalesData:",periodwiseSalesData);
                 const data = {periodwiseSalesData:periodwiseSalesData, period:"weekly"}
                 res.json(data);
             }else if(groupBy === 'monthly'){
@@ -179,7 +171,6 @@ module.exports = {
                     },
                 ];
                 const periodwiseSalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-                console.log("periodwiseSalesData:",periodwiseSalesData);
                 const data = {periodwiseSalesData:periodwiseSalesData, period:"monthly"}
                 res.json(data);
             }else if(groupBy === 'yearly'){
@@ -197,7 +188,6 @@ module.exports = {
                     },
                 ];
                 const periodwiseSalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-                console.log("periodwiseSalesData:",periodwiseSalesData);
                 const data = {periodwiseSalesData:periodwiseSalesData, period:"yearly"}
                 res.json(data);
             }else if(groupBy === 'daily'){
@@ -214,12 +204,10 @@ module.exports = {
                 },
               ];
               const periodwiseSalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-              console.log("periodwiseSalesData:",periodwiseSalesData);
               const formattedDatePeriodwiseSalesData = periodwiseSalesData.map(order => {
                 const formattedDate = order._id.date.toLocaleDateString();
                 return {...order,_id:formattedDate}
-              })
-              console.log("formattedDatePeriodwiseSalesData:",formattedDatePeriodwiseSalesData);
+              });
               const data = {periodwiseSalesData:formattedDatePeriodwiseSalesData, period:"daily"}
               res.json(data);
             }
@@ -230,7 +218,6 @@ module.exports = {
     getDaywiseSalesData : async(req,res)=>{
         try{
             const date = req.query.date;
-            console.log("date:",date);
             const isoDate = new Date(date);
             const salesData = await orderCollection.aggregate([
                 { $match: { date: { $eq: isoDate } } }, // Match by date
@@ -241,7 +228,6 @@ module.exports = {
                   },
                 },
             ]);
-            console.log("salesData:",salesData);
             res.json(salesData);
         }catch(err){
             console.log("Error while getting day wise data:",err.message);
@@ -263,13 +249,10 @@ module.exports = {
               ];
   
               const dailySalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-              console.log("dailySalesData:",dailySalesData);
               const dateFormattedDailyData = dailySalesData.map(dateValue => {
                 const formattedDate = dateValue._id.date.toLocaleDateString();
-                console.log("formattedDate:",formattedDate);
                 return {...dateValue,_id:formattedDate}
               })
-              console.log("dateFormattedDailyData:",dateFormattedDailyData);
               res.json(dateFormattedDailyData);
         } catch (err) {
             console.log("Error while getting daily sales data:",err.message);

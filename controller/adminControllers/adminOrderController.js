@@ -6,9 +6,10 @@ const Orders = require('../../model/orderSchema');
 const mongoose = require('mongoose');
 
 module.exports = {
+    //getting the orders list as table in admin side
     getOrders : async(req,res)=>{
-        if(req.query)console.log(req.query);
         try {
+            //pagination for table
             const limit = 5;
             const totalOrders = await Orders.countDocuments();
             const totalPages = Math.ceil(totalOrders/limit);
@@ -20,10 +21,8 @@ module.exports = {
             .skip((currentPage-1) * limit)
             .limit(limit)
             .lean();
-            //console.log("orders: ",orders);
             const dateFormattedOrders = orders.map(order=>{
                 const formattedDate = order.date.toLocaleDateString();
-                //console.log("formattedDate",formattedDate);
                 return {...order,date:formattedDate};
             })
             res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,dateFormattedOrders,title:"Orders",currentPage,nextPage,previousPage});
@@ -31,7 +30,7 @@ module.exports = {
             console.log("Error: ",error);
         }
     },
-
+    //getting order details
     getOrderDetails : async(req,res)=>{
         try {
             const orderId = req.params.id;
@@ -76,7 +75,6 @@ module.exports = {
                     }
                 }
             ]);
-            console.log("orders: ",orders);
             res.render('admin/adminOrderDetails',{admin:true,adminName:req.session.admin,orders,title:"Order details"});
         } catch (error) {
             console.log("Error !!: ",error);
@@ -85,8 +83,6 @@ module.exports = {
     updateOrderStatus: async(req,res)=>{
         try {
             const{value,orderId,productsDataId} = req.body;
-            console.log(req.body);
-            console.log(value,orderId,productsDataId);
             await Orders.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":value}},
                 {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]})
@@ -104,9 +100,6 @@ module.exports = {
                     $match:{'productsData._id':new mongoose.Types.ObjectId(productsDataId)}
                 }
             ])
-
-            console.log("order:",order);
-            console.log(order[0].productsData.orderStatus);
             const data = {orderStatus:order[0].productsData.orderStatus,productsDataId:productsDataId}
             res.json({data});
         } catch (error) {

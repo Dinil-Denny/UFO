@@ -5,11 +5,9 @@ module.exports = {
     getSalesData : async(req,res)=>{
         try {
             const orders = await orderCollection.find().populate('productsData.productId').lean();
-            //console.log("orders:",orders);
             const totalNumberOfOrders = orders.length;
             const totalRevenue = orders.reduce((acc,curr)=>acc+curr.totalPrice ,0).toFixed(2);
             const overallCouponDiscount = orders.reduce((acc,curr)=>acc+curr.couponDiscount,0).toFixed(2);
-            //console.log("totalRevenue:",totalRevenue);
             let pipeline = [
               {
                 $group: {
@@ -24,14 +22,10 @@ module.exports = {
             ];
 
             const dailySalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-            console.log("dailySalesData:",dailySalesData);
             const dateFormattedDailyData = dailySalesData.map(dateValue => {
               const formattedDate = dateValue._id.date.toLocaleDateString();
-              console.log("formattedDate:",formattedDate);
               return {...dateValue,date:formattedDate}
-            })
-            console.log("dateFormattedDailyData:",dateFormattedDailyData);
-
+            });
             
             res.render('admin/adminSalesReport',{admin:true,
                 title:"Sales Report",
@@ -49,7 +43,6 @@ module.exports = {
     getCustomDateSalesData : async(req,res)=>{
       try {
         const {fromDate,toDate} = req.query;
-        //console.log(fromDate,toDate);
         const isoFromDate = new Date(fromDate);
         const isoToDate = new Date(toDate);
         if(isoFromDate<Date.now() && isoToDate<=Date.now() && isoFromDate<isoToDate){
@@ -67,12 +60,10 @@ module.exports = {
               totalMRPDiscount:{$sum: '$productPriceDiscount'}
             }}
           ]);
-          //console.log("customDateSalesReport:",customDateSalesReport);
           return res.json(customDateSalesReport);
         }else{
           return res.json({errorMessage:"Select correct date values"});
         }
-        
       } catch (err) {
         console.log("Error while getting CutomDateSalesData:",err.message);
       }
@@ -81,10 +72,7 @@ module.exports = {
     getDayWiseData : async(req,res)=>{
         try {
             const {date} = req.query;
-            //console.log(req.query);
-            //console.log("req:",date);
             const isoDate = new Date(date);
-            //console.log("isoDate:",isoDate);
             const salesReport = await orderCollection.aggregate([
                 { $match: { date: { $eq: isoDate } } }, // Match by date
                 {
@@ -97,7 +85,6 @@ module.exports = {
                   },
                 },
             ]);
-            //console.log("salesReport:",salesReport);
             res.json(salesReport);
         } catch (err) {
             console.log("error while getting day wise sales data:",err.message);
@@ -107,7 +94,6 @@ module.exports = {
     getPeriodicSalesData : async(req,res)=>{
         try {
             const {groupBy} = req.query;
-            //console.log("groupBy:",groupBy);
             let pipeline = null;
             if(groupBy === 'weekly'){
                 pipeline = [
@@ -126,7 +112,6 @@ module.exports = {
                     },
                 ];
                 const periodwiseSalesData = await orderCollection.aggregate(pipeline);
-                //console.log("periodwiseSalesData:",periodwiseSalesData);
                 const data = {periodwiseSalesData:periodwiseSalesData, period:"weekly"}
                 res.json(data);
             }else if(groupBy === 'monthly'){
@@ -145,7 +130,6 @@ module.exports = {
                     },
                 ];
                 const periodwiseSalesData = await orderCollection.aggregate(pipeline);
-                console.log("periodwiseSalesData:",periodwiseSalesData);
                 const data = {periodwiseSalesData:periodwiseSalesData, period:"monthly"}
                 res.json(data);
             }else if(groupBy === 'yearly'){
@@ -163,7 +147,6 @@ module.exports = {
                     },
                 ];
                 const periodwiseSalesData = await orderCollection.aggregate(pipeline);
-                //console.log("periodwiseSalesData:",periodwiseSalesData);
                 const data = {periodwiseSalesData:periodwiseSalesData, period:"yearly"}
                 res.json(data);
             }else if(groupBy === 'daily'){
@@ -180,12 +163,10 @@ module.exports = {
                 },
               ];
               const periodwiseSalesData = await orderCollection.aggregate(pipeline).sort({_id:1});
-              console.log("periodwiseSalesData:",periodwiseSalesData);
               const formattedDatePeriodwiseSalesData = periodwiseSalesData.map(order => {
                 const formattedDate = order._id.date.toLocaleDateString();
                 return {...order,date:formattedDate}
-              })
-              console.log("formattedDatePeriodwiseSalesData:",formattedDatePeriodwiseSalesData);
+              });
               const data = {periodwiseSalesData:formattedDatePeriodwiseSalesData, period:"daily"}
               res.json(data);
             }
@@ -193,5 +174,4 @@ module.exports = {
             console.log("Error while running getPeriodicSalesData:",err.message);
         }
     }
-
 }

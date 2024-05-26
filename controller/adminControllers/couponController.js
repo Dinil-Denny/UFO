@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 
 module.exports = {
     getCouponList : async(req,res)=>{
-        console.log("page:",req.query);
         try{
+            //pagination for table displaying coupons
             const limit = 4;
             const totalCoupons = await couponCollection.countDocuments();
             const totalPages = Math.ceil(totalCoupons/limit);
@@ -13,7 +13,7 @@ module.exports = {
             const nextPage = currentPage<totalPages ? parseInt(currentPage)+1 : null;
 
             const coupons = await couponCollection.find().sort({createdAt:-1}).skip((currentPage-1) * limit).limit(limit).lean();
-            console.log("coupons:",coupons);
+            //modifyig the date format
             const dateModifiedCoupons = coupons.map((coupon)=>{
                 const expriyDate = coupon.expiryAt;
                 const formattedDate = expriyDate.toLocaleDateString();
@@ -21,7 +21,6 @@ module.exports = {
                 const formattedDateAndTime = `${formattedDate} ${formattedTime}`;
                 return {...coupon, expiryAt:formattedDateAndTime};
             });
-            console.log("dateModifiedCoupons:",dateModifiedCoupons);
             res.render('admin/couponListing',{dateModifiedCoupons,admin:true,adminName:req.session.admin,title:"Coupons",previousPage,currentPage,nextPage});
         }catch(err){
             console.log("Error while getting coupons list: ",err.message);
@@ -35,7 +34,6 @@ module.exports = {
         }
     },
     postAddCoupon : async(req,res)=>{
-        console.log(req.body);
         const {couponCode,discount,minimumSpend,expiryAt} = req.body;
         try{
             const couponExist = await couponCollection.findOne({couponCode:{$regex: new RegExp("^"+couponCode+"$","i")}});
@@ -67,9 +65,7 @@ module.exports = {
     postEditCoupon : async(req,res)=>{
         try {
             const{couponCode,discount,minimumSpend,expiryAt} = req.body;
-            console.log(req.body);
             const couponId = new mongoose.Types.ObjectId(req.params.id);
-            console.log(req.params.id);
             const couponExist = await couponCollection.findOne({couponCode:{$regex: new RegExp("^"+couponCode+"$","i")},_id:{$ne:couponId}});
             if(couponExist){
                 const coupon = await couponCollection.findOne({_id:couponId}).lean();

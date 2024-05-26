@@ -50,7 +50,6 @@ module.exports = {
           .skip((currentPage-1) * limit)
           .limit(limit)
           .lean();
-          console.log("products in pagination: ",products);
           const data = {products:products,previousPage:previousPage,currentPage:currentPage,nextPage:nextPage};
           res.json(data);
         } catch (error) {
@@ -62,18 +61,15 @@ module.exports = {
         try {
           // converting this string id into object id
           const objectId = new mongoose.Types.ObjectId(req.params.id);
-          console.log("objectId:",objectId)
           const product = await productCollection.findById(objectId).populate('brandName').lean();
           const user = await userCollection.findOne({email:req.session.userid});
           const userId = user._id;
           const cart = await cartCollection.findOne({userId});
           const wishlist = await wishlistCollection.findOne({user:userId});
-          console.log("wishlist:",wishlist);
           let productExistInWishlist = null;
           if(wishlist){
             productExistInWishlist = wishlist.products.find(product => product.productId.toString() === objectId.toString());
           }
-          console.log("productExistInWishlist:",productExistInWishlist);
           if(cart){
             const existingProduct = cart.products.find(product => product.productId.toString() === objectId.toString());
             
@@ -108,19 +104,13 @@ module.exports = {
     
       // product filtering
     filterProducts: async (req, res, next) => {
-    
         const filteredProducts = req.data.filteredProducts;
-        //console.log("req.data.filteredProducts:",req.data.filteredProducts);
         const previousPage = req.data.previousPage;
         const nextPage = req.data.nextPage;
         const currentPage = req.data.currentPage;
-    
-        //console.log("query: ",query);
         try {
           const data = {filteredProducts:filteredProducts,previousPage:previousPage,nextPage:nextPage,currentPage:currentPage}
           res.json(data);
-          // console.log("Filtered products: ",filteredProducs);
-          
         } catch (error) {
           console.log("Error occured while sorting: ", error.message);
         }

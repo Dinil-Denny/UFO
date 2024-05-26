@@ -146,28 +146,23 @@
 
     const pagination = async(value)=>{
         try{
-            console.log("value:",value);
             const response = await fetch(`/pagination/?page=${value.value}`,{
                 method:'GET',
                 headers:{'Content-Type':'application/json'}
             });
             const data = await response.json();
             updateProductList(data.products);
-            console.log("data:",data);
             if(data.previousPage){
                 const previousPage = document.getElementById('previousPage');
                 previousPage.value = data.previousPage;
-                console.log("previousPage:",previousPage)
             }
             const currentPageValue = document.getElementById('currentPageValue');
             currentPageValue.value = data.currentPage;
             const currentPage = document.getElementById('currentPage');
             currentPage.textContent = data.currentPage;
-            console.log("currentPage:",currentPage.innerHTML)
             if(data.nextPage){
                 const nextPage = document.getElementById('nextPage');
                 nextPage.value = data.nextPage;
-                console.log("nextPage:",nextPage)
             }
         }catch(err){
             console.log("Error:",err.message);
@@ -209,16 +204,11 @@
     };
 
     async function filterProducts(pageValue){
-        console.log("filterProducts function called");
         try{
             const search = document.getElementById("searchBox");
-            console.log("ser:",search.value);
             const selectedFilters = {};
             const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
             const sortValues = document.getElementById('sortProducts');
-            //console.log(sortValues.name);
-            //console.log("sortValues:",sortValues);
-            //console.log("checkboxes: ",checkboxes);
 
             //constructing query string with url parameters
             let queryString = '';
@@ -226,11 +216,9 @@
                 queryString+=`search=${search.value}&`
             }
             if(pageValue){
-                console.log("1")
                 queryString += `page=${pageValue.value}&`;
             }
             if(sortValues.value){
-                console.log("2")
                 queryString += `${sortValues.name}=${sortValues.value}&`;
             }
             for(const checkbox of checkboxes){
@@ -238,9 +226,7 @@
                 const filterValue = checkbox.value;
                 selectedFilters[filterName] = filterValue;
                 queryString += `${filterName}=${filterValue}&`;
-                console.log("queryString: ",queryString);
             }
-            console.log("Selected filters: ",selectedFilters);
             
             //removing the trailing '&' if any
             queryString = queryString.slice(0,-1);
@@ -254,24 +240,19 @@
 
             //update the product list with filtered data
             const data = await response.json();
-            console.log(data);
-            console.log("data:",data);
             updateProductList(data.filteredProducts);
 
             if(data.previousPage){
                 const previousPage = document.getElementById('previousPage');
                 previousPage.value = data.previousPage;
-                console.log("previousPage:",previousPage)
             }
             const currentPageValue = document.getElementById('currentPageValue');
             currentPageValue.value = data.currentPage;
             const currentPage = document.getElementById('currentPage');
             currentPage.textContent = data.currentPage;
-            console.log("currentPage:",currentPage.innerHTML);
             if(data.nextPage){
                 const nextPage = document.getElementById('nextPage');
                 nextPage.value = data.nextPage;
-                console.log("nextPage:",nextPage)
             }
         }catch(err){
             console.log("err:",err);

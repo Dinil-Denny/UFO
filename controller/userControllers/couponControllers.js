@@ -7,7 +7,6 @@ module.exports = {
     getCoupons : async(req,res)=>{
         try {
             const coupons = await couponsCollection.find().lean();
-            console.log("coupons:",coupons);
             res.render('user/coupons',{title:"Coupons",loginName: req.session.username,coupons});
         } catch (err) {
             console.log("Error while getting coupons:",err.message);
@@ -15,8 +14,6 @@ module.exports = {
     },
     couponCodeValidation : async(req,res)=>{
         try {
-            //console.log(req.body);
-            //console.log(req.session.userid);
             const {couponCode} = req.body
             let codDisabled = false;
             const user = await userCollection.findOne({email : req.session.userid});
@@ -33,18 +30,15 @@ module.exports = {
                 codDisabled = true;
             }
             const couponExist = await couponsCollection.findOne({couponCode:couponCode});
-            console.log("couponExist:",couponExist);
             if(!couponExist){
                 return res.json({message:"No coupon available. Enter correct coupon code",codDisabled});
             }
             
             // checking if coupon already used in previous orders
             const couponUsed = await orderCollection.findOne({userId:userId,couponApplied:couponCode});
-            console.log("couponUsed:",couponUsed);
             if(couponUsed){
                 return res.json({message:`Coupon already redeemed`,codDisabled});
             }
-
             if(subTotal>1000) {
                 codDisabled = true;
             }
@@ -57,7 +51,6 @@ module.exports = {
             if(newTotal>1000) {
                 codDisabled = true;
             }
-            console.log("couponDiscountAmount",couponDiscountAmount);
             res.json({couponDiscountAmount:couponDiscountAmount,newTotal:newTotal.toFixed(2),appliedCouponCode:couponExist.couponCode,message:"Coupon applied successfully",codDisabled});
 
         } catch (err) {

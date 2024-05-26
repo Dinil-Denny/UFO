@@ -13,7 +13,6 @@ module.exports = {
     postAddCatagory: async(req,res)=>{
         try{
             const {catagoryName,description} = req.body;
-            // const categoryExists = await categoryCollection.findOne({catagoryName});
              const categoryExists = await categoryCollection.findOne({
                 catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")}
             });
@@ -42,7 +41,6 @@ module.exports = {
     getEditCategory: async(req,res)=>{
         try {
             const category = await categoryCollection.findById(req.params.id).lean();
-                
             res.render('admin/editCategory',{admin:true,adminName:req.session.admin,title:"Edit Category",category});
         } catch (error) {
             console.log("Error !: ",error);
@@ -57,7 +55,6 @@ module.exports = {
                 catagoryName:{$regex:new RegExp("^"+catagoryName+"$","i")},
                 _id:{$ne:categoryIdToExclude}
             });
-                
                 
             if(!categoryExist){
                 await categoryCollection.findByIdAndUpdate(req.params.id,{catagoryName,description});

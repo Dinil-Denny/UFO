@@ -64,8 +64,6 @@ module.exports = {
           req.session.userid = req.body.email;
           // Storing the user's name in the session
           req.session.username = userExist.name;
-          console.log("session : ", req.session.userid);
-          console.log("userExist: ", userExist.name);
           res.redirect("/");
         }
       }
@@ -102,7 +100,6 @@ module.exports = {
   postUserRegister: async (req, res) => {
     try {
       const { name, email, mobilenumber, password, confirmPassword, referralCode } = req.body;
-      console.log("req.body:",req.body);
       if (!email && !mobilenumber && !password && !confirmPassword && !name) {
         return res.render("user/userRegister", {
           message: "Enter full details",
@@ -193,7 +190,6 @@ module.exports = {
         });
       } else {
         const otpExists = await otpCollection.findOne({ otp });
-        console.log("otpExists: " + otpExists);
         if (!otpExists) {
           return res.render("user/userOTPVerification", {
             message: "Incorrect OTP",
@@ -201,13 +197,10 @@ module.exports = {
           });
         }
         const { expiresAt } = otpExists;
-        console.log("expiresAt : " + expiresAt);
         // checking if otp expired or not
         let time = Date.now();
         if (expiresAt < time) {
-          console.log("date now : " + time);
           await otpCollection.deleteOne({ otp: otp });
-          console.log("otp deleted");
           return res.render("user/userOTPVerification", {
             message: "OTP expired! Try again",
             title: "OTP verification",
@@ -223,12 +216,10 @@ module.exports = {
             referralCode : req.session.referralCode,
             createdAt: Date.now(),
           };
-          console.log(userData);
           await userCollection.insertMany([userData]);
           
           //user's referral code generation
           const userReferralCode = await generateReferralCode(8);
-          console.log("code:",userReferralCode);
           const user = await userCollection.findOne({email:req.session.useremail})
           const newReferralCode = new referralCodeCollection({
             userId : user._id,
@@ -243,7 +234,6 @@ module.exports = {
           await newWallet.save();
 
           await otpCollection.deleteOne({ otp: otp });
-          console.log("OTP deleted");
           res.render("user/userLogin", { title: "Login" });
         } else {
           return res.render("user/userOTPVerification", {
@@ -258,7 +248,6 @@ module.exports = {
   },
   getResendOTP: async (req, res) => {
     const email = req.session.useremail;
-    console.log("email: ", email);
     await otpCollection.deleteOne({ userId: email });
     try {
       // generate otp
@@ -280,7 +269,6 @@ module.exports = {
       await otpCollection.insertMany([userOTP]);
       // sending email using transporter
       await transporter.sendMail(mailOptions);
-      console.log("Email send");
       res.render("user/userResendOTP");
     } catch (err) {
       console.log("An error occured !!! " + err.message);
@@ -293,7 +281,6 @@ module.exports = {
         return res.render("user/userResendOTP", { message: "OTP is required" });
       } else {
         const otpExists = await otpCollection.findOne({ otp });
-        console.log(otpExists);
         if (!otpExists) {
           return res.render("user/userResendOTP", {
             message: "OTP not found....check once more",
@@ -303,10 +290,7 @@ module.exports = {
         // checking if otp expired or not
         let time = Date.now();
         if (expiresAt < time) {
-          console.log("exprire at : " + time);
-          console.log("date now: " + Date.now());
           await otpCollection.deleteOne({ otp: otp });
-          console.log("otp deleted");
           return res.render("user/userResendOTP", {
             message: "OTP expired! Try again",
           });
@@ -321,11 +305,9 @@ module.exports = {
             referralCode : req.session.referralCode,
             createdAt: Date.now(),
           };
-          console.log(userData);
           await userCollection.insertMany([userData]);
           await otpCollection.deleteOne({ otp: otp });
           const userReferralCode = await generateReferralCode(8);
-          console.log("code:",userReferralCode);
           const userId = await userCollection.findOne({email:req.session.useremail})
           const newReferralCode = new referralCodeCollection({
             userId : userId._id,
@@ -364,7 +346,6 @@ module.exports = {
       const { email } = req.body;
       // storing email in session
       req.session.useremail = req.body.email;
-      console.log(email);
       if (!email) {
         return res.render("user/userForgetPassMail", {
           title: "Forget Password",
@@ -372,7 +353,6 @@ module.exports = {
         });
       }
       const user = await userCollection.findOne({ email: email });
-      console.log("User in reset pass: ", user);
       if (user) {
         await sendOTPVerificationMail(email);
         res.render("user/userForgetPassOTP", { title: "Forget Password" });
@@ -454,7 +434,6 @@ module.exports = {
 
   resetPassword: async (req, res, next) => {
     const email = req.session.useremail;
-
     try {
       const { password, password1 } = req.body;
       if (!password) {
@@ -480,7 +459,6 @@ module.exports = {
       await userCollection.findByIdAndUpdate(user._id, {
         password: hashedPassword,
       });
-      
       res.redirect("/login");
     } catch (error) {
       console.log("Error: ", error);

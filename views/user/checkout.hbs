@@ -2,7 +2,6 @@
 
 <script>
     const placeOrder = async() => {
-        console.log("place order is called");
         try{
             const userAddressId = document.querySelector('input[name="userAddressId"]:checked').value;
             const cartTotal = document.querySelector('input[name="cartTotal"]').value;
@@ -21,7 +20,6 @@
                 body:JSON.stringify({userAddressId,cartTotal,userCartId,userId,paymentMethod,couponDiscount,couponApplied,productPriceDiscount})
             })
             const data = await response.json();
-            console.log("Order data",data);
             if(data.redirect){
                 window.location.href = data.redirect;
             }else{
@@ -34,8 +32,6 @@
                     "handler" : function (response){
                         
                         if(response.razorpay_payment_id){
-                            console.log("response.razorpay_payment_id",response.razorpay_payment_id);
-                            console.log("response:",response);
                             fetch('/verifyPayment',{
                                 method:'POST',
                                 headers:{
@@ -59,9 +55,7 @@
                     window.location.href = '/orderFailed';
                 })
                 rzp1.open();
-            }
-
-            
+            }  
         }catch(err){
             console.log("err:",err.message);
         }
@@ -75,7 +69,6 @@
                         <div class="divider mt-50 mb-50"></div>
                     </div>
                 </div>
-                {{!-- <form action="/checkout" method="post"> --}}
                     <div class="row">
                         <div class="couponDiv">
                             <div class="mb-3">
@@ -204,17 +197,12 @@
                             </div>
                         </div>
                     </div>
-                {{!-- </form> --}}
             </div>
         </section>
-
-    
 
 <script>
 
     const verifyCoupon = async(value)=>{
-        console.log("verifyCoupon fn called");
-        console.log(value);
         try{
             const response = await fetch('/couponValidation',{
                 method:'POST',
@@ -224,7 +212,6 @@
                 body: JSON.stringify({couponCode:value})
             })
             const data = await response.json();
-            console.log("data:",data);
             if(data.message){
                 const errorBlock = document.getElementById("couponValidationError");
                 errorBlock.innerHTML = `<div class="alert alert-warning" role="alert">
@@ -233,15 +220,12 @@
             }
             if(data.couponDiscountAmount){
                 const couponDiscountBlock = document.getElementById("couponReductionAmountColumn");
-                console.log(couponDiscountBlock);
                 couponDiscountBlock.innerHTML = `<i class="bi bi-currency-rupee"></i> -${data.couponDiscountAmount}`;
             }
             if(data.newTotal){
                 const totalAmountBlock = document.getElementById("totalAmount");
-                console.log(totalAmountBlock);
                 totalAmountBlock.innerHTML = `<i class="bi bi-currency-rupee"></i> ${data.newTotal}`;
                 const hiddenSubTotal = document.getElementById("hiddenSubTotal");
-                console.log("hiddenSubTotal:",hiddenSubTotal.value);
                 hiddenSubTotal.value = data.newTotal;
             }
             if(data.appliedCouponCode){
@@ -253,7 +237,6 @@
                 hiddenCouponDiscount.value = data.couponDiscountAmount;
             }
             if(!data.codDisabled){
-                console.log("hi")
                 const codRadioBtn = document.getElementById("codRadioBtn");
                 codRadioBtn.innerHTML = '';
                 codRadioBtn.innerHTML = `<input class="form-check-input" required type="radio" name="paymentMethod" id="paymentRadio1" value="COD">

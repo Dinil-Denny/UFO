@@ -1,4 +1,3 @@
-const bcrypt = require('bcrypt');
 const otpCollection = require('../model/otpSchema');
 const transporter = require('../utils/mailTransporter');
 require('dotenv').config();
@@ -24,7 +23,6 @@ const sendOTPVerificationMail = async(email)=>{
       await otpCollection.insertMany([userOTP]);
       // sending email using transporter
       await transporter.sendMail(mailOptions);
-      console.log("Email send");
     }catch(err){
       console.log("An error occured !!! "+err.message);
     }

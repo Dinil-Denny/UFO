@@ -34,10 +34,9 @@
                             <button style="display: block; border-radius: 25px;"><a href="/cart" style="padding: 0%; text-decoration: none; color: white;">Go to Cart</a></button>
                         
                         {{else}}
-                        {{!-- <form action="/addToCart/{{product._id}}" method="post"> --}}
                             <input type="text" id="hiddenProductId" value="{{product._id}}" hidden>
                             <button id="addToCartBtn" style="display: block; border-radius: 25px;">Add to Cart</button>
-                        {{!-- </form> --}}
+                     
                         {{/if}}
                     {{else}}
                     <button style="display: block;" disabled>Out of stock</button>
@@ -106,7 +105,6 @@
             }
             });
             const data = await response.json();
-            console.log("data:",data);
             
             if (data) { // Check for success in response data
                 Swal.fire({

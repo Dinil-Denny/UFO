@@ -6,13 +6,10 @@ module.exports = {
     filterSorting : async(req,res,next)=>{
         try{
             const filters = req.query;
-            console.log("filters:",req.query);
             let query = {};
             if(filters.search){
                 const category = await categoryCollection.findOne({catagoryName:{$regex : filters.search, $options:'i'}});
-                //console.log("category:",category);
                 const brand = await brandCollection.findOne({brandName:{$regex: filters.search,$options:'i'}});
-                //console.log("brand:",brand);
                 if(category){
                     query = {
                         $or:[
@@ -76,12 +73,10 @@ module.exports = {
                 else
                     query.offerPrice = {$gte:Number(filters.offerPrice),$lte:Number(filters.offerPrice)+500}
             }
-            console.log("query: ",query);
 
             //pagination 
             const limit = 6;
             const totalProducts = await productCollection.find(query).countDocuments();
-            console.log("totalProducts",totalProducts);
             const totalPages = Math.ceil(totalProducts/limit);
             const currentPage = parseInt(req.query.page) || 1;
             const previousPage = currentPage>1 ? parseInt(currentPage)-1 : null;

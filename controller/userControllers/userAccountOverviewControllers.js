@@ -16,19 +16,14 @@ module.exports = {
         try {
           const userid = req.session.userid;
           const user = await userCollection.findOne({email:userid}).lean();
-          //console.log("userId",userid);
           const orders = await orderCollection.find({userId:user._id}).populate('productsData.productId').sort({date:-1}).lean();
-          //console.log("ordres: ",orders);
           const dateFormattedOrders = orders.map((order)=>{
             const orderedDate = order.date;
             const formattedDate = orderedDate.toLocaleDateString();
             return {...order,date:formattedDate}
           })
-          console.log("dateFormattedOrders:",dateFormattedOrders);
           const addresses = await addressCollection.find({userEmail:userid}).lean();
           const referralCode = await referralCodeCollection.findOne({userId:user._id}).lean();
-          console.log("referralCode: ",referralCode);
-          //console.log(`user in account overview: ${user}`);
           res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,dateFormattedOrders,referralCode:referralCode.referralCode});
         } catch (error) {
           console.log(`An error occured on loading account overview : ${error}`);
@@ -78,7 +73,6 @@ module.exports = {
                     }
                 }
             ]);
-            console.log("orderDetails:",orderDetails);
             res.render('user/orderDetails',{title:"Order Details",orderDetails,loginName:req.session.username});
         } catch (error) {
             console.log("error: ",error);
@@ -88,9 +82,7 @@ module.exports = {
     cancelProduct: async(req,res)=>{
         try{
             const orderId = req.params.orderId;
-            console.log("orderId: ",orderId);
             const productsDataId = req.params.productObjId;
-            console.log("orderProductId: ",productsDataId);
             await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":"cancelled"}},
                 {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]});
@@ -104,9 +96,7 @@ module.exports = {
     returnProduct: async(req,res)=>{
         try {
             const orderId = req.params.orderId;
-            console.log("orderId: ",orderId);
             const productsDataId = req.params.productObjId;
-            console.log("orderProductId: ",productsDataId);
             await orderCollection.findOneAndUpdate(
                 {_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":"returned"}},
@@ -116,15 +106,11 @@ module.exports = {
             const totalProductsInOrder = orderDetails.productsData.length;
             const couponDiscount = orderDetails.couponDiscount;
             const couponDiscountForEachProduct = (couponDiscount/totalProductsInOrder);
-            console.log("couponDiscountForEachProduct:",couponDiscountForEachProduct);
             const orderedProduct = orderDetails.productsData.find(val => {
                 return val._id.equals(new mongoose.Types.ObjectId(productsDataId))
             });
-            console.log("orderedProduct",orderedProduct);
             const orderedProductDetails = await productCollection.findOne({_id:orderedProduct.productId});
-            console.log("orderedProductDetails",orderedProductDetails);
             const refundAmount = ((orderedProductDetails.offerPrice * orderedProduct.quantity) - couponDiscountForEachProduct).toFixed(2);
-            console.log("refundAmt:",refundAmount);
 
             //depositing the refund amount to the user's wallet, if no wallet create one and deposit the amount
             const user = await userCollection.findOne({email:req.session.userid}).lean();
@@ -153,7 +139,6 @@ module.exports = {
     
     getAddnewAddress: async(req,res,next)=>{
         try {
-            //console.log("userid:",req.session.userid)
             res.render('user/userNewAddress',{title:"Add address",loginName:req.session.username,userEmail:req.session.userid});
         } catch (error) {
             console.log("Error in gettin add address form: ",error.message);
@@ -162,7 +147,6 @@ module.exports = {
     postAddnewAddress: async(req,res,next)=>{
         try {
             const{userEmail,name,mobileNumber,address,street,city,state,pinCode} = req.body;
-            console.log("req.body: ",req.body);
             const userAddress = {
                 userEmail,
                 name,
@@ -174,10 +158,7 @@ module.exports = {
                 pinCode 
             };
             await addressCollection.insertMany([userAddress]);
-            console.log("address saved");
             res.redirect('/account_overview');
-            
-            
         } catch (error) {
             console.log("Error in adding new address: ",error.message);
         }
@@ -185,7 +166,6 @@ module.exports = {
     getEditAddress: async(req,res,next)=>{
         try {
             const address = await addressCollection.findById(req.params.id).lean();
-            console.log("Edit address: ",address);
             res.render('user/editAddress',{title:"Edit address",address});
         } catch (error) {
             console.log(`An error occured: ${error.message}`);
@@ -194,8 +174,6 @@ module.exports = {
     postEditAddress: async(req,res,next)=>{
         try {
             const {name,mobileNumber,address,street,city,state,pinCode} = req.body;
-            console.log("req.body: ",req.body);
-            console.log("Object id : ",req.params.id);
             await addressCollection.findByIdAndUpdate(req.params.id,{name,mobileNumber,address,street,city,state,pinCode});
             res.redirect('/account_overview');
         } catch (error) {
@@ -205,7 +183,6 @@ module.exports = {
     deleteAddress : async(req,res,next)=>{
         try{
             await addressCollection.findByIdAndUpdate(req.params.id,{isActive:false});
-            console.log("Address soft deleted");
             res.redirect('/account_overview');
         }catch(error){
             console.log("Error while deleting address: ",error.message);
@@ -214,9 +191,7 @@ module.exports = {
     getEditDetails: async(req,res,next)=>{
         try {
             const user = await userCollection.findById(req.params.id).lean();
-            console.log("user to edit details: ",user);
-            res.render('user/editDetails',{title:"Edit details",user})
-
+            res.render('user/editDetails',{title:"Edit details",user});
         } catch (error) {
             console.log(`Error : ${error.message}`);
         }
@@ -224,9 +199,7 @@ module.exports = {
     postEditDetails: async(req,res,next)=>{
         try {
             const {name,mobileNumber} = req.body;
-            console.log("req.body: ",req.body);
             await userCollection.findByIdAndUpdate(req.params.id,{name,mobileNumber});
-            console.log("user details saved");
             res.redirect('/account_overview');
         } catch (error) {
             console.log(`Error : ${error.message}`);
@@ -235,7 +208,6 @@ module.exports = {
     getEditEmail : async(req,res)=>{
         try {
             const user = await userCollection.findOne({_id:req.params.id}).lean();
-            console.log("user:",user);
             res.render('user/editEmail',{title:"Edit email",user});
         } catch (error) {
             console.log("Error while getting edit email:",error.message);

@@ -1,5 +1,4 @@
 
-
     <header class="container d-flex flex-wrap justify-content-between align-items-center py-3 mb-4 border-bottom">
         <a href="#" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
             <span class="fs-4">My Wallet <i class="bi bi-wallet2"></i></span>
@@ -28,7 +27,6 @@
                         <thead>
                             <tr>
                                 <th>Transaction date</th>
-                                {{!-- <th>Transaction ID</th> --}}
                                 <th>Transaction type</th>
                                 <th>Amount</th>
                             </tr>
@@ -38,7 +36,6 @@
                             {{#each formattedDateWalletData}}
                             <tr>
                                 <td>{{this.transactionDate}}</td>
-                                {{!-- <td>{{this._id}}</td> --}}
                                 <td>{{this.transactionType}}</td>
                                 <td>{{this.transactionAmount}}</td>
                             </tr>
@@ -52,7 +49,6 @@
                     </table>
                 </div>
             </div>
-            
         </div>
     </main>
 

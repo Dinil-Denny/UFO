@@ -1,10 +1,3 @@
-{{!-- <script>
-    const retryPayment = document.getElementById("retryPayment");
-    retryPayment.addEventListener('click',function(){
-        const totalPrice = document.getElementById("totalPrice").value
-    })
-</script> --}}
-
 <body>
     <main class="main">
         <section class="pt-150 pb-150">
@@ -15,9 +8,6 @@
                             <div class="col-md-4">
                                 <div class="dashboard-menu">
                                     <ul class="nav flex-column" role="tablist">
-                                        {{!-- <li class="nav-item">
-                                            <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" href="#dashboard" role="tab" aria-controls="dashboard" aria-selected="false"><i class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
-                                        </li> --}}
                                         <li class="nav-item">
                                             <a class="nav-link active" id="orders-tab" data-bs-toggle="tab" href="#orders" role="tab" aria-controls="orders" aria-selected="false"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
                                         </li>
@@ -44,7 +34,6 @@
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
-                                                                {{!-- <th>Product</th> --}}
                                                                 <th>Date</th>
                                                                 <th>Total</th>
                                                                 <th>Payment method</th>
@@ -55,7 +44,6 @@
                                                         <tbody>
                                                             {{#each dateFormattedOrders}}
                                                             <tr>
-                                                                {{!-- <td>#1357</td> --}}
                                                                 <input type="text" value="{{this._id}}" id="orderId" hidden>
                                                                 <input type="text" value="{{this.totalPrice}}" id="totalPrice" hidden>
                                                                 <td>{{this.date}}</td>
@@ -199,7 +187,7 @@
         </section>
     </main>
     <!-- Vendor JS-->
-    <script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
+    {{!-- <script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="assets/js/vendor/jquery-3.6.0.min.js"></script>
     <script src="assets/js/vendor/jquery-migrate-3.3.0.min.js"></script>
     <script src="assets/js/vendor/bootstrap.bundle.min.js"></script>
@@ -217,7 +205,7 @@
     <script src="assets/js/plugins/isotope.js"></script>
     <script src="assets/js/plugins/scrollup.js"></script>
     <script src="assets/js/plugins/jquery.vticker-min.js"></script>
-    <script src="assets/js/plugins/jquery.theia.sticky.js"></script>
+    <script src="assets/js/plugins/jquery.theia.sticky.js"></script> --}}
     <!-- Template  JS -->
     <script src="assets/js/main.js"></script>
 </body>
@@ -226,8 +214,6 @@
 <script>
     async function retryPayment(orderId,totalPrice){
         try{
-            console.log("called");
-            console.log(orderId,totalPrice);
             const response = await fetch('/retryPayment',{
                 method:'POST',
                 headers:{
@@ -236,7 +222,6 @@
                 body:JSON.stringify({orderId,totalPrice})
             })
             const data = await response.json();
-            console.log("data:",data);
             const options = {
                 "key" : data.razorpayKey,
                 "amount" : data.order.amount,
@@ -246,8 +231,6 @@
                 "handler" : function (response){
                         
                     if(response.razorpay_payment_id){
-                        console.log("response.razorpay_payment_id",response.razorpay_payment_id);
-                        console.log("response:",response);
                         fetch('/verifyPayment',{
                             method:'POST',
                             headers:{

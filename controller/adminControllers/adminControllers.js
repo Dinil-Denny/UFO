@@ -10,17 +10,14 @@ module.exports = {
         }catch(err){
             console.log("Error! : ",err);
         }
-            
     },
     postAdminLogin : async(req,res,next)=>{
         const {email,password} = req.body;
-        // console.log(email,password);
         try{
             if(!email || !password){
                 return res.render('admin/adminLogin',{admin: true , message: "Email and Password required",title:"Admin_Login"});
             } 
             const adminExist = await adminCollection.findOne({email});
-            // console.log("adminExist: "+adminExist);
             if(!adminExist){
                 return res.render('admin/adminLogin',{admin: true , message: "Email not found! Check once again",title:"Admin_Login"});
             } 
@@ -31,8 +28,7 @@ module.exports = {
             }
             req.session.adminid = req.body.email;
             req.session.admin = adminExist.name;
-            res.redirect('/admin')
-            // res.render('admin/adminDashboard',{admin:true, adminName:admin, title:"Admin_Login",title:"Admin_Dashboard"});
+            res.redirect('/admin');
         }catch(err){
             console.log("error...!!! "+err.message);
         }
@@ -46,6 +42,5 @@ module.exports = {
         }catch(err){
             console.log("Error !! - ",err);
         }
-        
     },
 }

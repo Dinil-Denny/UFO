@@ -11,7 +11,6 @@ module.exports = {
                 code += characters.charAt(Math.floor(Math.random()*characters.length));
             }
         }while(await referralCodeCollection.findOne({referralCode:code}))
-        console.log("referralCode:",code);
         return code;
     }
 }

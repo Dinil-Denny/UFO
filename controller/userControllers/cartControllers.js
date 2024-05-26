@@ -59,8 +59,6 @@ module.exports = {
 
                 // checking if product is in stock
                 const product = await Product.findById(productId);
-                // if(product.stock < quantity)
-                //     res.redirect('/productDetails/'+productId);
                 await cart.save();
             }
             res.json({succesMessage:"Item added to cart"});
@@ -97,7 +95,6 @@ module.exports = {
             let subTotal = 0;
             let total = 0;
             cartProducts.forEach( item =>{
-                console.log("item : ",item.productId.offerPrice);
                 subTotal += (item.productId.offerPrice * item.quantity);
                 total += (item.productId.price * item.quantity);
             }); 
@@ -130,7 +127,6 @@ module.exports = {
         try {
             const user = await User.findOne({email:req.session.userid});
             const wishlist = await Wishlist.findOne({user:user._id},{products:1}).populate({path:'products.productId',populate:{path:'brandName'}}).lean();
-            console.log("wishlist:",wishlist);
             let products = null 
             if(wishlist){
                 products = wishlist.products.sort((a,b)=>{
@@ -140,20 +136,16 @@ module.exports = {
                 });
             }
             res.render('user/userWishlist',{title:"Wishlist",products,loginName: req.session.username});
-            
         } catch (error) {
             console.log("error while getting wishlist:",error.message);
         }
     },
-    //add and remve from wishlist 
+    //add and remove from wishlist 
     wishlistControl : async(req,res)=>{
         try{
             const user = await User.findOne({email:req.session.userid});
-            //console.log("user:",user);
             const productId = req.params.id;
-            //console.log("productId:",productId);
             const existingWishlist = await Wishlist.findOne({user:user._id});
-            //console.log("existingWishlist:",existingWishlist);
             if(!existingWishlist){
                 const newWishlist = new Wishlist({
                     user,
@@ -162,7 +154,6 @@ module.exports = {
                 await newWishlist.save();
             }else{
                 const productExist = existingWishlist.products.findIndex(product => product.productId.toString() === productId.toString());
-                //console.log("productExist:",productExist);
                 if(productExist !== -1){
                     existingWishlist.products.splice(productExist,1);
                     await existingWishlist.save();
@@ -176,6 +167,4 @@ module.exports = {
             console.log("Error while adding to wishlist: ",err.message);
         }
     }
-    
-
 }
