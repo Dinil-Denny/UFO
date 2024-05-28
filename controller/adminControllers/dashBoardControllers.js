@@ -45,7 +45,6 @@ module.exports = {
                 {
                     $limit:10
                 }
-
             ]);
             res.render('admin/topTenProducts',{title:"Top selling 10 products",admin:true,adminName:req.session.admin,topSellingProducts})
         } catch (err) {

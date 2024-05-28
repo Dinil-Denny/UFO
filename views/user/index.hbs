@@ -30,42 +30,39 @@
     {{!--------------------------- top deals --------------------------}}
     <div class="topDeals mt-3 mb-3" style="background-color: #EFE9E1;"> 
         <div class="pt-4">
-            <h3 class="text-center">Top Deals</h3> 
+            <h3 class="text-center">Trending Now!</h3> 
         </div>
         <div class="d-flex justify-content-evenly pt-3 flex-wrap"> 
-        <div class="card mb-3" style="width: 18rem;">
-            <img src="/images/men-tshirt-white.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-body">
-                <a href="#" class="card-link">Card link</a>
-                <a href="#" class="card-link">Another link</a>
-            </div>
-        </div>
-        <div class="card mb-3" style="width: 18rem;">
-            <img src="/images/women-dress-grey.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-body">
-                <a href="#" class="card-link">Card link</a>
-                <a href="#" class="card-link">Another link</a>
-            </div>
-        </div>
-        <div class="card mb-3" style="width: 18rem;">
-            <img src="/images/women-dress-grey.jpg" class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-            <div class="card-body">
-                <a href="#" class="card-link">Card link</a>
-                <a href="#" class="card-link">Another link</a>
-            </div>
-        </div>
+            {{!-- products --}}
+            <div class="productsContainer d-flex flex-column">  
+                <div class="products mb-3 d-flex justify-content-center flex-wrap">
+                    {{#if topSellingProducts}}
+                    {{#each topSellingProducts}}
+                    {{#if this.orderedProducts.active}}
+                    <div class="card m-3" style="width: 18rem; border-top-right-radius: 25px; border-top-left-radius: 25px;border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                        <a class="productListCart" style="text-decoration: none; color: black;" href="/productDetails/{{this.orderedProducts._id}}">
+                        <img src="{{this.orderedProducts.images.[0]}}" class="card-img-top p-2" style="height:350px; border-top-right-radius: 25px; border-top-left-radius: 25px;" alt="Product image">
+                        <div class="card-body text-center" style="background-color: #d9d9d9; border-bottom-left-radius: 15px;border-bottom-right-radius: 15px;">
+                                        
+                            <h5 class="card-title">{{this.orderedProducts.brandName.brandName}}</h5>
+                            <p class="card-text">{{this.orderedProducts.productName}}</p>
+                            <div class="product-price">
+                                <span class="fw-bold text-danger-emphasis fs-5 me-2">Rs. {{this.orderedProducts.offerPrice}} </span>
+                                <span class="old-price text-decoration-line-through">Rs. {{this.orderedProducts.price}}</span>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    {{/if}}
+                    {{/each}}
+                    {{else}}
+                    <div class="m-3">
+                        <h5 class="text-center fs-4">Sorry, no products found!...</h5>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>  
+        {{!-- products --}}
         </div>
     </div>
     {{!--------------------------- top deals end --------------------------}}

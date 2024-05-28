@@ -88,25 +88,20 @@ router.post('/changePassword/:id',userAuthentication,postChangePassword);
 
 // get cart
 router.get('/cart',userAuthentication,getCart);
-
 // add to cart
 router.post('/addToCart/:id',userAuthentication,addToCart);
-
-//get wishlist
-router.get('/getWishlist',userAuthentication,getWishlist);
-
-//add to whishlist
-router.post('/wishlist/:id',userAuthentication,wishlistControl);
-
 //updating cart quantity
 router.post('/updateCartQuantity',userAuthentication,updateCartQuantity);
-
 // delete product from cart 
-router.get('/removeCartItem/:id',userAuthentication,removeItemInCart);
-
+router.get('/removeCartItem/:id',userAuthentication,removeItemInCart)
 // cart checkout page
 router.get('/checkout',userAuthentication,getCartCheckout);
 router.post('/checkout',userAuthentication,postCartCheckout);
+
+//get wishlist
+router.get('/getWishlist',userAuthentication,getWishlist);
+//add to whishlist
+router.post('/wishlist/:id',userAuthentication,wishlistControl);
 
 //coupons page
 router.get('/coupons',userAuthentication,getCoupons);

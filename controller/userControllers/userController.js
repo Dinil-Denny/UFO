@@ -6,13 +6,42 @@ const transporter = require("../../utils/mailTransporter");
 const {generateReferralCode} = require('../../helpers/referralCodeGeneration');
 const referralCodeCollection = require('../../model/referralCodeSchema');
 const walletCollection = require('../../model/walletSchema');
+const orderCollection = require('../../model/orderSchema');
 require("dotenv").config();
 
 module.exports = {
   getHomePage: async (req, res, next) => {
     try {
       const userName = req.session.username;
-      res.render("user/index", { title: "UFO", loginName: userName });
+      const topSellingProducts = await orderCollection.aggregate([
+          {
+              $unwind:"$productsData"
+          },
+          {
+              $group:{_id:'$productsData.productId',quantityOrdered:{$sum:'$productsData.quantity'}}
+          },
+          {
+              $sort:{quantityOrdered:-1}
+          },
+          {
+              $lookup:{
+                  from:"products",
+                  localField:"_id",
+                  foreignField:"_id",
+                  as:"orderedProducts"
+              }
+          },
+          {
+            $project:{orderedProducts:1,_id:0}
+          },
+          {
+            $unwind:"$orderedProducts"
+          },
+          {
+              $limit:4
+          }
+      ]);
+      res.render("user/index", { title: "UFO", loginName: userName ,topSellingProducts:topSellingProducts});
     } catch (error) {
       console.log("Error!!: ", error);
     }
