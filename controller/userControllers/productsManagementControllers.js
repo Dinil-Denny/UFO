@@ -35,6 +35,7 @@ module.exports = {
           });
         } catch (error) {
           console.log("Error!! : ", error);
+          res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
       },
     
@@ -54,6 +55,7 @@ module.exports = {
           res.json(data);
         } catch (error) {
           console.log("Error while products pagination: ",error.message);
+          res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     
@@ -99,6 +101,7 @@ module.exports = {
           
         } catch (error) {
           console.log("Error!!: ", error);
+          res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     
@@ -113,6 +116,7 @@ module.exports = {
           res.json(data);
         } catch (error) {
           console.log("Error occured while sorting: ", error.message);
+          res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 }

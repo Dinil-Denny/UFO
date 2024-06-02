@@ -25,6 +25,7 @@ module.exports = {
             
         } catch (err) {
             console.log("Error while getting wallet:",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     }
 }

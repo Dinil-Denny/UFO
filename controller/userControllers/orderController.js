@@ -45,6 +45,7 @@ module.exports = {
             res.render('user/checkout',{userAddress,subTotal,total,discount,userId,userCartId,loginName: req.session.username,title:"Checkout",codDisabled});
         } catch (error) {
             console.log("Error while getting cart to checkout:",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 
@@ -128,6 +129,7 @@ module.exports = {
             await Cart.findOneAndDelete({_id: userCartId});
         } catch (error) {
             console.log("Error occured while checkout: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },  
 
@@ -144,6 +146,7 @@ module.exports = {
             res.json({order,razorpayKey:process.env.RZP_KEY_ID,orderId});
         } catch (error) {
             console.log("Error in retry payment:",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 
@@ -166,6 +169,7 @@ module.exports = {
             }
         } catch (err) {
             console.log("Error in verify payment:",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 
@@ -174,6 +178,7 @@ module.exports = {
             res.render('user/orderSuccess',{loginName: req.session.username, title:"Order-Placed"});
         } catch (err) {
             console.log("Error !!: ",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     getOrderFailurePage: async(req,res)=>{
@@ -181,6 +186,7 @@ module.exports = {
             res.render('user/orderFailure',{loginName: req.session.username, title:"Order-Failed"});
         } catch (err) {
             console.log("Error !!: ",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     }
 }

@@ -44,6 +44,7 @@ module.exports = {
       res.render("user/index", { title: "UFO", loginName: userName ,topSellingProducts:topSellingProducts});
     } catch (error) {
       console.log("Error!!: ", error);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -52,6 +53,7 @@ module.exports = {
       res.render("user/userLogin", { title: "Login" });
     } catch (error) {
       console.log("Error!!: ", error);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -98,6 +100,7 @@ module.exports = {
       }
     } catch (err) {
       console.log("Error!! " + err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -109,6 +112,7 @@ module.exports = {
       });
     } catch (err) {
       console.log("Error!!: ", err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -122,6 +126,7 @@ module.exports = {
       }
     } catch (error) {
       console.log("Error!!: ", error);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -273,6 +278,7 @@ module.exports = {
       }
     } catch (err) {
       console.log("An error occured: " + err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
   getResendOTP: async (req, res) => {
@@ -301,6 +307,7 @@ module.exports = {
       res.render("user/userResendOTP");
     } catch (err) {
       console.log("An error occured !!! " + err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
   postResendOTP: async (req, res, next) => {
@@ -359,6 +366,7 @@ module.exports = {
       }
     } catch (err) {
       console.log("Error occured: " + err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -367,6 +375,7 @@ module.exports = {
       res.render("user/userForgetPassMail");
     } catch (error) {
       console.log("Error!!: ", error);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -393,6 +402,7 @@ module.exports = {
       }
     } catch (err) {
       console.log("An error occured: " + err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -429,6 +439,7 @@ module.exports = {
       }
     } catch (error) {
       console.log("Error : ", error);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -458,6 +469,7 @@ module.exports = {
       res.render("user/userForgetPassOTP");
     } catch (err) {
       console.log("An error occured !!! " + err.message);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 
@@ -491,6 +503,7 @@ module.exports = {
       res.redirect("/login");
     } catch (error) {
       console.log("Error: ", error);
+      res.render('user/userError',{title:"Error!",loginName: req.session.username});
     }
   },
 };

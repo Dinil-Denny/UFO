@@ -27,6 +27,7 @@ module.exports = {
           res.render('user/accountOverview',{title:"Account overview",loginName:req.session.username,user,addresses,dateFormattedOrders,referralCode:referralCode.referralCode});
         } catch (error) {
           console.log(`An error occured on loading account overview : ${error}`);
+          res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 
@@ -76,6 +77,7 @@ module.exports = {
             res.render('user/orderDetails',{title:"Order Details",orderDetails,loginName:req.session.username});
         } catch (error) {
             console.log("error: ",error);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 
@@ -89,6 +91,7 @@ module.exports = {
             res.redirect(`/orderDetails/${orderId}`);
         }catch(err){
             console.log("Error while cancelling product-order: ",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
         
     },
@@ -134,6 +137,7 @@ module.exports = {
             res.redirect(`/orderDetails/${orderId}`);
         } catch (error) {
             console.log("Error while returning the product: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     
@@ -142,6 +146,7 @@ module.exports = {
             res.render('user/userNewAddress',{title:"Add address",loginName:req.session.username,userEmail:req.session.userid});
         } catch (error) {
             console.log("Error in gettin add address form: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     postAddnewAddress: async(req,res,next)=>{
@@ -161,6 +166,7 @@ module.exports = {
             res.redirect('/account_overview');
         } catch (error) {
             console.log("Error in adding new address: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     getEditAddress: async(req,res,next)=>{
@@ -169,6 +175,7 @@ module.exports = {
             res.render('user/editAddress',{title:"Edit address",address});
         } catch (error) {
             console.log(`An error occured: ${error.message}`);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     postEditAddress: async(req,res,next)=>{
@@ -177,7 +184,8 @@ module.exports = {
             await addressCollection.findByIdAndUpdate(req.params.id,{name,mobileNumber,address,street,city,state,pinCode});
             res.redirect('/account_overview');
         } catch (error) {
-            console.log("Error in editing address: ",error.message)
+            console.log("Error in editing address: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     deleteAddress : async(req,res,next)=>{
@@ -186,6 +194,7 @@ module.exports = {
             res.redirect('/account_overview');
         }catch(error){
             console.log("Error while deleting address: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     getEditDetails: async(req,res,next)=>{
@@ -194,6 +203,7 @@ module.exports = {
             res.render('user/editDetails',{title:"Edit details",user});
         } catch (error) {
             console.log(`Error : ${error.message}`);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     postEditDetails: async(req,res,next)=>{
@@ -203,6 +213,7 @@ module.exports = {
             res.redirect('/account_overview');
         } catch (error) {
             console.log(`Error : ${error.message}`);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     getEditEmail : async(req,res)=>{
@@ -211,6 +222,7 @@ module.exports = {
             res.render('user/editEmail',{title:"Edit email",user});
         } catch (error) {
             console.log("Error while getting edit email:",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     getEditEmailOTP : async(req,res)=>{
@@ -260,6 +272,7 @@ module.exports = {
             res.json({success:true,redirect:'/account_overview'});
         }catch(error){
             console.log("Error:",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     getChangePassword : async(req,res)=>{
@@ -268,6 +281,7 @@ module.exports = {
             res.render('user/changePassword',{title:"Change Password",user});
         } catch (error) {
             console.log("Error while changing password: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     postChangePassword: async(req,res)=>{
@@ -282,6 +296,7 @@ module.exports = {
             res.redirect('/account_overview');
         } catch (error) {
             console.log("Error while changing password: ",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     

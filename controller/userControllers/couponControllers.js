@@ -10,6 +10,7 @@ module.exports = {
             res.render('user/coupons',{title:"Coupons",loginName: req.session.username,coupons});
         } catch (err) {
             console.log("Error while getting coupons:",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     couponCodeValidation : async(req,res)=>{
@@ -55,6 +56,7 @@ module.exports = {
 
         } catch (err) {
             console.log("Error while validating coupon:",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     }
 }

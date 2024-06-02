@@ -27,8 +27,8 @@ module.exports = {
                     i--;
                 }
             }
-            // let subTotal = 0;
-            // let total = 0;
+            let subTotal = 0;
+            let total = 0;
             cartProducts.forEach( item =>{
                 subTotal += (item.productId.offerPrice * item.quantity);
                 total += (item.productId.price * item.quantity);
@@ -74,6 +74,7 @@ module.exports = {
             res.json({succesMessage:"Item added to cart"});
         } catch (error) {
             console.log("Error while adding product to cart: ",error);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     removeItemInCart : async(req,res)=>{
@@ -86,6 +87,7 @@ module.exports = {
             res.redirect('/cart');
         } catch (error) {
             console.log("Error occure while removing product from cart: ",error);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
 
@@ -148,6 +150,7 @@ module.exports = {
             res.render('user/userWishlist',{title:"Wishlist",products,loginName: req.session.username});
         } catch (error) {
             console.log("error while getting wishlist:",error.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     //add and remove from wishlist 
@@ -175,6 +178,7 @@ module.exports = {
             res.redirect('/productDetails/'+productId);
         }catch(err){
             console.log("Error while adding to wishlist: ",err.message);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     }
 }
