@@ -24,6 +24,7 @@ module.exports = {
             res.render('admin/couponListing',{dateModifiedCoupons,admin:true,adminName:req.session.admin,title:"Coupons",previousPage,currentPage,nextPage});
         }catch(err){
             console.log("Error while getting coupons list: ",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     getAddCoupon : async(req,res)=>{
@@ -31,6 +32,7 @@ module.exports = {
             res.render('admin/addCoupon',{title:"Add coupon",admin:true,adminName: req.session.admin});
         }catch(err){
             console.log("Error while getting Add coupon",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     postAddCoupon : async(req,res)=>{
@@ -50,6 +52,7 @@ module.exports = {
             res.redirect('/admin/coupons');
         }catch(err){
             console.log("Error while adding coupon",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     getEditCoupon : async(req,res)=>{
@@ -60,6 +63,7 @@ module.exports = {
             res.render('admin/editCoupon',{admin:true,title:"Edit Coupon",coupon,modifiedDateFormat});
         } catch (err) {
             console.log("Error while getting edit coupon:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     postEditCoupon : async(req,res)=>{
@@ -76,6 +80,7 @@ module.exports = {
             res.redirect('/admin/coupons');
         } catch (err) {
             console.log("Error while editing coupon: ",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     couponStatusUpdate : async(req,res)=>{
@@ -91,6 +96,7 @@ module.exports = {
             }
         }catch(err){
             console.log("Error while coupon status update:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     deleteCoupon : async(req,res)=>{
@@ -100,6 +106,7 @@ module.exports = {
             res.redirect('/admin/coupons');
         } catch (err) {
             console.log("Error while deleting the product:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     }
 }

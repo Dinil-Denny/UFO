@@ -8,6 +8,7 @@ module.exports = {
             res.render('admin/addCategory',{categoryList,admin:true,adminName:req.session.admin,title:"Category"});
         }catch(err){
             console.log(`Error occured!! : ${err.message}`);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     postAddCatagory: async(req,res)=>{
@@ -28,6 +29,7 @@ module.exports = {
             res.render('admin/addCategory',{admin:true, adminName:req.session.admin, message:"Category already exists!", title:"Category",categoryList});
         }catch(err){
             console.log(`An error occured: ${err.message}`);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     deleteCategory:async(req,res)=>{
@@ -36,6 +38,7 @@ module.exports = {
             res.redirect('/admin/category');
         } catch (error) {
             console.log(`An error occured: ${err.message}`);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }      
     },
     getEditCategory: async(req,res)=>{
@@ -44,6 +47,7 @@ module.exports = {
             res.render('admin/editCategory',{admin:true,adminName:req.session.admin,title:"Edit Category",category});
         } catch (error) {
             console.log("Error !: ",error);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     postEditCategory: async(req,res)=>{
@@ -63,7 +67,8 @@ module.exports = {
             res.render('admin/editCategory',{admin:true,adminName:req.session.admin,title:"Edit Category",message:"Category name already exists.",category});
                 
         }catch(err){
-            console.log(`An error occured:- ${err}`);   
+            console.log(`An error occured:- ${err}`);  
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin}); 
         }
     },
 }

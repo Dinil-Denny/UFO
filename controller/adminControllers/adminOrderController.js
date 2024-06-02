@@ -28,6 +28,7 @@ module.exports = {
             res.render('admin/adminOrders',{admin:true,adminName:req.session.admin,dateFormattedOrders,title:"Orders",currentPage,nextPage,previousPage});
         } catch (error) {
             console.log("Error: ",error);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     //getting order details
@@ -78,6 +79,7 @@ module.exports = {
             res.render('admin/adminOrderDetails',{admin:true,adminName:req.session.admin,orders,title:"Order details"});
         } catch (error) {
             console.log("Error !!: ",error);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     updateOrderStatus: async(req,res)=>{
@@ -104,6 +106,7 @@ module.exports = {
             res.json({data});
         } catch (error) {
             console.log("Error while updating order status: ",error);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     }
 }

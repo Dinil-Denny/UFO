@@ -17,6 +17,7 @@ module.exports = {
             }
         }catch(err){
             console.log("Error !! "+err);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         } 
     },
     topSellingProducts : async(req,res)=>{
@@ -49,6 +50,7 @@ module.exports = {
             res.render('admin/topTenProducts',{title:"Top selling 10 products",admin:true,adminName:req.session.admin,topSellingProducts})
         } catch (err) {
             console.log("Error while getting top selling products:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     topSellingCategorys : async(req,res)=>{
@@ -89,6 +91,7 @@ module.exports = {
             res.render('admin/topTenCategory',{title:"Top selling 10 category",admin:true,adminName:req.session.admin,topSellingCategory})
         } catch (err) {
             console.log("Error while getting topSellingCategory:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     topSellingBrands : async(req,res)=>{
@@ -129,6 +132,7 @@ module.exports = {
             res.render('admin/topTenBrands',{admin:true,title:"Top selling 10 bramds",adminName:req.session.admin,topSellingBrands})
         } catch (err) {
             console.log("Error while getting topSellingBrands:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     getPeriodicChartData : async(req,res)=>{
@@ -212,6 +216,7 @@ module.exports = {
             }
         } catch (err) {
             console.log("Error while getting chart data:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     getDaywiseSalesData : async(req,res)=>{
@@ -230,6 +235,7 @@ module.exports = {
             res.json(salesData);
         }catch(err){
             console.log("Error while getting day wise data:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     getDailySalesData: async(req,res)=>{
@@ -255,6 +261,7 @@ module.exports = {
               res.json(dateFormattedDailyData);
         } catch (err) {
             console.log("Error while getting daily sales data:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     }
 }

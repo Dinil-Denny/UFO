@@ -9,6 +9,7 @@ module.exports = {
             res.render('admin/adminLogin',{admin:true,title:"Admin_Login"});
         }catch(err){
             console.log("Error! : ",err);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     postAdminLogin : async(req,res,next)=>{
@@ -31,6 +32,7 @@ module.exports = {
             res.redirect('/admin');
         }catch(err){
             console.log("error...!!! "+err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     adminLogout:async(req,res,next)=>{
@@ -41,6 +43,7 @@ module.exports = {
             });
         }catch(err){
             console.log("Error !! - ",err);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 }

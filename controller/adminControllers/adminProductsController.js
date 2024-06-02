@@ -22,6 +22,7 @@ module.exports = {
                 
         } catch (error) {
             console.log(`An error occured : ${error}`);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 
@@ -41,6 +42,7 @@ module.exports = {
             res.json(data);
         } catch (error) {
             console.log("Error while paginatin: ",error.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     getAddProduct: async(req,res)=>{
@@ -49,8 +51,10 @@ module.exports = {
             const brands = await brandNameCollection.find().lean();
             res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories,brands});
         } catch (err) {
-            if(err)
+            if(err){
                 console.log(`An error occured : ${err.message}`);
+                res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
+            }  
         }
     },
     
@@ -88,7 +92,10 @@ module.exports = {
             await product.save();
             res.redirect('/admin/products');
         } catch (err) {
-            if(err)console.log(`An error occured!: ${err}`);
+            if(err){
+                console.log(`An error occured!: ${err}`);
+                res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
+            }
         }
     },
     postAddBrand : async(req,res,next)=>{
@@ -107,6 +114,7 @@ module.exports = {
             res.render('admin/addProducts',{admin:true, adminName:req.session.admin, title:"Add Products", categories,brands,brandAddErrorMessage:"Brand already exists"});
         } catch (error) {
             console.log("Error while adding brand: ",error.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 
@@ -120,6 +128,7 @@ module.exports = {
             res.render('admin/editProduct',{admin:true, adminName:req.session.admin,title:"Edit Product",product,category,categories,brands});
         }catch(err){
             console.log("Unexpected error occured: ",err);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     postEditProducts: async(req,res)=>{
@@ -173,6 +182,7 @@ module.exports = {
             res.redirect('/admin/products')
         } catch (error) {
             console.log("An error occured: ",error.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 
@@ -189,7 +199,8 @@ module.exports = {
                 res.redirect('/admin/products');
             }
         }catch(err){
-            console.log("An error occured: ",err)
+            console.log("An error occured: ",err);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     deleteProducts: async(req,res)=>{
@@ -199,6 +210,7 @@ module.exports = {
             res.redirect('/admin/products');
         }catch(err){
             console.log("Error while deleting product: ",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     }
 }

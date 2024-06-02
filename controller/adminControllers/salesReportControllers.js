@@ -37,6 +37,7 @@ module.exports = {
             })
         } catch (err) {
             console.log("Error while getting sales data: ",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 
@@ -66,6 +67,7 @@ module.exports = {
         }
       } catch (err) {
         console.log("Error while getting CutomDateSalesData:",err.message);
+        res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
       }
     },
 
@@ -88,6 +90,7 @@ module.exports = {
             res.json(salesReport);
         } catch (err) {
             console.log("error while getting day wise sales data:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 
@@ -172,6 +175,7 @@ module.exports = {
             }
         } catch (err) {
             console.log("Error while running getPeriodicSalesData:",err.message);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     }
 }

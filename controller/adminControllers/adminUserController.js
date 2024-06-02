@@ -7,6 +7,7 @@ module.exports = {
             res.render('admin/adminCustomers',{admin:true, userList, adminName:req.session.admin,title:"User_List"});          
         } catch (error) {
             console.log("Error: ",error);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
     blockUser : async(req,res,next)=>{
@@ -23,6 +24,7 @@ module.exports = {
             } 
         } catch (error) {
             console.log("Error! : ",err);
+            res.render('admin/adminError',{title:"Error",admin:true,adminName:req.session.admin});
         }
     },
 }
