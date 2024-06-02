@@ -69,7 +69,7 @@ router.post('/addAddress',userAuthentication,postAddnewAddress)
 
 // get edit address
 router.get('/editAddress/:id',userAuthentication,getEditAddress);
-router.post('/editAddress/:id',postEditAddress);
+router.post('/editAddress/:id',userAuthentication,postEditAddress);
 
 // soft delete address
 router.get('/deleteAddress/:id',userAuthentication,deleteAddress);

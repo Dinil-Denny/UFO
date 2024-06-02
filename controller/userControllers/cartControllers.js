@@ -13,13 +13,22 @@ module.exports = {
             const user = await User.findOne({email:userEmail});
             const userId = user._id;
             const userCart = await Cart.findOne({userId}).populate({path:'products.productId',populate:{path:'brandName'}}).lean();
-            
             if(!userCart) 
                 return res.render('user/cart',{title:"Cart",loginName: req.session.username});
 
             let cartProducts = userCart.products;
-            let subTotal = 0;
-            let total = 0;
+            for(let i=0;i<cartProducts.length;i++){
+                let itemExist = cartProducts[i].productId.stock>0;
+                if(itemExist===false){
+                    await Cart.updateOne({_id:userCart._id,"products.productId":cartProducts[i].productId._id},
+                        {$pull:{products:{productId:cartProducts[i].productId._id}}}
+                    );
+                    cartProducts.splice(i,1);
+                    i--;
+                }
+            }
+            // let subTotal = 0;
+            // let total = 0;
             cartProducts.forEach( item =>{
                 subTotal += (item.productId.offerPrice * item.quantity);
                 total += (item.productId.price * item.quantity);
@@ -31,7 +40,8 @@ module.exports = {
             res.render('user/cart',{title:"Cart",userCart,loginName: req.session.username,subTotal,total,discount});
 
         } catch (error) {
-            console.log("Error while fetching cart : ",error)
+            console.log("Error while fetching cart : ",error);
+            res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
     addToCart : async(req,res)=>{

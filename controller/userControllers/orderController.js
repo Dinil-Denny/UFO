@@ -24,6 +24,7 @@ module.exports = {
             const user = await User.findOne({email : req.session.userid});
             const userId = user._id;
             const userCart = await Cart.findOne({userId}).populate('products.productId');
+            //console.log("userCart: ",userCart);
             const userCartId = userCart._id;
             //cart subtotal
             let cartProducts = userCart.products;
