@@ -56,7 +56,7 @@ const orderSchema = new mongoose.Schema({
     date : {
         type : Date,
         required : true,
-        default : new Date().toISOString().slice(0, 10)
+        default : () => new Date().toISOString().slice(0, 10)
     },
     couponApplied : {
         type : String,

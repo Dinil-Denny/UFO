@@ -88,7 +88,7 @@ module.exports = {
 
             if(paymentMethod === "ONLINE"){
                 const options = {
-                    amount: cartTotal*100,
+                    amount: parseInt(cartTotal)*100,
                     currency:"INR",
                     receipt: crypto.randomBytes(10).toString("hex")
                 }
@@ -128,7 +128,7 @@ module.exports = {
             //deleteing the cart after placing the order
             await Cart.findOneAndDelete({_id: userCartId});
         } catch (error) {
-            console.log("Error occured while checkout: ",error.message);
+            console.log("Error occured while checkout: ",error);
             res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },  
@@ -138,14 +138,14 @@ module.exports = {
             const totalPrice = req.body.totalPrice;
             const orderId = req.body.orderId;
             const options = {
-                amount: totalPrice*100,
+                amount: parseInt(totalPrice)*100,
                 currency:"INR",
                 receipt: crypto.randomBytes(10).toString("hex")
             }
             const order = await instance.orders.create(options);
             res.json({order,razorpayKey:process.env.RZP_KEY_ID,orderId});
         } catch (error) {
-            console.log("Error in retry payment:",error.message);
+            console.log("Error in retry payment:",error);
             res.render('user/userError',{title:"Error!",loginName: req.session.username});
         }
     },
@@ -162,7 +162,7 @@ module.exports = {
             .update(sign.toString())
             .digest('hex');
             if(expectedSignature === razorpay_signature){
-                await Orders.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{$set:{paymentStatus:"payed",date: Date.now()}});
+                await Orders.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},{$set:{paymentStatus:"payed",date: new Date().toISOString().slice(0, 10)}});
                 return res.status(200).json({success:true});
             }else{
                 return res.status(400).json({success:false});
