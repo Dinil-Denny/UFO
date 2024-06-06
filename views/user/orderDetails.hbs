@@ -33,10 +33,10 @@
                                     <td class=" text-center">{{this.productsData.orderStatus}}</td>
                                     <td>
                                         {{#ifEquals this.productsData.orderStatus "placed"}}
-                                            <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
+                                            <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}/{{this.productsData.productId}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
                                         {{/ifEquals}}
                                         {{#ifEquals this.productsData.orderStatus "shipped"}}
-                                            <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
+                                            <a href="/cancelProduct/{{this._id}}/{{this.productsData._id}}/{{this.productsData.productId}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto mb-3" style="width: fit-content;" onclick="return confirm(`Do you want to cancel this order?`)">Cancel order</a>
                                         {{/ifEquals}}
                                         {{#ifEquals this.productsData.orderStatus "cancelled"}}
                                             <button class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" disabled>Cancel order</button>

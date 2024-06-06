@@ -222,10 +222,8 @@ module.exports = {
     getDaywiseSalesData : async(req,res)=>{
         try{
             const date = req.query.date;
-            console.log("date:",date);
             console.log(new Date().toISOString().slice(0, 10));
             const isoDate = new Date(date);
-            console.log("iso date:",isoDate);
             const salesData = await orderCollection.aggregate([
                 { $match: { date: { $eq: isoDate } } }, // Match by date
                 {
@@ -235,7 +233,6 @@ module.exports = {
                   },
                 },
             ]);
-            console.log("sales :",salesData);
             res.json(salesData);
         }catch(err){
             console.log("Error while getting day wise data:",err.message);

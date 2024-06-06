@@ -1,7 +1,5 @@
 const bcrypt = require('bcrypt');
-const userCollection = require('../../model/userSchema');
 const adminCollection = require('../../model/adminSchema');
-const orderCollection = require('../../model/orderSchema');
 
 module.exports = {
     getAdminLogin : (req,res,next)=>{

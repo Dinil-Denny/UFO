@@ -59,7 +59,7 @@ router.get('/account_overview',userAuthentication,getAccountOverview);
 //order details 
 router.get('/orderDetails/:id',userAuthentication,getOrderDetails);
 //cancel ordered product
-router.get('/cancelProduct/:orderId/:productObjId',userAuthentication,cancelProduct);
+router.get('/cancelProduct/:orderId/:productObjId/:productId',userAuthentication,cancelProduct);
 //return product 
 router.get('/returnProduct/:orderId/:productObjId',userAuthentication,returnProduct);
 

@@ -62,7 +62,7 @@ module.exports = {
                 },  
                 {
                     $project:{
-                        productsData:1,shippingAddress:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,
+                        productsData:1,shippingAddress:1,paymentMethod:1,orderStatus:1,totalPrice:1,date:1,orderedProducts:1,
                         productName:"$orderedProducts.productName",
                         productImages:"$orderedProducts.images",
                         quantity:"$productsData.quantity",
@@ -74,6 +74,7 @@ module.exports = {
                     }
                 }
             ]);
+            //console.log("orderDetails:",orderDetails);
             res.render('user/orderDetails',{title:"Order Details",orderDetails,loginName:req.session.username});
         } catch (error) {
             console.log("error: ",error);
@@ -84,10 +85,29 @@ module.exports = {
     cancelProduct: async(req,res)=>{
         try{
             const orderId = req.params.orderId;
+            const productId = req.params.productId;
             const productsDataId = req.params.productObjId;
+            const product = await orderCollection.aggregate([
+                {
+                    $match:{_id:new mongoose.Types.ObjectId(orderId)}
+                },
+                {
+                    $unwind:"$productsData"
+                },
+                {
+                    $match:{"productsData.productId":new mongoose.Types.ObjectId(productId)}
+                },
+                {
+                    $project:{"productsData.quantity":1,_id:0}
+                }
+            ]);
+            //changing the order status of product to "cancelled"
             await orderCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":"cancelled"}},
                 {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]});
+            //incrementing the product stock while cancelling the product
+            await productCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(productId)},
+                {$inc:{stock:product[0].productsData.quantity}});
             res.redirect(`/orderDetails/${orderId}`);
         }catch(err){
             console.log("Error while cancelling product-order: ",err.message);
