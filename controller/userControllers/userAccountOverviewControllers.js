@@ -120,11 +120,29 @@ module.exports = {
         try {
             const orderId = req.params.orderId;
             const productsDataId = req.params.productObjId;
+            const productId = req.params.productId;
+            const product = await orderCollection.aggregate([
+                {
+                    $match:{_id:new mongoose.Types.ObjectId(orderId)}
+                },
+                {
+                    $unwind:"$productsData"
+                },
+                {
+                    $match:{"productsData.productId":new mongoose.Types.ObjectId(productId)}
+                },
+                {
+                    $project:{"productsData.quantity":1,_id:0}
+                }
+            ]);
             await orderCollection.findOneAndUpdate(
                 {_id:new mongoose.Types.ObjectId(orderId)},
                 {$set:{"productsData.$[product].orderStatus":"returned"}},
                 {arrayFilters:[{"product._id":{$eq:new mongoose.Types.ObjectId(productsDataId)}}]}
             );
+            //incrementing product stock after returning the product
+            await productCollection.findOneAndUpdate({_id:new mongoose.Types.ObjectId(productId)},
+                {$inc:{stock:product[0].productsData.quantity}});
             const orderDetails = await orderCollection.findOne({_id:new mongoose.Types.ObjectId(orderId)});
             const totalProductsInOrder = orderDetails.productsData.length;
             const couponDiscount = orderDetails.couponDiscount;

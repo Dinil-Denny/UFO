@@ -61,7 +61,7 @@ router.get('/orderDetails/:id',userAuthentication,getOrderDetails);
 //cancel ordered product
 router.get('/cancelProduct/:orderId/:productObjId/:productId',userAuthentication,cancelProduct);
 //return product 
-router.get('/returnProduct/:orderId/:productObjId',userAuthentication,returnProduct);
+router.get('/returnProduct/:orderId/:productObjId/:productId',userAuthentication,returnProduct);
 
 // get add address
 router.get('/addAddress',userAuthentication,getAddnewAddress);

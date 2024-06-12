@@ -42,7 +42,7 @@
                                             <button class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" disabled>Cancel order</button>
                                         {{/ifEquals}}
                                         {{#ifEquals this.productsData.orderStatus "delivered"}}
-                                            <a href="/returnProduct/{{this._id}}/{{this.productsData._id}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" onclick="return confirm(`Do you want to return this product?`)">Return product</a>
+                                            <a href="/returnProduct/{{this._id}}/{{this.productsData._id}}/{{this.productsData.productId}}" class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" onclick="return confirm(`Do you want to return this product?`)">Return product</a>
                                         {{/ifEquals}}
                                         {{#ifEquals this.productsData.orderStatus "returned"}}
                                             <button class="btn btn-danger d-grid gap-2 col-6 mx-auto" style="width: fit-content;" disabled>Return product</button>
